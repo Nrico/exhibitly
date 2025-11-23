@@ -103,6 +103,59 @@ export function PortfolioLayout({
         )
     }
 
+    if (theme === 'archive') {
+        return (
+            <div className="min-h-screen bg-[#f4f4f4] text-black font-mono selection:bg-black selection:text-white">
+                <div className="p-4 md:p-8">
+                    <header className="mb-12 border-b border-black pb-4 flex justify-between items-end">
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tighter">
+                                {settings.site_title || profile.full_name || 'Untitled Artist'}
+                            </h1>
+                            <p className="text-xs max-w-md mt-2 leading-relaxed">
+                                {settings.site_bio || 'No bio available.'}
+                            </p>
+                        </div>
+                        <div className="flex gap-4 text-xs">
+                            <a href="#" className="hover:underline">[IG]</a>
+                            <a href="#" className="hover:underline">[WEB]</a>
+                            <a href="#" className="hover:underline">[MAIL]</a>
+                        </div>
+                    </header>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
+                        {artworks.map((artwork) => (
+                            <div key={artwork.id} className="group cursor-pointer">
+                                <div className="relative aspect-square bg-gray-200 mb-2 border border-black overflow-hidden">
+                                    {artwork.image_url && (
+                                        <Image
+                                            src={artwork.image_url}
+                                            alt={artwork.title}
+                                            fill
+                                            className="object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                                        />
+                                    )}
+                                </div>
+                                <div className="text-[10px] leading-tight border-t border-black pt-1">
+                                    <div className="font-bold truncate">{artwork.title}</div>
+                                    <div className="flex justify-between text-gray-600">
+                                        <span>{artwork.medium}</span>
+                                        <span>{artwork.price ? `$${artwork.price}` : 'NFS'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <footer className="border-t border-black pt-4 text-[10px] uppercase flex justify-between">
+                        <div>Index: {new Date().getFullYear()}</div>
+                        <div>Powered by Exhibitly</div>
+                    </footer>
+                </div>
+            </div>
+        )
+    }
+
     // Default 'minimal' theme
     return (
         <div className="min-h-screen bg-white text-[#111] font-serif selection:bg-[#111] selection:text-white">

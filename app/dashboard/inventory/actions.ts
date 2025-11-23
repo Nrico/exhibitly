@@ -11,6 +11,23 @@ export async function createArtwork(formData: FormData) {
         return { error: 'Unauthorized' }
     }
 
+    // Ensure profile exists (self-healing for old accounts)
+    const { data: profile } = await supabase.from('profiles').select('id').eq('id', user.id).single()
+    if (!profile) {
+        await supabase.from('profiles').insert({
+            id: user.id,
+            email: user.email!,
+            full_name: user.user_metadata.full_name || user.email?.split('@')[0],
+            username: user.user_metadata.username || user.email?.split('@')[0],
+            account_type: 'artist' // Default
+        })
+        // Also ensure site settings exist
+        await supabase.from('site_settings').insert({
+            user_id: user.id,
+            site_title: user.user_metadata.full_name || user.email?.split('@')[0]
+        })
+    }
+
     const title = formData.get('title') as string
     const medium = formData.get('medium') as string
     const price = formData.get('price') as string

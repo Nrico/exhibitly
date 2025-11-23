@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { OnboardingChecklist } from '@/components/dashboard/onboarding-checklist'
 import { StatsCards } from '@/components/dashboard/stats-cards'
 import { PlusCircle, MagicWand } from '@phosphor-icons/react/dist/ssr'
 import Image from 'next/image'
@@ -13,6 +14,20 @@ export default async function Dashboard() {
         return redirect('/auth')
     }
 
+    // Fetch Profile
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+    // Fetch Site Settings
+    const { data: settings } = await supabase
+        .from('site_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .single()
+
     // Fetch recent uploads
     const { data: recentUploads } = await supabase
         .from('artworks')
@@ -21,6 +36,29 @@ export default async function Dashboard() {
         .order('created_at', { ascending: false })
         .limit(5)
 
+    // Fetch Analytics Stats
+    const { count: totalViews } = await supabase
+        .from('profile_views')
+        .select('*', { count: 'exact', head: true })
+        .eq('profile_id', user.id)
+
+    const { count: totalArtworks } = await supabase
+        .from('artworks')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+
+    const { count: soldArtworks } = await supabase
+        .from('artworks')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('status', 'sold')
+
+    const { count: availableArtworks } = await supabase
+        .from('artworks')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('status', 'available')
+
     const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
     return (
@@ -28,7 +66,7 @@ export default async function Dashboard() {
             <div className="max-w-4xl mx-auto">
                 <header className="flex justify-between items-end mb-10">
                     <div>
-                        <h1 className="font-serif text-4xl text-[#111111] mb-1">Welcome, {user?.user_metadata?.full_name?.split(' ')[0] || 'Artist'}.</h1>
+                        <h1 className="font-serif text-4xl text-[#111111] mb-1">Welcome, {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Artist'}.</h1>
                         <div className="text-sm text-[#666666]">{currentDate}</div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -43,7 +81,20 @@ export default async function Dashboard() {
                     </div>
                 </header>
 
-                <StatsCards />
+                <OnboardingChecklist
+                    profile={profile}
+                    settings={settings}
+                    artworkCount={recentUploads?.length || 0}
+                    username={profile?.username}
+                />
+
+                <StatsCards
+                    totalViews={totalViews || 0}
+                    totalArtworks={totalArtworks || 0}
+                    soldArtworks={soldArtworks || 0}
+                    availableArtworks={availableArtworks || 0}
+                    username={profile?.username}
+                />
 
                 <h2 className="text-lg font-semibold mb-5 text-[#111111]">Recent Uploads</h2>
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

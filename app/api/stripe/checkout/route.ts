@@ -38,9 +38,10 @@ export async function POST(req: Request) {
 
         const session = await stripe.checkout.sessions.create({
             customer: customerId,
+            payment_method_types: ['card'],
             line_items: [
                 {
-                    price: 'price_1QO...', // Replace with your actual Stripe Price ID
+                    price: 'price_1SWexFLH4rc8LhuuZ7CEIr9h', // Replace with your actual Stripe Price ID
                     quantity: 1,
                 },
             ],
@@ -55,6 +56,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ sessionId: session.id, url: session.url });
     } catch (err: any) {
         console.error(err);
-        return new NextResponse('Internal Error', { status: 500 });
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

@@ -16,6 +16,8 @@ export default async function InventoryPage() {
 
         if (data) {
             artworks = data
+        } else {
+            console.error('Error fetching artworks:', await supabase.from('artworks').select('*').eq('user_id', user.id).then(res => res.error))
         }
     } else {
         // Fallback for mock user or if DB connection fails/tables don't exist yet

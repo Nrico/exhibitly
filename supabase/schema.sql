@@ -7,8 +7,11 @@ create table public.profiles (
   id uuid references auth.users on delete cascade not null primary key,
   email text unique not null,
   full_name text,
+  username text unique,
   avatar_url text,
   account_type text check (account_type in ('artist', 'gallery')),
+  stripe_customer_id text,
+  subscription_status text default 'free',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -68,15 +71,13 @@ create policy "Users can delete their own artworks."
   using ( auth.uid() = user_id );
 
 -- SITE SETTINGS TABLE
--- Configuration for the public portfolio site
+-- Site Settings Table
 create table public.site_settings (
   user_id uuid references public.profiles(id) on delete cascade not null primary key,
   site_title text,
   site_bio text,
-  theme text check (theme in ('white', 'dark', 'archive')) default 'white',
+  theme text default 'minimal',
   custom_domain text unique,
-  contact_email text,
-  show_sold_items boolean default true,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -84,8 +85,8 @@ create table public.site_settings (
 -- Enable RLS for site_settings
 alter table public.site_settings enable row level security;
 
--- Site Settings policies
-create policy "Site settings are viewable by everyone."
+-- Policies for site_settings
+create policy "Public site settings are viewable by everyone."
   on public.site_settings for select
   using ( true );
 
@@ -96,6 +97,27 @@ create policy "Users can insert their own site settings."
 create policy "Users can update their own site settings."
   on public.site_settings for update
   using ( auth.uid() = user_id );
+
+-- Profile Views Table (Analytics)
+create table public.profile_views (
+  id uuid default gen_random_uuid() primary key,
+  profile_id uuid references public.profiles(id) on delete cascade not null,
+  viewed_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  viewer_ip text, -- Optional: Store hashed IP or just keep it simple
+  user_agent text
+);
+
+-- Enable RLS for profile_views
+alter table public.profile_views enable row level security;
+
+-- Policies for profile_views
+create policy "Anyone can insert a view."
+  on public.profile_views for insert
+  with check ( true );
+
+create policy "Users can view their own analytics."
+  on public.profile_views for select
+  using ( auth.uid() = profile_id );
 
 -- TRIGGER FOR NEW USERS
 -- Automatically create a profile entry when a new user signs up via Supabase Auth

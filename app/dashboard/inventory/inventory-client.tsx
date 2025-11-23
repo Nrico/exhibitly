@@ -29,11 +29,22 @@ type Artwork = {
 
 export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[] }) {
     const router = useRouter()
+
+    // Debug logging
+    console.log('InventoryClient rendered with artworks:', initialArtworks)
+
     const [isEditorOpen, setIsEditorOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState<Artwork | null>(null)
     const [isCreating, setIsCreating] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [isDragging, setIsDragging] = useState(false)
+
+    const [filterStatus, setFilterStatus] = useState<'all' | 'available' | 'sold' | 'draft'>('all')
+
+    const filteredArtworks = initialArtworks.filter(item => {
+        if (filterStatus === 'all') return true
+        return item.status === filterStatus
+    })
 
     const openEditor = (item: Artwork) => {
         setSelectedItem(item)
@@ -67,11 +78,18 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
     }
 
     const handleSave = async (formData: FormData) => {
+        let result
         if (isCreating) {
-            await createArtwork(formData)
+            result = await createArtwork(formData)
         } else if (selectedItem) {
-            await updateArtwork(selectedItem.id, formData)
+            result = await updateArtwork(selectedItem.id, formData)
         }
+
+        if (result?.error) {
+            alert(`Error: ${result.error}`)
+            return
+        }
+
         router.refresh()
         closeEditor()
     }
@@ -79,7 +97,11 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
     const handleDelete = async () => {
         if (selectedItem) {
             if (confirm('Are you sure you want to delete this artwork?')) {
-                await deleteArtwork(selectedItem.id)
+                const result = await deleteArtwork(selectedItem.id)
+                if (result?.error) {
+                    alert(`Error: ${result.error}`)
+                    return
+                }
                 router.refresh()
                 closeEditor()
             }
@@ -153,11 +175,29 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
             {/* TOOLBAR */}
             <div className="flex justify-between items-center mb-5 bg-white p-2.5 border border-gray-200 rounded-lg">
                 <div className="flex gap-1.5">
-                    <div className="px-4 py-2 text-sm rounded-md cursor-pointer bg-[#111111] text-white font-medium">All Items</div>
-                    <div className="px-4 py-2 text-sm rounded-md cursor-pointer text-[#666666] hover:bg-gray-100 hover:text-[#111111]">Available</div>
-                    <div className="px-4 py-2 text-sm rounded-md cursor-pointer text-[#666666] hover:bg-gray-100 hover:text-[#111111]">Sold</div>
-                    <div className="px-4 py-2 text-sm rounded-md cursor-pointer text-[#f57f17] hover:bg-gray-100 flex items-center gap-1.5">
-                        <WarningCircle size={16} /> Needs Review (0)
+                    <div
+                        onClick={() => setFilterStatus('all')}
+                        className={`px-4 py-2 text-sm rounded-md cursor-pointer font-medium transition-colors ${filterStatus === 'all' ? 'bg-[#111111] text-white' : 'text-[#666666] hover:bg-gray-100 hover:text-[#111111]'}`}
+                    >
+                        All Items
+                    </div>
+                    <div
+                        onClick={() => setFilterStatus('available')}
+                        className={`px-4 py-2 text-sm rounded-md cursor-pointer font-medium transition-colors ${filterStatus === 'available' ? 'bg-[#e8f5e9] text-[#2e7d32]' : 'text-[#666666] hover:bg-gray-100 hover:text-[#111111]'}`}
+                    >
+                        Available
+                    </div>
+                    <div
+                        onClick={() => setFilterStatus('sold')}
+                        className={`px-4 py-2 text-sm rounded-md cursor-pointer font-medium transition-colors ${filterStatus === 'sold' ? 'bg-[#ffebee] text-[#c62828]' : 'text-[#666666] hover:bg-gray-100 hover:text-[#111111]'}`}
+                    >
+                        Sold
+                    </div>
+                    <div
+                        onClick={() => setFilterStatus('draft')}
+                        className={`px-4 py-2 text-sm rounded-md cursor-pointer font-medium transition-colors flex items-center gap-1.5 ${filterStatus === 'draft' ? 'bg-[#fff8e1] text-[#f57f17]' : 'text-[#f57f17] hover:bg-gray-100'}`}
+                    >
+                        <WarningCircle size={16} /> Needs Review ({initialArtworks.filter(i => i.status === 'draft').length})
                     </div>
                 </div>
                 <div className="flex gap-2.5">
@@ -185,14 +225,14 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                         </tr>
                     </thead>
                     <tbody>
-                        {initialArtworks.length === 0 && (
+                        {filteredArtworks.length === 0 && (
                             <tr>
                                 <td colSpan={7} className="p-8 text-center text-[#666666]">
                                     No artworks found. Add one to get started.
                                 </td>
                             </tr>
                         )}
-                        {initialArtworks.map((item) => (
+                        {filteredArtworks.map((item) => (
                             <tr
                                 key={item.id}
                                 onClick={() => openEditor(item)}

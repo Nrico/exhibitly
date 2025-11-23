@@ -9,6 +9,7 @@ type Profile = {
     full_name: string | null
     email: string
     avatar_url: string | null
+    subscription_status?: string | null
 }
 
 type SiteSettings = {
@@ -25,6 +26,7 @@ export function SettingsForm({
     initialSettings: SiteSettings
 }) {
     const [isSaving, setIsSaving] = useState(false)
+    const [isLoadingCheckout, setIsLoadingCheckout] = useState(false)
 
     const handleSubmit = async (formData: FormData) => {
         setIsSaving(true)
@@ -38,6 +40,29 @@ export function SettingsForm({
         setIsSaving(false)
         alert('Settings saved successfully!')
     }
+
+    const handleUpgrade = async () => {
+        setIsLoadingCheckout(true)
+        try {
+            const response = await fetch('/api/stripe/checkout', {
+                method: 'POST',
+            })
+            const data = await response.json()
+
+            if (data.url) {
+                window.location.href = data.url
+            } else {
+                alert('Error starting checkout')
+            }
+        } catch (error) {
+            console.error('Checkout error:', error)
+            alert('Error starting checkout')
+        } finally {
+            setIsLoadingCheckout(false)
+        }
+    }
+
+    const isPro = initialProfile.subscription_status === 'active'
 
     return (
         <div className="max-w-[1200px] mx-auto">
@@ -151,19 +176,30 @@ export function SettingsForm({
                             </div>
                             <div className="text-sm text-[#666666] mt-1">Manage your plan tier and payment methods.</div>
                         </div>
-                        <span className="bg-[#111111] text-white px-2.5 py-1 rounded text-xs uppercase tracking-wider font-medium">
-                            Professional Plan
+                        <span className={`px-2.5 py-1 rounded text-xs uppercase tracking-wider font-medium ${isPro ? 'bg-[#111111] text-white' : 'bg-gray-100 text-gray-600'}`}>
+                            {isPro ? 'Professional Plan' : 'Free Plan'}
                         </span>
                     </div>
 
                     <div className="flex justify-between items-center p-5 bg-[#f9fafb] rounded-md border border-gray-200">
                         <div>
-                            <div className="font-semibold text-sm text-[#111111]">$12.00 / month</div>
-                            <div className="text-xs text-[#666666] mt-0.5">Next invoice: December 20, 2025</div>
+                            <div className="font-semibold text-sm text-[#111111]">{isPro ? '$12.00 / month' : '$0.00 / month'}</div>
+                            <div className="text-xs text-[#666666] mt-0.5">{isPro ? 'Next invoice: December 20, 2025' : 'Upgrade to remove limits.'}</div>
                         </div>
-                        <a href="#" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 no-underline">
-                            Manage Billing on Stripe <ArrowSquareOut size={16} />
-                        </a>
+                        {isPro ? (
+                            <a href="#" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 no-underline">
+                                Manage Billing on Stripe <ArrowSquareOut size={16} />
+                            </a>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={handleUpgrade}
+                                disabled={isLoadingCheckout}
+                                className="bg-[#111111] text-white px-4 py-2 rounded-md text-sm hover:bg-[#333] transition-colors flex items-center gap-2 disabled:opacity-50"
+                            >
+                                {isLoadingCheckout ? 'Loading...' : 'Upgrade to Pro'} <ArrowSquareOut size={16} />
+                            </button>
+                        )}
                     </div>
                 </div>
 

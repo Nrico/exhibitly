@@ -1,8 +1,14 @@
-'use client'
+import { Archive, TrendUp, Globe, ArrowSquareOut, LockKey } from '@phosphor-icons/react/dist/ssr'
 
-import { Archive, TrendUp, Globe, ArrowSquareOut, LockKey } from '@phosphor-icons/react'
+type Props = {
+    totalViews: number
+    totalArtworks: number
+    soldArtworks: number
+    availableArtworks: number
+    username?: string
+}
 
-export function StatsCards() {
+export function StatsCards({ totalViews, totalArtworks, soldArtworks, availableArtworks, username }: Props) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
 
@@ -13,16 +19,16 @@ export function StatsCards() {
                     <Archive size={16} />
                 </div>
                 <div className="font-serif text-4xl font-semibold text-gray-900 mb-3 leading-none">
-                    42 Items
+                    {totalArtworks} Items
                 </div>
                 <div className="flex gap-4 pt-4 mt-4 border-t border-gray-50 text-sm">
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-green-700"></span>
-                        12 Available
+                        {availableArtworks} Available
                     </div>
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-red-700"></span>
-                        30 Sold
+                        {soldArtworks} Sold
                     </div>
                 </div>
             </div>
@@ -30,13 +36,13 @@ export function StatsCards() {
             {/* Card 2: Visitor Interest */}
             <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] relative">
                 <div className="text-xs uppercase tracking-widest text-gray-500 mb-4 flex justify-between items-center">
-                    Visitor Interest (30d)
+                    Visitor Interest (All Time)
                     <span className="bg-green-50 text-green-700 px-1.5 py-0.5 rounded text-[10px] font-medium flex items-center gap-1">
-                        <TrendUp size={12} weight="bold" /> 12%
+                        <TrendUp size={12} weight="bold" /> Live
                     </span>
                 </div>
                 <div className="font-serif text-4xl font-semibold text-gray-900 mb-3 leading-none">
-                    1,240 Views
+                    {totalViews.toLocaleString()} Views
                 </div>
                 <div className="h-[50px] w-full mt-3 relative opacity-80">
                     {/* Simple SVG Sparkline */}
@@ -65,9 +71,13 @@ export function StatsCards() {
                 </div>
 
                 <div>
-                    <a href="#" className="inline-flex items-center gap-2 bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800 hover:bg-gray-200 transition-colors">
-                        enricotrujillo.com <ArrowSquareOut size={14} />
-                    </a>
+                    {username ? (
+                        <a href={`/${username}`} target="_blank" className="inline-flex items-center gap-2 bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800 hover:bg-gray-200 transition-colors">
+                            exhibit.ly/{username} <ArrowSquareOut size={14} />
+                        </a>
+                    ) : (
+                        <span className="text-sm text-gray-400 italic">No public site yet</span>
+                    )}
                 </div>
                 <div className="text-xs text-gray-400 mt-3 flex items-center gap-1.5">
                     <LockKey size={12} /> SSL Certificate Active
