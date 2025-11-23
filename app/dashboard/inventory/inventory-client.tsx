@@ -77,22 +77,33 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
         }
     }
 
+    const [isSaving, setIsSaving] = useState(false)
+
     const handleSave = async (formData: FormData) => {
-        let result
-        if (isCreating) {
-            result = await createArtwork(formData)
-        } else if (selectedItem) {
-            result = await updateArtwork(selectedItem.id, formData)
-        }
+        if (isSaving) return // Prevent double submission
+        setIsSaving(true)
 
-        if (result?.error) {
-            alert(`Error: ${result.error}`)
-            return
-        }
+        try {
+            let result
+            if (isCreating) {
+                result = await createArtwork(formData)
+            } else if (selectedItem) {
+                result = await updateArtwork(selectedItem.id, formData)
+            }
 
-        router.refresh()
-        closeEditor()
+            if (result?.error) {
+                alert(`Error: ${result.error}`)
+                return
+            }
+
+            router.refresh()
+            closeEditor()
+        } finally {
+            setIsSaving(false)
+        }
     }
+
+
 
     const handleDelete = async () => {
         if (selectedItem) {
@@ -424,8 +435,13 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                             <button type="button" onClick={closeEditor} className="px-5 py-2.5 bg-white border border-gray-200 rounded-md text-sm cursor-pointer hover:bg-gray-50 transition-colors text-[#111111]">
                                 Cancel
                             </button>
-                            <button type="submit" className="px-5 py-2.5 bg-[#111111] text-white border-none rounded-md text-sm font-medium cursor-pointer hover:bg-[#333] transition-colors">
-                                {isCreating ? 'Create Artwork' : 'Save Changes'}
+                            <button
+                                type="submit"
+                                disabled={isSaving}
+                                className="px-5 py-2.5 bg-[#111111] text-white border-none rounded-md text-sm font-medium cursor-pointer hover:bg-[#333] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                            >
+                                {isSaving && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+                                {isSaving ? 'Saving...' : (isCreating ? 'Create Artwork' : 'Save Changes')}
                             </button>
                         </div>
                     </div>

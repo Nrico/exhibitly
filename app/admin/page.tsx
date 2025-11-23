@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { CheckCircle, XCircle } from '@phosphor-icons/react/dist/ssr'
+import { DeleteUserButton } from './components/delete-user-button'
 
 export default async function AdminPage() {
     const supabase = await createClient()
@@ -62,8 +63,8 @@ export default async function AdminPage() {
                                 <td className="p-4 text-sm text-gray-700 capitalize">{profile.account_type}</td>
                                 <td className="p-4">
                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${profile.subscription_status === 'active'
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-gray-100 text-gray-600'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-gray-100 text-gray-600'
                                         }`}>
                                         {profile.subscription_status || 'free'}
                                     </span>
@@ -78,7 +79,7 @@ export default async function AdminPage() {
                                 <td className="p-4 text-sm text-gray-500">
                                     {new Date(profile.created_at).toLocaleDateString()}
                                 </td>
-                                <td className="p-4">
+                                <td className="p-4 flex items-center">
                                     <a
                                         href={`/${profile.username}`}
                                         target="_blank"
@@ -86,6 +87,9 @@ export default async function AdminPage() {
                                     >
                                         View Site
                                     </a>
+                                    {!profile.is_admin && (
+                                        <DeleteUserButton id={profile.id} />
+                                    )}
                                 </td>
                             </tr>
                         ))}

@@ -163,6 +163,36 @@ begin
 end;
 $$ language plpgsql security definer;
 
-create trigger on_auth_user_created
-  after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- STORAGE SETUP
+-- Create the 'artworks' bucket if it doesn't exist
+insert into storage.buckets (id, name, public)
+values ('artworks', 'artworks', true)
+on conflict (id) do nothing;
+
+-- Storage Policies
+create policy "Artwork images are publicly accessible."
+  on storage.objects for select
+  using ( bucket_id = 'artworks' );
+
+create policy "Users can upload artwork images."
+  on storage.objects for insert
+  with check (
+    bucket_id = 'artworks' and
+    auth.uid() = (storage.foldername(name))[1]::uuid
+  );
+
+create policy "Users can update their own artwork images."
+  on storage.objects for update
+  using (
+    bucket_id = 'artworks' and
+    auth.uid() = (storage.foldername(name))[1]::uuid
+  );
+
+create policy "Users can delete their own artwork images."
+  on storage.objects for delete
+  using (
+    bucket_id = 'artworks' and
+    auth.uid() = (storage.foldername(name))[1]::uuid
+  );

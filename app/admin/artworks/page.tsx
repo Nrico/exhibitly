@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
-import { Trash } from '@phosphor-icons/react/dist/ssr'
 import Image from 'next/image'
+import { DeleteArtworkButton } from '../components/delete-artwork-button'
 
 export default async function AdminArtworksPage() {
     const supabase = await createClient()
@@ -54,8 +54,8 @@ export default async function AdminArtworksPage() {
                                 </td>
                                 <td className="p-4">
                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.status === 'available' ? 'bg-green-100 text-green-800' :
-                                            item.status === 'sold' ? 'bg-red-100 text-red-800' :
-                                                'bg-gray-100 text-gray-600'
+                                        item.status === 'sold' ? 'bg-red-100 text-red-800' :
+                                            'bg-gray-100 text-gray-600'
                                         }`}>
                                         {item.status}
                                     </span>
@@ -67,10 +67,7 @@ export default async function AdminArtworksPage() {
                                     {new Date(item.created_at).toLocaleDateString()}
                                 </td>
                                 <td className="p-4 text-right">
-                                    {/* In a real app, this would be a server action form */}
-                                    <button className="text-red-600 hover:text-red-800 p-2 hover:bg-red-50 rounded transition-colors" title="Delete (Demo Only)">
-                                        <Trash size={18} />
-                                    </button>
+                                    <DeleteArtworkButton id={item.id} />
                                 </td>
                             </tr>
                         ))}
