@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrico Trujillo | Fine Art</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Fauna+One&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. THE PALETTE --- */
+        :root {
+            --bg-body: #121212; /* Deep Charcoal, almost black */
+            --bg-card: #1e1e1e; /* Slightly lighter for contrast */
+            --text-main: #e0e0e0; /* Off-white */
+            --text-muted: #888888;
+            --accent-gold: #c8aa6e; /* Antique Gold */
+            --red-dot: #aa3a3a;
+            
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Fauna One', serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- 2. LAYOUT (Split Screen) --- */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Sidebar (The Placard) */
+        .sidebar {
+            width: 35%;
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            border-right: 1px solid #333;
+            z-index: 10;
+        }
+
+        /* Right Content (The Gallery) */
+        .gallery-scroll {
+            width: 65%;
+            margin-left: 35%; /* Pushes content to right of sidebar */
+            padding: 80px 60px;
+        }
+
+        /* --- 3. TYPOGRAPHY & NAV --- */
+        h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            color: var(--text-main);
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 60px;
+        }
+
+        nav a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--text-main);
+            transform: translateX(10px); /* Subtle slide right */
+        }
+
+        .nav-active { color: var(--text-main); border-left: 2px solid var(--accent-gold); padding-left: 10px; }
+
+        /* --- 4. THE ART CARDS --- */
+        .art-card {
+            margin-bottom: 100px; /* Huge whitespace between pieces */
+            opacity: 0; /* For fade-in animation */
+            transform: translateY(30px);
+            animation: fadeUp 1s forwards;
+        }
+
+        /* Stagger animation for first few items */
+        .art-card:nth-child(1) { animation-delay: 0.2s; }
+        .art-card:nth-child(2) { animation-delay: 0.4s; }
+        .art-card:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .frame {
+            padding: 15px; /* The "Matte" width */
+            background-color: #fff; /* White Matte */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.5s ease;
+        }
+        
+        .frame:hover { transform: scale(1.02); }
+
+        .frame img {
+            display: block;
+            width: 100%;
+            height: auto;
+            filter: contrast(1.05); /* Slight pop */
+        }
+
+        .caption {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .title-block h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .title-block p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .status-block {
+            text-align: right;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+        }
+
+        .price { color: var(--accent-gold); display: block; margin-top: 5px;}
+        .sold-text { color: #555; text-decoration: line-through; }
+        
+        .red-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            background-color: var(--red-dot);
+            border-radius: 50%;
+            margin-left: 5px;
+            position: relative; bottom: 2px;
+        }
+
+        /* --- 5. MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .container { flex-direction: column; }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 40px 20px;
+                text-align: center;
+                border-right: none;
+                border-bottom: 1px solid #333;
+            }
+
+            .gallery-scroll {
+                width: 100%;
+                margin-left: 0;
+                padding: 40px 20px;
+            }
+
+            h1 { font-size: 2.5rem; }
+            nav a:hover { transform: none; }
+            .nav-active { border-left: none; border-bottom: 2px solid var(--accent-gold); padding-left: 0; padding-bottom: 5px; display: inline-block; }
+        }
+
+        /* --- 6. MODAL (Classic Style) --- */
+        .modal {
+            display: none; position: fixed; z-index: 9999;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+
+        .modal-img { max-height: 80vh; max-width: 90%; border: 10px solid #fff; }
+        
+        .modal-close {
+            position: absolute; top: 30px; right: 40px;
+            color: #fff; font-size: 40px; cursor: pointer;
+            font-family: var(--font-display);
+        }
+
+        .modal-inquire {
+            margin-top: 20px;
+            color: var(--text-main);
+            border: 1px solid var(--accent-gold);
+            padding: 10px 30px;
+            text-decoration: none;
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .modal-inquire:hover { background-color: var(--accent-gold); color: #000; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <aside class="sidebar">
+            <div>
+                <h1>Enrico<br>Trujillo</h1>
+                <div class="tagline">Collection MMXXV</div>
+                
+                <nav>
+                    <a href="#" class="nav-active">Gallery</a>
+                    <a href="#">Biography</a>
+                    <a href="#">Exhibitions</a>
+                    <a href="#">Acquisitions</a>
+                </nav>
+            </div>
+            
+            <div style="margin-top: auto; color: #444; font-size: 0.8rem;">
+                &copy; 2025 Enrico Trujillo Studio<br>Taos, New Mexico
+            </div>
+        </aside>
+
+        <main class="gallery-scroll">
+
+            <article class="art-card" onclick="openModal(this, 'available', 'Morning on the Ridge')">
+                <div class="frame">
+                    <img src="https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=1000" alt="Landscape">
+                </div>
+                <div class="caption">
+                    <div class="title-block">
+                        <h2>Morning on the Ridge</h2>
+                        <p>Oil on Linen, 24" x 36", 2024</p>
+                    </div>
+                    <div class="status-block">
+                        <span class="price">$1,800</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="art-card" onclick="openModal(this, 'sold', 'The Watcher')">
+                <div class="frame">
+                    <img src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?q=80&w=1000" alt="Portrait">
+                </div>
+                <div class="caption">
+                    <div class="title-block">
+                        <h2>The Watcher</h2>
+                        <p>Charcoal Study, 12" x 18", 2023</p>
+                    </div>
+                    <div class="status-block">
+                        <span class="sold-text">Sold</span><span class="red-dot"></span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="art-card" onclick="openModal(this, 'available', 'High Desert Bloom')">
+                <div class="frame">
+                    <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000" alt="Nature">
+                </div>
+                <div class="caption">
+                    <div class="title-block">
+                        <h2>High Desert Bloom</h2>
+                        <p>Oil on Canvas, 36" x 48", 2025</p>
+                    </div>
+                    <div class="status-block">
+                        <span class="price">$2,400</span>
+                    </div>
+                </div>
+            </article>
+
+        </main>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-close" onclick="closeModal()">&times;</div>
+        <img id="modalImg" class="modal-img">
+        <a id="modalBtn" href="#" class="modal-inquire">Inquire</a>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modalImg');
+        const modalBtn = document.getElementById('modalBtn');
+
+        function openModal(card, status, title) {
+            const imgSrc = card.querySelector('img').src;
+            
+            modal.style.display = "flex";
+            modalImg.src = imgSrc;
+
+            if (status === 'available') {
+                modalBtn.style.display = "block";
+                modalBtn.href = "mailto:enrico@example.com?subject=Acquisition Inquiry: " + title;
+                modalBtn.innerHTML = "Inquire to Acquire";
+            } else {
+                modalBtn.style.display = "block";
+                modalBtn.removeAttribute('href');
+                modalBtn.innerHTML = "Item in Private Collection";
+                modalBtn.style.border = "none";
+                modalBtn.style.cursor = "default";
+            }
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        // Close on clicking background
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+        
+        // Esc key
+        document.addEventListener('keydown', function(e) {
+            if(e.key === "Escape") closeModal();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibitly | Upgrade</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --bg-body: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #666;
+            --accent: #111;
+            --border: #e5e5e5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background: var(--bg-body);
+        }
+
+        /* --- NAVBAR --- */
+        nav { padding: 30px 60px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; }
+
+        /* --- PRICING SECTION --- */
+        .pricing-container {
+            max-width: 1000px;
+            margin: 60px auto;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        h1 { font-family: 'Cormorant Garamond', serif; font-size: 3rem; margin-bottom: 15px; font-weight: 400; }
+        .subtitle { color: var(--text-muted); margin-bottom: 40px; }
+
+        /* Toggle Switch */
+        .toggle-wrapper {
+            display: inline-flex;
+            align-items: center;
+            background: #f4f4f4;
+            border-radius: 30px;
+            padding: 4px;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        .toggle-btn {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .toggle-btn.active { background: white; color: black; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: 500; }
+        
+        .discount-tag {
+            position: absolute;
+            right: -85px;
+            top: 5px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Cards Grid */
+        .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; }
+
+        .plan-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            transition: transform 0.3s, border-color 0.3s;
+            position: relative;
+        }
+        .plan-card:hover { transform: translateY(-5px); border-color: #000; }
+        
+        .plan-card.featured { background: #111; color: white; border-color: #111; }
+        .plan-card.featured .text-muted { color: #888; }
+        .plan-card.featured li { border-bottom-color: #333; }
+        .plan-card.featured .check-icon { color: #fff; }
+
+        .plan-name { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 10px; }
+        .plan-price { font-size: 2.5rem; font-weight: 600; margin-bottom: 5px; }
+        .plan-period { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 30px; }
+
+        .btn-plan {
+            width: 100%;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 30px;
+            border: 1px solid #000;
+        }
+        .btn-light { background: white; color: black; }
+        .btn-light:hover { background: #f9f9f9; }
+        .btn-dark { background: #111; color: white; }
+        .btn-dark:hover { background: #333; border-color: #333; }
+        /* Inverted for the featured card */
+        .featured .btn-plan { background: white; color: black; border: none; }
+        .featured .btn-plan:hover { background: #eee; }
+
+        ul { list-style: none; }
+        li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .check-icon { color: #111; font-size: 1.1rem; }
+
+        /* --- SIMULATED STRIPE MODAL --- */
+        .stripe-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .stripe-window {
+            width: 900px;
+            height: 600px;
+            background: white;
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Left side of Stripe (Order Summary) */
+        .stripe-left {
+            background: #f7f7f7;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+        .stripe-back { font-size: 0.8rem; color: #666; cursor: pointer; margin-bottom: 40px; display: flex; align-items: center; gap: 5px;}
+        .stripe-product-price { font-size: 2rem; font-weight: 600; margin-bottom: 5px; }
+        .stripe-product-name { color: #666; margin-bottom: 40px; }
+        .stripe-line-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; }
+        .stripe-total { margin-top: auto; padding-top: 20px; border-top: 1px solid #e0e0e0; display: flex; justify-content: space-between; font-weight: 600; }
+
+        /* Right side of Stripe (Payment Input) */
+        .stripe-right { padding: 40px; }
+        .stripe-header { font-size: 1.2rem; font-weight: 600; margin-bottom: 30px; }
+        
+        .stripe-input-group { margin-bottom: 20px; }
+        .stripe-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: #333; }
+        .stripe-input {
+            width: 100%; padding: 12px;
+            border: 1px solid #e0e0e0; border-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .stripe-pay-btn {
+            width: 100%; padding: 14px;
+            background: #0a2540; /* Stripe Blue */
+            color: white; border: none; border-radius: 5px;
+            font-weight: 600; font-size: 1rem; cursor: pointer;
+            margin-top: 20px;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Exhibitly.</div>
+        <a href="#" style="text-decoration:none; color:#666; font-size:0.9rem;">Back to Dashboard</a>
+    </nav>
+
+    <div class="pricing-container">
+        <h1>Invest in your art.</h1>
+        <p class="subtitle">Simple, transparent pricing. Cancel anytime.</p>
+
+        <div class="toggle-wrapper">
+            <button class="toggle-btn active" onclick="togglePrice('monthly')">Monthly Billing</button>
+            <button class="toggle-btn" onclick="togglePrice('yearly')">Yearly Billing</button>
+            <div class="discount-tag">Save 25%</div>
+        </div>
+
+        <div class="cards-grid">
+            
+            <div class="plan-card featured">
+                <div class="plan-name">Independent Artist</div>
+                <div class="plan-price" id="price-artist">$12</div>
+                <div class="plan-period text-muted">per month</div>
+
+                <button class="btn-plan" onclick="openStripe('artist')">Subscribe Now</button>
+
+                <ul>
+                    <li><i class="ph ph-check check-icon"></i> Unlimited Artworks</li>
+                    <li><i class="ph ph-check check-icon"></i> Custom Domain (yourname.com)</li>
+                    <li><i class="ph ph-check check-icon"></i> 0% Commission on Sales</li>
+                    <li><i class="ph ph-check check-icon"></i> Password Protected Rooms</li>
+                    <li><i class="ph ph-check check-icon"></i> Export Data (PDF & Zip)</li>
+                </ul>
+            </div>
+
+            <div class="plan-card">
+                <div class="plan-name">Gallery & Studio</div>
+                <div class="plan-price" id="price-gallery">$79</div>
+                <div class="plan-period">per month</div>
+
+                <button class="btn-plan btn-dark" onclick="openStripe('gallery')">Contact Sales</button>
+
+                <ul>
+                    <li><i class="ph ph-check check-icon"></i> Up to 50 Artists</li>
+                    <li><i class="ph ph-check check-icon"></i> Exhibition Management</li>
+                    <li><i class="ph ph-check check-icon"></i> Location & Map Integration</li>
+                    <li><i class="ph ph-check check-icon"></i> Priority Onboarding Support</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="stripe-overlay" id="stripeModal" onclick="if(event.target === this) closeStripe()">
+        <div class="stripe-window">
+            
+            <div class="stripe-left">
+                <div class="stripe-back" onclick="closeStripe()"><i class="ph ph-arrow-left"></i> Cancel</div>
+                <div style="margin-top:auto; margin-bottom:auto;">
+                    <div style="font-size:0.9rem; color:#666; margin-bottom:10px;">Subscribe to Exhibitly</div>
+                    <div class="stripe-product-price" id="stripe-price">$12.00</div>
+                    <div class="stripe-product-name" id="stripe-period">per month</div>
+                    
+                    <div class="stripe-line-item">
+                        <span>Exhibitly Pro (Artist)</span>
+                        <span id="stripe-item-price">$12.00</span>
+                    </div>
+                    <div class="stripe-line-item">
+                        <span>Sales Tax</span>
+                        <span>$0.00</span>
+                    </div>
+                </div>
+                <div class="stripe-total">
+                    <span>Total due today</span>
+                    <span id="stripe-total">$12.00</span>
+                </div>
+            </div>
+
+            <div class="stripe-right">
+                <div class="stripe-header">Pay with card</div>
+                
+                <div class="stripe-input-group">
+                    <label class="stripe-label">Email</label>
+                    <input type="email" class="stripe-input" value="art@enricotrujillo.com" readonly>
+                </div>
+
+                <div class="stripe-input-group">
+                    <label class="stripe-label">Card Information</label>
+                    <div style="border:1px solid #e0e0e0; border-radius:5px; overflow:hidden;">
+                        <input type="text" class="stripe-input" placeholder="1234 1234 1234 1234" style="border:none; border-bottom:1px solid #eee; border-radius:0;">
+                        <div style="display:flex;">
+                            <input type="text" class="stripe-input" placeholder="MM / YY" style="border:none; border-right:1px solid #eee; border-radius:0;">
+                            <input type="text" class="stripe-input" placeholder="CVC" style="border:none; border-radius:0;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stripe-input-group">
+                    <label class="stripe-label">Cardholder Name</label>
+                    <input type="text" class="stripe-input" placeholder="Enrico Trujillo">
+                </div>
+
+                <button class="stripe-pay-btn">
+                    <i class="ph ph-lock-key"></i> Subscribe
+                </button>
+                
+                <div style="text-align:center; margin-top:15px; font-size:0.75rem; color:#888;">
+                    Powered by <strong>Stripe</strong> | Terms | Privacy
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let isYearly = false;
+
+        function togglePrice(type) {
+            const btns = document.querySelectorAll('.toggle-btn');
+            const priceArtist = document.getElementById('price-artist');
+            const priceGallery = document.getElementById('price-gallery');
+
+            btns.forEach(b => b.classList.remove('active'));
+
+            if(type === 'yearly') {
+                btns[1].classList.add('active');
+                priceArtist.innerHTML = '$9';
+                priceGallery.innerHTML = '$65';
+                isYearly = true;
+            } else {
+                btns[0].classList.add('active');
+                priceArtist.innerHTML = '$12';
+                priceGallery.innerHTML = '$79';
+                isYearly = false;
+            }
+        }
+
+        function openStripe(plan) {
+            if (plan === 'gallery') {
+                alert("For the Gallery plan, this button would open an email to your brother/sales.");
+                return;
+            }
+            
+            // Update the Mock Data
+            const price = isYearly ? '$108.00' : '$12.00';
+            const period = isYearly ? 'per year' : 'per month';
+
+            document.getElementById('stripe-price').innerText = price;
+            document.getElementById('stripe-item-price').innerText = price;
+            document.getElementById('stripe-total').innerText = price;
+            document.getElementById('stripe-period').innerText = period;
+
+            document.getElementById('stripeModal').style.display = 'flex';
+        }
+
+        function closeStripe() {
+            document.getElementById('stripeModal').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

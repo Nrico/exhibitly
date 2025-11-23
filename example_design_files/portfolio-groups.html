@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrico Trujillo | Collections</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;1,300&family=Oswald:wght@300;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-color: #eaeaea; /* Light concrete/stone */
+            --card-bg: #ffffff;
+            --text-dark: #111111;
+            --text-light: #666666;
+            --accent: #bfa37e; /* Sandstone gold */
+            --font-head: 'Oswald', sans-serif;
+            --font-body: 'Merriweather', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        /* --- 1. LANDING PAGE (COLLECTIONS MENU) --- */
+        .collections-menu {
+            min-height: 100vh;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .brand-header h1 {
+            font-family: var(--font-head);
+            font-size: 2.5rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .brand-header p {
+            color: var(--text-light);
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .series-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .series-card {
+            position: relative;
+            height: 400px;
+            background-color: #ccc;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .series-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            filter: brightness(0.8);
+        }
+
+        .series-card:hover img {
+            transform: scale(1.1);
+            filter: brightness(0.6);
+        }
+
+        .series-label {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .series-label h2 {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .series-label span {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-top: 1px solid var(--accent);
+            padding-top: 5px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        /* --- 2. VIEWER INTERFACE (HIDDEN INITIALLY) --- */
+        .viewer-interface {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: var(--bg-color);
+            z-index: 100;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+        }
+
+        .viewer-active { display: flex; }
+
+        /* Control Bar */
+        .controls {
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            border-bottom: 1px solid #dcdcdc;
+            background: rgba(234, 234, 234, 0.95);
+        }
+
+        .back-btn {
+            font-family: var(--font-head);
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: var(--text-light);
+        }
+
+        .back-btn:hover { color: var(--text-dark); }
+
+        .collection-title {
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .view-toggles {
+            display: flex;
+            gap: 20px;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+            opacity: 0.5;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .toggle-btn.active-mode {
+            opacity: 1;
+            border-bottom: 2px solid var(--text-dark);
+        }
+
+        /* Content Container */
+        .content-stage {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0;
+            transition: all 0.5s ease;
+        }
+
+        /* --- VIEW MODE A: GRID (INDEX) --- */
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 40px;
+            padding: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .grid-item {
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .grid-item:hover { opacity: 0.8; }
+
+        .grid-item img {
+            width: 100%;
+            display: block;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .grid-meta {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* --- VIEW MODE B: FOCUS (CAROUSEL) --- */
+        .stage-focus {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            height: 100%;
+            align-items: center;
+            padding: 0;
+        }
+
+        .focus-item {
+            min-width: 100vw; /* Full screen width */
+            height: 80vh;
+            scroll-snap-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .focus-item img {
+            max-height: 85%;
+            max-width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .focus-meta {
+            margin-top: 25px;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .focus-meta h3 {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+            padding: 4px 8px;
+            background: #ddd;
+        }
+        .sold { background: #ccc; color: #666; text-decoration: line-through; }
+        .avail { background: var(--text-dark); color: #fff; }
+
+        /* Hide scrollbar for sleekness */
+        .stage-focus::-webkit-scrollbar { display: none; }
+
+    </style>
+</head>
+<body>
+
+    <div class="collections-menu" id="mainMenu">
+        <div class="brand-header">
+            <h1>Enrico Trujillo</h1>
+            <p>Selected Works & Series</p>
+        </div>
+
+        <div class="series-grid">
+            
+            <div class="series-card" onclick="loadCollection('taos')">
+                <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000" alt="Landscape">
+                <div class="series-label">
+                    <h2>Taos Light</h2>
+                    <span>12 Works</span>
+                </div>
+            </div>
+
+            <div class="series-card" onclick="loadCollection('abstract')">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=1000" alt="Abstract">
+                <div class="series-label">
+                    <h2>Abstracts</h2>
+                    <span>8 Works</span>
+                </div>
+            </div>
+
+             <div class="series-card" onclick="loadCollection('figures')">
+                <img src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?q=80&w=1000" alt="Figures">
+                <div class="series-label">
+                    <h2>Figurative</h2>
+                    <span>5 Works</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="viewer-interface" id="viewer">
+        
+        <div class="controls">
+            <div class="back-btn" onclick="closeCollection()">&larr; All Collections</div>
+            <div class="collection-title" id="viewerTitle">Collection Name</div>
+            <div class="view-toggles">
+                <div class="toggle-btn" id="btnGrid" onclick="setView('grid')">Index</div>
+                <div class="toggle-btn active-mode" id="btnFocus" onclick="setView('focus')">Focus</div>
+            </div>
+        </div>
+
+        <div class="content-stage stage-focus" id="stage">
+            </div>
+    </div>
+
+    <script>
+        // --- MOCK DATA FOR COLLECTIONS ---
+        // In a real site, this might come from a database or JSON file.
+        const collections = {
+            'taos': {
+                title: "Taos Light",
+                works: [
+                    { title: "High Desert Bloom", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000", meta: "Oil on Canvas, 36x48", sold: false },
+                    { title: "Rio Grande Gorge", img: "https://images.unsplash.com/photo-1465188162913-8fb5709d6d57?q=80&w=1000", meta: "Oil on Panel, 12x16", sold: true },
+                    { title: "Adobe Shadows", img: "https://images.unsplash.com/photo-1595867923357-2972358456d5?q=80&w=1000", meta: "Oil on Linen, 24x30", sold: false },
+                    { title: "Winter Sage", img: "https://images.unsplash.com/photo-1485550409059-9afb054cada4?q=80&w=1000", meta: "Watercolor, 9x12", sold: true }
+                ]
+            },
+            'abstract': {
+                title: "Abstract Studies",
+                works: [
+                    { title: "Chaos Theory", img: "https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=1000", meta: "Acrylic, 48x48", sold: false },
+                    { title: "Blue Note", img: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1000", meta: "Mixed Media, 24x24", sold: false }
+                ]
+            },
+            'figures': {
+                title: "Figurative",
+                works: [
+                    { title: "The Watcher", img: "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?q=80&w=1000", meta: "Charcoal, 18x24", sold: true }
+                ]
+            }
+        };
+
+        const viewer = document.getElementById('viewer');
+        const mainMenu = document.getElementById('mainMenu');
+        const stage = document.getElementById('stage');
+        const viewerTitle = document.getElementById('viewerTitle');
+        const btnGrid = document.getElementById('btnGrid');
+        const btnFocus = document.getElementById('btnFocus');
+
+        let currentView = 'focus'; // 'grid' or 'focus'
+
+        // Open a Collection
+        function loadCollection(key) {
+            const data = collections[key];
+            if(!data) return;
+
+            // Set Title
+            viewerTitle.innerText = data.title;
+
+            // Build HTML
+            let html = '';
+            
+            data.works.forEach(work => {
+                const statusHTML = work.sold 
+                    ? `<span class="status-badge sold">Sold</span>` 
+                    : `<span class="status-badge avail">Available</span>`;
+
+                // We wrap items in a generic div. The CSS class of 'stage' determines how they look.
+                html += `
+                    <div class="${currentView === 'grid' ? 'grid-item' : 'focus-item'}">
+                        <img src="${work.img}">
+                        <div class="${currentView === 'grid' ? 'grid-meta' : 'focus-meta'}">
+                            <h3>${work.title}</h3>
+                            <p>${work.meta}</p>
+                            ${statusHTML}
+                        </div>
+                    </div>
+                `;
+            });
+
+            stage.innerHTML = html;
+
+            // Show Viewer
+            mainMenu.style.display = 'none';
+            viewer.classList.add('viewer-active');
+            
+            // Reset view to whatever was last selected or default
+            setView(currentView); 
+        }
+
+        // Close Viewer
+        function closeCollection() {
+            viewer.classList.remove('viewer-active');
+            mainMenu.style.display = 'flex';
+        }
+
+        // Toggle View Mode
+        function setView(mode) {
+            currentView = mode;
+
+            // Update Buttons
+            if(mode === 'grid') {
+                btnGrid.classList.add('active-mode');
+                btnFocus.classList.remove('active-mode');
+                
+                // Change Stage Layout
+                stage.className = 'content-stage stage-grid';
+            } else {
+                btnFocus.classList.add('active-mode');
+                btnGrid.classList.remove('active-mode');
+                
+                // Change Stage Layout
+                stage.className = 'content-stage stage-focus';
+            }
+
+            // Re-render content wrappers (This is a simple way to swap the classes on the items)
+            // In a real React/Vue app this would be automatic, here we manually swap class names.
+            const items = stage.children;
+            for(let i=0; i<items.length; i++) {
+                items[i].className = mode === 'grid' ? 'grid-item' : 'focus-item';
+                
+                // Also swap the meta class
+                const metaDiv = items[i].querySelector('div');
+                if(metaDiv) metaDiv.className = mode === 'grid' ? 'grid-meta' : 'focus-meta';
+            }
+        }
+
+    </script>
+
+</body>
+</html>

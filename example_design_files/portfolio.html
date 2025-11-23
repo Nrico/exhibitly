@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrico Trujillo - Portfolio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --bg-color: #fdfdfd;
+            --text-main: #2a2a2a;
+            --text-muted: #888888;
+            --accent-gold: #c5a059;
+            --font-heading: 'Cormorant Garamond', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --gap: 40px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- HEADER --- */
+        header {
+            padding: 60px 20px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        nav {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-main);
+            margin: 0 15px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover { color: var(--accent-gold); }
+
+        /* --- GALLERY GRID --- */
+        .gallery-container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: var(--gap);
+        }
+
+        .art-piece {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+        }
+
+        .art-piece:hover { transform: translateY(-5px); }
+
+        .image-wrapper {
+            width: 100%;
+            aspect-ratio: 3/4; 
+            overflow: hidden;
+            background-color: #eee;
+        }
+
+        .art-piece img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            filter: grayscale(10%);
+        }
+
+        .art-piece:hover img {
+            transform: scale(1.03);
+            filter: grayscale(0%);
+        }
+
+        .info {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .info h3 {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* --- STATUS INDICATORS (New) --- */
+        .meta-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .red-dot {
+            height: 8px;
+            width: 8px;
+            background-color: #c94c4c;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-sold {
+            color: #a0a0a0;
+            font-weight: 400;
+        }
+
+        .status-available {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .price {
+            color: var(--accent-gold);
+        }
+
+        /* --- LIGHTBOX (MODAL) --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; top: 0;
+            width: 100%; height: 100%; 
+            background-color: rgba(255,255,255,0.95);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active { opacity: 1; }
+
+        .modal-content {
+            max-width: 80%;
+            max-height: 80vh;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            border: 8px solid white;
+        }
+
+        .modal-caption {
+            margin-top: 20px;
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+        
+        .modal-meta {
+            margin-top: 5px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 30px; right: 40px;
+            font-size: 40px;
+            color: #aaa;
+            cursor: pointer;
+            font-family: var(--font-heading);
+            line-height: 1;
+        }
+
+        .close-btn:hover { color: var(--text-main); }
+
+        footer {
+            text-align: center;
+            padding: 50px 20px;
+            margin-top: 50px;
+            border-top: 1px solid #eee;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Enrico Trujillo</h1>
+        <div class="subtitle">Fine Art & Illustration</div>
+        <nav>
+            <a href="#">Portfolio</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <main class="gallery-container">
+        
+        <div class="art-piece" onclick="openModal(this)">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=1000&auto=format&fit=crop" alt="Abstract Landscape">
+            </div>
+            <div class="info">
+                <h3>Morning on the Ridge</h3>
+                <p>Oil on Canvas, 24" x 30"</p>
+                <div class="meta-row">
+                    <span class="red-dot"></span>
+                    <span class="status-sold">Sold</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="art-piece" onclick="openModal(this)">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1000&auto=format&fit=crop" alt="Portrait Study">
+            </div>
+            <div class="info">
+                <h3>Study in Blue</h3>
+                <p>Acrylic on Wood Panel, 18" x 18"</p>
+                <div class="meta-row">
+                    <span class="status-available">Available</span>
+                    <span>&mdash;</span>
+                    <span class="price">$850</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="art-piece" onclick="openModal(this)">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1549887552-93f954d1d960?q=80&w=1000&auto=format&fit=crop" alt="Still Life">
+            </div>
+            <div class="info">
+                <h3>The Old Workshop</h3>
+                <p>Watercolor, 12" x 16"</p>
+                <div class="meta-row">
+                    <span class="red-dot"></span>
+                    <span class="status-sold">Sold</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="art-piece" onclick="openModal(this)">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000&auto=format&fit=crop" alt="Nature Scene">
+            </div>
+            <div class="info">
+                <h3>High Desert Bloom</h3>
+                <p>Oil on Canvas, 36" x 48"</p>
+                <div class="meta-row">
+                    <span class="status-available">Available</span>
+                    <span>&mdash;</span>
+                    <span class="price">$1,200</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="artModal" class="modal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImg">
+        <div class="modal-caption" id="caption"></div>
+        <div class="modal-meta" id="meta"></div>
+    </div>
+
+    <footer>
+        &copy; 2025 Enrico Trujillo. All Rights Reserved.
+    </footer>
+
+    <script>
+        const modal = document.getElementById('artModal');
+        const modalImg = document.getElementById('modalImg');
+        const captionText = document.getElementById('caption');
+        const metaText = document.getElementById('meta');
+
+        function openModal(element) {
+            const imgElement = element.querySelector('img');
+            const titleElement = element.querySelector('h3');
+            const descElement = element.querySelector('p');
+            
+            modal.style.display = "flex";
+            setTimeout(() => { modal.classList.add('active'); }, 10);
+
+            modalImg.src = imgElement.src;
+            captionText.innerHTML = titleElement.innerHTML;
+            // Pass the medium/dimensions to the modal too
+            metaText.innerHTML = descElement.innerHTML;
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            setTimeout(() => { modal.style.display = "none"; }, 300);
+        }
+
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") closeModal();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibitly | The Digital Standard for Fine Art</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-color: #ffffff; /* Pure White */
+            --bg-alt: #fafafa;   /* Very subtle off-white for segmentation */
+            --text-main: #1a1a1a; /* Soft Black */
+            --text-muted: #666666;
+            --border-color: #e5e5e5;
+            
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+            
+            --container-width: 1200px;
+            --spacing-section: 140px; /* Generous vertical whitespace */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; transition: opacity 0.3s; }
+        a:hover { opacity: 0.7; }
+
+        /* --- UTILITIES --- */
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .serif { font-family: var(--font-serif); }
+        .sans { font-family: var(--font-sans); }
+        
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--text-main);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--text-main);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--bg-alt);
+        }
+
+        /* --- HEADER --- */
+        header {
+            padding: 40px 0;
+            border-bottom: 1px solid transparent;
+        }
+        
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links a {
+            margin-left: 30px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 60px 0 100px 0;
+            text-align: center;
+        }
+
+        /* The "Framed" Image Look */
+        .hero-image-frame {
+            max-width: 900px;
+            margin: 0 auto 60px auto;
+            aspect-ratio: 16/9;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Subtle grayscale for that minimalist art vibe */
+            filter: saturate(0.8) contrast(1.1); 
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            font-weight: 300;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* --- VALUE PROP (TRIPTYCH) --- */
+        .value-prop {
+            padding: var(--spacing-section) 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 60px;
+        }
+
+        .prop-number {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            color: var(--text-muted);
+            opacity: 0.3;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .prop-card h3 {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .prop-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* --- SHOWCASE (Selected Exhibitions) --- */
+        .showcase {
+            padding: var(--spacing-section) 0;
+            background-color: var(--bg-alt);
+            overflow: hidden;
+        }
+
+        .section-header {
+            margin-bottom: 60px;
+            text-align: left;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 400;
+        }
+
+        /* Horizontal Scroll Simulation */
+        .scroller {
+            display: flex;
+            gap: 40px;
+            padding-bottom: 20px;
+            overflow-x: auto;
+            /* Hide scrollbar for cleaner look */
+            scrollbar-width: none; 
+        }
+
+        .mockup-card {
+            min-width: 600px;
+            flex-shrink: 0;
+        }
+
+        .browser-window {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .browser-window img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .caption {
+            font-family: var(--font-serif);
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- SEGMENTATION (Two Doors) --- */
+        .segmentation {
+            border-top: 1px solid var(--border-color);
+        }
+
+        .split-screen {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+
+        .split-panel {
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid var(--border-color);
+            transition: background-color 0.4s ease;
+        }
+
+        .split-panel:last-child { border-right: none; }
+        .split-panel:hover { background-color: var(--bg-alt); }
+
+        .panel-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .split-panel h2 {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        .split-panel p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 400px;
+        }
+
+        .price-tag {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: block;
+            font-size: 1.2rem;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 60px 0;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .footer-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            :root { --spacing-section: 80px; }
+            
+            .hero h1 { font-size: 2.2rem; }
+            
+            .hero-actions { flex-direction: column; }
+            .hero-actions .btn { width: 100%; text-align: center; }
+            
+            .grid-3 { grid-template-columns: 1fr; gap: 40px; }
+            
+            .mockup-card { min-width: 85vw; }
+            
+            .split-screen { grid-template-columns: 1fr; }
+            .split-panel { padding: 60px 30px; border-right: none; border-bottom: 1px solid var(--border-color); }
+            
+            .footer-flex { flex-direction: column; gap: 20px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-flex">
+            <div class="logo">Exhibitly.</div>
+            <nav class="nav-links">
+                <a href="#">Login</a>
+                <a href="#" class="btn btn-primary" style="padding: 8px 20px; margin-left: 20px; border:none;">Get Started</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-image-frame">
+                <img src="https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=2000&auto=format&fit=crop" alt="Abstract Fine Art">
+            </div>
+
+            <h1 class="serif">The Digital Standard <br> for Fine Art.</h1>
+            
+            <p>Escape the clutter of generic website builders. Exhibitly is the minimalist platform designed specifically for independent artists and curated galleries.</p>
+            
+            <div class="hero-actions">
+                <a href="#" class="btn btn-primary">Build Artist Portfolio</a>
+                <a href="#" class="btn btn-outline">Explore Gallery Solutions</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="value-prop">
+        <div class="container">
+            <div class="grid-3">
+                <div class="prop-card">
+                    <span class="prop-number">01.</span>
+                    <h3>Uncompromising Curation</h3>
+                    <p>Your work deserves a quiet room. Our templates are intentionally restrained, removing all clutter to place total focus on the art itself.</p>
+                </div>
+                <div class="prop-card">
+                    <span class="prop-number">02.</span>
+                    <h3>Museum-Grade Performance</h3>
+                    <p>Built on next-generation infrastructure to serve ultra-high-resolution images instantly, globally, on any device without compression artifacts.</p>
+                </div>
+                <div class="prop-card">
+                    <span class="prop-number">03.</span>
+                    <h3>Zero-Maintenance Design</h3>
+                    <p>A platform you don't have to manage. No plugins, no updates, no broken themes. Just a pristine environment that always works.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="showcase">
+        <div class="container">
+            <div class="section-header">
+                <h2>Selected Exhibitions.</h2>
+            </div>
+            
+            <div class="scroller">
+                
+                <div class="mockup-card">
+                    <div class="browser-window">
+                        <img src="https://images.unsplash.com/photo-1507643179173-4463bd0ed3fa?q=80&w=1000&auto=format&fit=crop" alt="Minimalist Portfolio">
+                    </div>
+                    <div class="caption">Elena Kogan Studio, Berlin.</div>
+                </div>
+
+                <div class="mockup-card">
+                    <div class="browser-window">
+                        <img src="https://images.unsplash.com/photo-1545989253-02cc26577f88?q=80&w=1000&auto=format&fit=crop" alt="Gallery Site">
+                    </div>
+                    <div class="caption">The High Desert Collective, Santa Fe.</div>
+                </div>
+
+                <div class="mockup-card">
+                    <div class="browser-window">
+                        <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1000&auto=format&fit=crop" alt="Sculpture Portfolio">
+                    </div>
+                    <div class="caption">Hiroshi T. Works, Tokyo.</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="segmentation">
+        <div class="split-screen">
+            
+            <div class="split-panel">
+                <span class="panel-label">For the Solo Practitioner</span>
+                <h2>The Artist<br>Portfolio.</h2>
+                <p>An elegant digital calling card. Connect your domain, upload your best work, and present yourself professionally in minutes.</p>
+                <span class="price-tag">$12 / month</span>
+                <div>
+                    <a href="#" class="btn btn-primary">Start Artist Trial &rarr;</a>
+                </div>
+            </div>
+
+            <div class="split-panel">
+                <span class="panel-label">For Galleries & Collectives</span>
+                <h2>The Gallery<br>Platform.</h2>
+                <p>Manage your roster of artists, curate digital exhibitions, and highlight seasonal events from one unified dashboard.</p>
+                <span class="price-tag">$79 / month</span>
+                <div>
+                    <a href="#" class="btn btn-outline">View Gallery Features &rarr;</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-flex">
+            <div class="logo" style="font-size: 1.2rem;">Exhibitly.</div>
+            <div>Made for art in Santa Fe & the Cloud.</div>
+            <div>
+                <a href="#" style="margin-left: 20px;">Contact</a>
+                <a href="#" style="margin-left: 20px;">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

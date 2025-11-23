@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrico Trujillo | Contemporary Art</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. MODERN VARS & RESET --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-light: #666666;
+            --accent: #d4af37; /* Muted Gold */
+            --sold-color: #b0b0b0;
+            --available-color: #2a9d8f; /* Deep Teal for "Buy" signal */
+            --nav-height: 70px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            font-family: 'Lato', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- 2. STICKY NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            height: var(--nav-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .nav-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            margin-left: 25px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- 3. HERO SECTION --- */
+        header {
+            height: 70vh; /* 70% of screen height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            background: linear-gradient(to bottom, #f9f9f9, #ffffff);
+            margin-top: var(--nav-height);
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem; /* Big typography */
+            font-weight: 400;
+            margin-bottom: 10px;
+            line-height: 1.1;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            font-weight: 300;
+        }
+
+        /* --- 4. MASONRY GALLERY (Pinterest Style) --- */
+        .gallery-wrapper {
+            padding: 50px 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .masonry {
+            column-count: 3; /* Desktop default */
+            column-gap: 30px;
+        }
+
+        .art-card {
+            break-inside: avoid; /* Prevents cutting items in half */
+            margin-bottom: 40px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .art-card:hover { transform: translateY(-5px); }
+
+        .art-image {
+            width: 100%;
+            border-radius: 4px;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Soft shadow */
+        }
+
+        .art-details {
+            padding-top: 15px;
+        }
+
+        .art-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .art-medium {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        /* Status Pills */
+        .status-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 0;
+        }
+
+        .status-sold { color: var(--sold-color); text-decoration: line-through; }
+        .status-available { color: var(--text-dark); border-bottom: 1px solid var(--accent); }
+
+        /* --- 5. MOBILE RESPONSIVENESS --- */
+        @media (max-width: 1024px) {
+            .masonry { column-count: 2; }
+            header h1 { font-size: 3rem; }
+        }
+
+        @media (max-width: 600px) {
+            .masonry { column-count: 1; } /* Single column for phone */
+            header h1 { font-size: 2.5rem; }
+            header { height: 50vh; }
+            .nav-links { display: none; } /* Simple hide for demo, ideally hamburger menu */
+        }
+
+        /* --- 6. LIGHTBOX --- */
+        .modal {
+            display: none; position: fixed; z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(255,255,255,0.98);
+            justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal.active { opacity: 1; }
+        
+        .modal-container {
+            display: flex;
+            flex-direction: row; /* Side by side on desktop */
+            max-width: 900px;
+            width: 90%;
+            background: #fff;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .modal-img-wrapper { flex: 1.5; }
+        .modal-img-wrapper img { width: 100%; height: 100%; object-fit: contain; display: block;}
+
+        .modal-info {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .modal-title { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; }
+        .modal-meta { color: var(--text-light); margin-bottom: 20px; line-height: 1.6; }
+        
+        .inquire-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--text-dark);
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: background 0.3s;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .inquire-btn:hover { background-color: var(--accent); }
+
+        .close-btn {
+            position: absolute; top: 20px; right: 30px;
+            font-size: 2rem; cursor: pointer; color: var(--text-dark);
+        }
+
+        @media (max-width: 768px) {
+            .modal-container { flex-direction: column; }
+            .modal-info { padding: 20px; }
+            .modal-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">Enrico Trujillo</div>
+        <div class="nav-links">
+            <a href="#">Work</a>
+            <a href="#">Bio</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Art & Atmosphere</h1>
+        <p>Exploring the light and shadow of the Southwest through contemporary oil and mixed media.</p>
+    </header>
+
+    <section class="gallery-wrapper">
+        <div class="masonry">
+            
+            <div class="art-card" onclick="openModal(this, 'available')">
+                <img class="art-image" src="https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=1000" alt="Abstract">
+                <div class="art-details">
+                    <div class="art-title">Morning on the Ridge</div>
+                    <div class="art-medium">Oil on Canvas, 24" x 30"</div>
+                    <div class="status-badge status-available">Available &mdash; $1,200</div>
+                </div>
+            </div>
+
+            <div class="art-card" onclick="openModal(this, 'sold')">
+                <img class="art-image" src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?q=80&w=1000" alt="Portrait">
+                <div class="art-details">
+                    <div class="art-title">The Watcher</div>
+                    <div class="art-medium">Charcoal & Pastel, 12" x 20"</div>
+                    <div class="status-badge status-sold">Sold</div>
+                </div>
+            </div>
+
+            <div class="art-card" onclick="openModal(this, 'available')">
+                <img class="art-image" src="https://images.unsplash.com/photo-1549887552-93f954d1d960?q=80&w=1000" alt="Workshop">
+                <div class="art-details">
+                    <div class="art-title">Taos Afternoon</div>
+                    <div class="art-medium">Watercolor, 16" x 16"</div>
+                    <div class="status-badge status-available">Available &mdash; $850</div>
+                </div>
+            </div>
+
+            <div class="art-card" onclick="openModal(this, 'available')">
+                <img class="art-image" src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000" alt="Forest">
+                <div class="art-details">
+                    <div class="art-title">High Desert Bloom</div>
+                    <div class="art-medium">Oil on Linen, 36" x 48"</div>
+                    <div class="status-badge status-available">Available &mdash; $2,400</div>
+                </div>
+            </div>
+
+             <div class="art-card" onclick="openModal(this, 'sold')">
+                <img class="art-image" src="https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1000" alt="Blue">
+                <div class="art-details">
+                    <div class="art-title">Study in Blue</div>
+                    <div class="art-medium">Acrylic, 10" x 10"</div>
+                    <div class="status-badge status-sold">Sold</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <div id="artModal" class="modal">
+        <div class="close-btn" onclick="closeModal()">&times;</div>
+        <div class="modal-container">
+            <div class="modal-img-wrapper">
+                <img id="modalImg" src="">
+            </div>
+            <div class="modal-info">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <p class="modal-meta" id="modalMeta"></p>
+                <div id="modalAction"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('artModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMeta = document.getElementById('modalMeta');
+        const modalAction = document.getElementById('modalAction');
+
+        function openModal(card, status) {
+            const img = card.querySelector('.art-image').src;
+            const title = card.querySelector('.art-title').innerText;
+            const medium = card.querySelector('.art-medium').innerText;
+            const priceText = card.querySelector('.status-badge').innerText;
+
+            modal.style.display = "flex";
+            setTimeout(() => { modal.classList.add('active'); }, 10);
+            
+            modalImg.src = img;
+            modalTitle.innerText = title;
+            modalMeta.innerText = medium + "\n\n" + priceText;
+
+            // Dynamic Button Logic
+            if(status === 'available') {
+                modalAction.innerHTML = `<a href="mailto:enrico@example.com?subject=Inquiry: ${title}" class="inquire-btn">Inquire to Purchase</a>`;
+            } else {
+                modalAction.innerHTML = `<span style="color:#aaa; font-style:italic;">This piece has found a home.</span>`;
+            }
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            setTimeout(() => { modal.style.display = "none"; }, 300);
+        }
+
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeModal();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if(e.key === "Escape") closeModal();
+        });
+    </script>
+
+</body>
+</html>

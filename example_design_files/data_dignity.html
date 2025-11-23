@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibitly | Export & Archive</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --bg-body: #f4f6f8;
+            --bg-card: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --accent: #1a1a1a; /* Black for seriousness */
+            --border: #e5e5e5;
+            --sidebar-width: 260px;
+            --radius: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        aside {
+            width: var(--sidebar-width);
+            background-color: #111;
+            color: #888;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .brand {
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { background: rgba(255,255,255,0.1); color: white; font-weight: 500; }
+        .nav-item i { font-size: 1.2rem; }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 60px 80px;
+        }
+
+        header { margin-bottom: 50px; }
+        
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        /* --- EXPORT GRID --- */
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .export-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .export-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-color: #ccc;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: #f4f6f8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            color: var(--text-main);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            flex-grow: 1; /* Pushes button to bottom */
+        }
+
+        .btn-export {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 1px solid var(--text-main);
+            color: var(--text-main);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-export:hover {
+            background: var(--text-main);
+            color: white;
+        }
+
+        /* Primary action (Zip) slightly darker default */
+        .btn-primary {
+            background: var(--text-main);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #333;
+        }
+
+        /* --- PROGRESS STATE --- */
+        .progress-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #eee;
+            border-top: 3px solid var(--text-main);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .progress-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- FILE LIST PREVIEW (Respectful detail) --- */
+        .file-preview {
+            background: #f9fafb;
+            border: 1px dashed #ccc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none; /* Hidden until success */
+        }
+        .file-row {
+            display: flex;
+            gap: 10px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #555;
+            margin-bottom: 5px;
+            align-items: center;
+        }
+        .file-icon { color: #888; }
+        .file-highlight { color: #1a1a1a; font-weight: 600; background: #eee; padding: 0 4px; border-radius: 3px;}
+
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="brand">Exhibitly.</div>
+        <div class="nav-item"><i class="ph ph-squares-four"></i> Dashboard</div>
+        <div class="nav-item"><i class="ph ph-image"></i> Inventory</div>
+        <div class="nav-item active"><i class="ph ph-download-simple"></i> Export Data</div>
+        <div class="nav-item"><i class="ph ph-gear"></i> Settings</div>
+        
+        <div style="margin-top:auto; font-size:0.75rem; opacity:0.5;">
+            Logged in as<br>Enrico Trujillo
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <h1>Data Dignity</h1>
+            <p class="subtitle">
+                Your work belongs to you. Export your entire portfolio at any time in formats designed for galleries, clients, and personal archives.
+            </p>
+        </header>
+
+        <div class="export-grid">
+
+            <div class="export-card" id="card-pdf">
+                <div class="progress-overlay" id="progress-pdf">
+                    <div class="spinner"></div>
+                    <div class="progress-text">Generating Catalog...</div>
+                    <div class="progress-sub">Formatting layouts</div>
+                </div>
+
+                <div class="card-icon">
+                    <i class="ph ph-file-pdf"></i>
+                </div>
+                <div class="card-title">Price Sheet / Catalog</div>
+                <div class="card-desc">
+                    A professionally formatted PDF listing your current available inventory. Includes thumbnails, dimensions, medium, and pricing. Perfect for emailing to galleries as an availability list.
+                </div>
+                <button class="btn-export" onclick="simulateDownload('pdf')">
+                    <i class="ph ph-download-simple"></i> Download PDF
+                </button>
+            </div>
+
+            <div class="export-card" id="card-zip">
+                <div class="progress-overlay" id="progress-zip">
+                    <div class="spinner"></div>
+                    <div class="progress-text">Archiving Portfolio...</div>
+                    <div class="progress-sub" id="zip-status">Renaming files...</div>
+                </div>
+
+                <div class="card-icon">
+                    <i class="ph ph-package"></i>
+                </div>
+                <div class="card-title">Full Digital Archive (.zip)</div>
+                <div class="card-desc">
+                    Downloads high-resolution copies of your work along with a CSV spreadsheet of metadata. 
+                    <br><br>
+                    <strong style="color:#1a1a1a; font-weight:500;">Smart Renaming:</strong> 
+                    Files are automatically renamed to include your <em>Last Name</em> or <em>Collection</em> (e.g., <code style="font-size:0.85rem; background:#eee; padding:2px;">Morning_Light_Trujillo.jpg</code>) so galleries never lose track of your work.
+                </div>
+                <button class="btn-export btn-primary" onclick="simulateDownload('zip')">
+                    <i class="ph ph-file-archive"></i> Create Archive
+                </button>
+                
+                <div class="file-preview" id="zip-success">
+                    <div style="color:green; font-weight:600; font-size:0.85rem; margin-bottom:10px;">
+                        <i class="ph ph-check-circle"></i> Archive Ready
+                    </div>
+                    <div class="file-row">
+                        <i class="ph ph-image file-icon"></i> 
+                        <span>Study_In_Blue_Acrylic_<span class="file-highlight">Trujillo</span>.jpg</span>
+                    </div>
+                    <div class="file-row">
+                        <i class="ph ph-image file-icon"></i> 
+                        <span>Rio_Grande_Sunset_<span class="file-highlight">Desert_Series</span>.jpg</span>
+                    </div>
+                    <div class="file-row">
+                        <i class="ph ph-file-csv file-icon"></i> 
+                        <span>Enrico_Trujillo_Inventory.csv</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function simulateDownload(type) {
+            const progressId = type === 'pdf' ? 'progress-pdf' : 'progress-zip';
+            const overlay = document.getElementById(progressId);
+            const statusText = document.getElementById('zip-status');
+            
+            // Show Overlay
+            overlay.style.display = 'flex';
+
+            // Simulate steps (just for visual effect in this demo)
+            let steps = 0;
+            const interval = setInterval(() => {
+                steps++;
+                
+                if(type === 'zip') {
+                    if(steps === 1) statusText.innerText = "Fetching high-res images...";
+                    if(steps === 2) statusText.innerText = "Sanitizing filenames...";
+                    if(steps === 3) statusText.innerText = "Applying naming convention: [Title]_[Medium]_[Name]";
+                    if(steps === 4) statusText.innerText = "Compressing...";
+                }
+
+                if (steps >= 5) {
+                    clearInterval(interval);
+                    overlay.style.display = 'none';
+                    
+                    if(type === 'zip') {
+                        document.getElementById('zip-success').style.display = 'block';
+                    } else {
+                        alert("PDF Downloaded (Simulation)");
+                    }
+                }
+            }, 600); // 0.6 second per step
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrico Trujillo | Gallery Walk</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. SETUP & VARIABLES --- */
+        :root {
+            --bg-wall: #f2f2f2; /* Subtle Gallery Grey */
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --accent: #b8860b; /* Dark Gold */
+            --font-display: 'Italiana', serif;
+            --font-body: 'Manrope', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-wall);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* We handle scroll manually */
+        }
+
+        /* --- 2. FIXED ELEMENTS --- */
+        /* The Artist Signature (Always visible) */
+        .brand-fixed {
+            position: fixed;
+            top: 40px;
+            left: 50px;
+            z-index: 100;
+            mix-blend-mode: exclusion; /* Cool effect over images */
+            color: #fff; /* Looks black on white, white on black */
+        }
+
+        .brand-fixed h1 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .brand-fixed p {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        /* Navigation (Bottom Right) */
+        nav {
+            position: fixed;
+            bottom: 40px;
+            right: 50px;
+            z-index: 100;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover { color: var(--accent); }
+
+        /* --- 3. THE HORIZONTAL TRACK --- */
+        .gallery-track {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+            overflow-x: auto; /* Allow horizontal scroll */
+            overflow-y: hidden;
+            align-items: center; /* Vertically center art */
+            padding-left: 20vw; /* Start spacing */
+            padding-right: 20vw; /* End spacing */
+            gap: 15vw; /* Huge gap between artworks */
+            
+            /* Hide scrollbar for sleekness */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .gallery-track::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* --- 4. INTRO TEXT WALL --- */
+        .wall-text {
+            min-width: 400px;
+            margin-right: 5vw;
+        }
+
+        .wall-text h2 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .wall-text p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 350px;
+        }
+
+        /* --- 5. ARTWORK GROUPING --- */
+        .art-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex-shrink: 0; /* Prevent shrinking */
+            transition: transform 0.5s ease;
+        }
+
+        /* Subtle parallax/interaction */
+        .art-group:hover { transform: scale(1.01); }
+
+        .frame {
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15); /* Deep gallery shadow */
+            background: #fff; /* White canvas edge */
+            line-height: 0;
+        }
+
+        .frame img {
+            display: block;
+            /* The height controls the size of everything. 
+               Landscape/Portrait is handled automatically by ratio. */
+            height: 60vh; 
+            width: auto; 
+            max-width: none;
+        }
+
+        /* Placard (The Label) */
+        .placard {
+            margin-top: 20px;
+            margin-left: 5px;
+            max-width: 300px;
+        }
+
+        .placard h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .placard-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .status-row {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .red-dot {
+            width: 8px; height: 8px;
+            background-color: #c00;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .sold { color: #999; text-decoration: line-through; }
+        .avail { color: var(--text-primary); border-bottom: 1px solid var(--accent); cursor: pointer;}
+
+        /* --- 6. RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .brand-fixed { top: 20px; left: 20px; mix-blend-mode: normal; color: #000;}
+            nav { display: none; } /* Hide footer nav on mobile */
+            
+            .gallery-track {
+                padding-left: 10vw;
+                gap: 10vw;
+            }
+            
+            .wall-text { min-width: 80vw; }
+            .wall-text h2 { font-size: 2.5rem; }
+            
+            .frame img { height: 50vh; } /* Smaller images on phone */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="brand-fixed">
+        <h1>Enrico Trujillo</h1>
+        <p>Exhibition 2025</p>
+    </div>
+
+    <nav>
+        <a href="#">Works</a>
+        <a href="#">Statement</a>
+        <a href="#">Inquire</a>
+    </nav>
+
+    <main class="gallery-track" id="scrollContainer">
+        
+        <div class="wall-text">
+            <h2>Light &<br>Shadow</h2>
+            <p>A visual exploration of the New Mexico high desert, capturing the fleeting moments where sunlight meets the adobe and sage.</p>
+        </div>
+
+        <article class="art-group">
+            <div class="frame">
+                <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000" alt="High Desert">
+            </div>
+            <div class="placard">
+                <h3>High Desert Bloom</h3>
+                <span class="placard-meta">Oil on Canvas, 36" x 48"</span>
+                <div class="status-row">
+                    <span class="avail" onclick="alert('Open email form for: High Desert Bloom')">Inquire ($1,200)</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="art-group">
+            <div class="frame">
+                <img src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?q=80&w=1000" alt="Portrait">
+            </div>
+            <div class="placard">
+                <h3>The Watcher</h3>
+                <span class="placard-meta">Charcoal Study, 18" x 24"</span>
+                <div class="status-row">
+                    <span class="red-dot"></span>
+                    <span class="sold">Sold</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="art-group">
+            <div class="frame">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=1000" alt="Abstract">
+            </div>
+            <div class="placard">
+                <h3>Morning Ridge</h3>
+                <span class="placard-meta">Oil on Panel, 12" x 12"</span>
+                <div class="status-row">
+                    <span class="avail">Inquire ($600)</span>
+                </div>
+            </div>
+        </article>
+
+         <div class="wall-text" style="min-width: 300px;">
+            <h2>Studio<br>Visits</h2>
+            <p>By appointment only.<br>Taos, NM.<br><br>enrico@example.com</p>
+        </div>
+
+    </main>
+
+    <script>
+        // --- THE WHEEL JACK ---
+        // This script captures the vertical mouse wheel and turns it into horizontal scroll.
+        // It makes the site usable on desktop computers with standard mice.
+        
+        const scrollContainer = document.getElementById("scrollContainer");
+
+        scrollContainer.addEventListener("wheel", (evt) => {
+            // If screen is wide (Desktop), hijack the scroll. 
+            // On mobile, we let native touch scrolling happen.
+            if (window.innerWidth > 768) {
+                evt.preventDefault();
+                // Move scrollLeft by the amount of deltaY (vertical scroll amount)
+                scrollContainer.scrollLeft += evt.deltaY;
+            }
+        });
+    </script>
+
+</body>
+</html>

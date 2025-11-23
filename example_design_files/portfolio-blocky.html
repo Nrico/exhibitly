@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrico Trujillo | Catalog</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. RESET & VARIABLES --- */
+        :root {
+            --bg-body: #ffffff;
+            --bg-buffer: #f4f4f4; /* The light grey square background */
+            --text-main: #111111;
+            --text-sub: #777777;
+            --accent: #333333;
+            --gap: 40px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- 2. HEADER (Minimal) --- */
+        header {
+            padding: 60px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        nav { display: flex; gap: 30px; }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover { color: var(--text-main); }
+
+        /* --- 3. THE UNIFORM GRID --- */
+        .grid-container {
+            display: grid;
+            /* Responsive: columns min 300px, fit as many as possible */
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 60px 40px; /* 60px vertical gap, 40px horizontal */
+            padding: 0 40px 100px 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            cursor: pointer;
+            group: hover; /* For hover effects */
+        }
+
+        /* The "Buffer" - The Square Box */
+        .buffer-block {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Forces a perfect square */
+            background-color: var(--bg-buffer);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover .buffer-block {
+            background-color: #efefef; /* Slightly darker on hover */
+        }
+
+        /* The Image inside the buffer */
+        .buffer-block img {
+            /* This ensures the art floats and is never cropped */
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+            
+            /* Subtle shadow for depth */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.02); /* Slight lift */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+
+        /* --- 4. CARD INFO --- */
+        .card-info {
+            text-align: left;
+            padding-left: 5px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        /* Status Indicators */
+        .status-line {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+        }
+        
+        .dot-red { background-color: #d9534f; }
+        .dot-green { background-color: #5cb85c; }
+
+        .sold { color: #999; }
+        .avail { color: var(--text-main); }
+
+        /* --- 5. MODAL (Clean) --- */
+        .modal {
+            display: none; position: fixed; z-index: 100;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(255,255,255,0.98);
+            justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+        
+        .modal.active { opacity: 1; }
+
+        .modal-img {
+            max-height: 75vh;
+            max-width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+
+        .modal-details { text-align: center; }
+        
+        .modal h2 { font-weight: 600; font-size: 1.5rem; margin-bottom: 5px; }
+        .modal p { color: var(--text-sub); margin-bottom: 20px; }
+
+        .btn-inquire {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            transition: opacity 0.2s;
+        }
+        .btn-inquire:hover { opacity: 0.8; }
+
+        .close {
+            position: absolute; top: 30px; right: 40px;
+            font-size: 2rem; cursor: pointer; color: #aaa;
+        }
+        .close:hover { color: #000; }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            header { padding: 30px 20px; flex-direction: column; gap: 20px; }
+            .grid-container { padding: 0 20px; grid-template-columns: 1fr; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Enrico Trujillo</div>
+        <nav>
+            <a href="#">Work</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <main class="grid-container">
+
+        <div class="card" onclick="openModal(this, 'available')">
+            <div class="buffer-block">
+                <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000" alt="High Desert">
+            </div>
+            <div class="card-info">
+                <div class="card-title">High Desert Bloom</div>
+                <div class="card-meta">Oil on Canvas, 36x48"</div>
+                <div class="status-line avail">
+                    <span class="dot dot-green"></span> Available — $1,200
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="openModal(this, 'sold')">
+            <div class="buffer-block">
+                <img src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?q=80&w=1000" alt="The Watcher">
+            </div>
+            <div class="card-info">
+                <div class="card-title">The Watcher</div>
+                <div class="card-meta">Charcoal on Paper, 24x18"</div>
+                <div class="status-line sold">
+                    <span class="dot dot-red"></span> Sold
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="openModal(this, 'available')">
+            <div class="buffer-block">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=1000" alt="Abstract">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Morning Frequency</div>
+                <div class="card-meta">Acrylic on Panel, 20x20"</div>
+                <div class="status-line avail">
+                    <span class="dot dot-green"></span> Available — $850
+                </div>
+            </div>
+        </div>
+
+         <div class="card" onclick="openModal(this, 'sold')">
+            <div class="buffer-block">
+                <img src="https://images.unsplash.com/photo-1465188162913-8fb5709d6d57?q=80&w=1000" alt="Gorge">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Rio Grande Gorge</div>
+                <div class="card-meta">Oil on Canvas, 30x40"</div>
+                <div class="status-line sold">
+                    <span class="dot dot-red"></span> Sold
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="close" onclick="closeModal()">&times;</div>
+        <img id="modalImg" class="modal-img">
+        <div class="modal-details">
+            <h2 id="modalTitle"></h2>
+            <p id="modalMeta"></p>
+            <div id="modalBtnContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modalImg');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMeta = document.getElementById('modalMeta');
+        const modalBtnContainer = document.getElementById('modalBtnContainer');
+
+        function openModal(card, status) {
+            // Extract data from the card
+            const img = card.querySelector('img').src;
+            const title = card.querySelector('.card-title').innerText;
+            const meta = card.querySelector('.card-meta').innerText;
+
+            modal.style.display = 'flex';
+            modalImg.src = img;
+            modalTitle.innerText = title;
+            modalMeta.innerText = meta;
+
+            // Logic for buttons
+            if(status === 'available') {
+                modalBtnContainer.innerHTML = `<a href="mailto:enrico@example.com?subject=Inquiry: ${title}" class="btn-inquire">Inquire to Purchase</a>`;
+            } else {
+                modalBtnContainer.innerHTML = `<span style="color:#999; font-size:0.9rem;">This piece is in a private collection.</span>`;
+            }
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeModal();
+        });
+    </script>
+
+</body>
+</html>

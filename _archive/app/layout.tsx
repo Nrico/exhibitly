@@ -1,4 +1,4 @@
-import './globals.css'
+import '../css/globals.css'
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display, Cormorant_Garamond } from 'next/font/google'
 
@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${playfair_display.variable} ${cormorant_garamond.variable}`}>
+      <body className={`${inter.variable} ${playfair_display.variable} ${cormorant_garamond.variable} bg-bg-color text-text-main font-sans leading-relaxed antialiased`}>
         {children}
       </body>
     </html>

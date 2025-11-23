@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibitly | Inventory Management</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --border: #e5e5e5;
+            --sidebar-width: 260px;
+            --radius: 8px;
+            
+            /* Status Colors */
+            --status-green-bg: #e8f5e9; --status-green-text: #2e7d32;
+            --status-yellow-bg: #fff8e1; --status-yellow-text: #f57f17;
+            --status-red-bg: #ffebee; --status-red-text: #c62828;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        aside {
+            width: var(--sidebar-width);
+            background-color: #111;
+            color: #888;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: fixed;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .brand {
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { background: rgba(255,255,255,0.1); color: white; font-weight: 500; }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 40px 60px;
+            transition: margin-right 0.3s ease; /* For slide-over */
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; }
+
+        /* --- SMART DROPZONE --- */
+        .dropzone {
+            background: white;
+            border: 2px dashed #ccc;
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .dropzone:hover { border-color: #111; background: #fafafa; }
+        
+        .dropzone-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 5px; }
+        .dropzone-subtitle { color: var(--text-muted); font-size: 0.9rem; }
+        
+        /* --- TOOLBAR --- */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .filters { display: flex; gap: 5px; }
+        
+        .filter-tab {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .filter-tab:hover { background: #f5f5f5; color: var(--text-main); }
+        .filter-tab.active { background: #111; color: white; font-weight: 500; }
+
+        .actions { display: flex; gap: 10px; }
+        
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+        .btn-icon:hover { background: #f9f9f9; border-color: #999; }
+
+        /* --- INVENTORY TABLE --- */
+        .table-container {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th {
+            text-align: left;
+            padding: 15px 20px;
+            background: #fafafa;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: #fcfcfc; }
+
+        .thumb {
+            width: 48px; height: 48px;
+            background: #eee;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        /* Collection Pill (for Renaming Logic) */
+        .collection-tag {
+            font-size: 0.75rem;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #555;
+            font-family: monospace;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-live { background: var(--status-green-bg); color: var(--status-green-text); }
+        .status-sold { background: var(--status-red-bg); color: var(--status-red-text); }
+        .status-ai { background: var(--status-yellow-bg); color: var(--status-yellow-text); }
+
+        /* Pulsing Dot for AI */
+        .pulse-ring {
+            width: 8px; height: 8px;
+            background: currentColor;
+            border-radius: 50%;
+            position: relative;
+        }
+        .pulse-ring::after {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.6;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 
+            0% { transform: scale(1); opacity: 0.6; } 
+            100% { transform: scale(2.5); opacity: 0; } 
+        }
+
+        /* --- SLIDE-OVER EDIT PANEL --- */
+        .slide-over {
+            position: fixed;
+            top: 0; right: -450px; /* Hidden by default */
+            width: 450px;
+            height: 100vh;
+            background: white;
+            border-left: 1px solid var(--border);
+            box-shadow: -5px 0 30px rgba(0,0,0,0.1);
+            z-index: 50;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .slide-over.open { right: 0; }
+
+        .slide-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafafa;
+        }
+
+        .ai-banner {
+            background: var(--status-yellow-bg);
+            color: var(--status-yellow-text);
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .slide-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; display: block; color: #444; }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            min-height: 80px;
+        }
+
+        .slide-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-save {
+            background: var(--text-main);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside>
+        <div class="brand">Exhibitly.</div>
+        <a href="#" class="nav-item"><i class="ph ph-squares-four"></i> Dashboard</a>
+        <a href="#" class="nav-item active"><i class="ph ph-image"></i> Inventory</a>
+        <a href="#" class="nav-item"><i class="ph ph-download-simple"></i> Export Data</a>
+        <a href="#" class="nav-item"><i class="ph ph-palette"></i> Site Design</a>
+        <a href="#" class="nav-item"><i class="ph ph-gear"></i> Settings</a>
+        
+        <div style="margin-top:auto; font-size:0.75rem; opacity:0.5;">
+            Logged in as<br>Enrico Trujillo
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <header>
+            <h1>Inventory</h1>
+            <button class="btn-icon" style="background:#111; color:white; border:none;">
+                <i class="ph ph-plus"></i> Add Single Item
+            </button>
+        </header>
+
+        <!-- SMART DROPZONE -->
+        <div class="dropzone">
+            <i class="ph ph-upload-simple" style="font-size: 2rem; color:#ccc; margin-bottom:10px;"></i>
+            <div class="dropzone-title">Drag & Drop Batch Upload</div>
+            <div class="dropzone-subtitle">
+                Max 20 images per batch. 
+                <span style="color:#f57f17; font-weight:500;"><i class="ph ph-magic-wand"></i> AI Auto-Tagging Enabled</span>
+            </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <div class="filters">
+                <div class="filter-tab active">All Items</div>
+                <div class="filter-tab">Available</div>
+                <div class="filter-tab">Sold</div>
+                <div class="filter-tab" style="color: var(--status-yellow-text);">
+                    <i class="ph ph-warning-circle"></i> Needs Review (1)
+                </div>
+            </div>
+            <div class="actions">
+                <!-- Data Dignity Buttons -->
+                <button class="btn-icon"><i class="ph ph-file-pdf"></i> PDF Sheet</button>
+                <button class="btn-icon"><i class="ph ph-file-archive"></i> Export .zip</button>
+            </div>
+        </div>
+
+        <!-- DATA GRID -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="60">Image</th>
+                        <th>Title / Description</th>
+                        <th>Collection</th>
+                        <th>Medium</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th width="50"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ITEM 1: AI Generated (Needs Review) -->
+                    <tr onclick="openEditor(1)" style="cursor:pointer">
+                        <td><img src="https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=100" class="thumb"></td>
+                        <td>
+                            <div style="font-weight:500">Untitled Abstract #9</div>
+                            <div style="font-size:0.8rem; color:#888;">24" x 36"</div>
+                        </td>
+                        <td><span style="color:#ccc;">--</span></td>
+                        <td>Oil on Canvas</td>
+                        <td style="color:#aaa;">--</td>
+                        <td>
+                            <span class="status-badge status-ai">
+                                <div class="pulse-ring"></div>
+                                Needs Review
+                            </span>
+                        </td>
+                        <td><i class="ph ph-caret-right"></i></td>
+                    </tr>
+
+                    <!-- ITEM 2: Live -->
+                    <tr onclick="openEditor(2)" style="cursor:pointer">
+                        <td><img src="https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=100" class="thumb"></td>
+                        <td>
+                            <div style="font-weight:500">Study in Blue</div>
+                            <div style="font-size:0.8rem; color:#888;">18" x 18"</div>
+                        </td>
+                        <td><span class="collection-tag">Blue_Period</span></td>
+                        <td>Acrylic</td>
+                        <td>$850</td>
+                        <td>
+                            <span class="status-badge status-live">
+                                <i class="ph ph-check-circle"></i> Live
+                            </span>
+                        </td>
+                        <td><i class="ph ph-caret-right"></i></td>
+                    </tr>
+
+                     <!-- ITEM 3: Sold -->
+                     <tr onclick="openEditor(3)" style="cursor:pointer">
+                        <td><img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=100" class="thumb"></td>
+                        <td>
+                            <div style="font-weight:500">High Desert Bloom</div>
+                            <div style="font-size:0.8rem; color:#888;">36" x 48"</div>
+                        </td>
+                        <td><span class="collection-tag">Desert_Series</span></td>
+                        <td>Oil on Canvas</td>
+                        <td>$1,200</td>
+                        <td>
+                            <span class="status-badge status-sold">Sold</span>
+                        </td>
+                        <td><i class="ph ph-caret-right"></i></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- SLIDE-OVER EDIT PANEL (Hidden by default) -->
+    <div class="slide-over" id="editorPanel">
+        <div class="slide-header">
+            <h3>Edit Artwork</h3>
+            <button class="btn-icon" onclick="closeEditor()" style="border:none; padding:5px;"><i class="ph ph-x" style="font-size:1.2rem"></i></button>
+        </div>
+
+        <!-- AI Warning Banner -->
+        <div class="ai-banner">
+            <i class="ph ph-magic-wand"></i> 
+            Data generated by AI. Please verify.
+        </div>
+
+        <div class="slide-body">
+            <div style="text-align:center; margin-bottom:20px;">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=400" style="max-width:100%; height:200px; object-fit:contain; background:#eee; border-radius:4px;">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-input" value="Untitled Abstract #9">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Collection / Series</label>
+                <!-- Important for Renaming Logic -->
+                <input type="text" class="form-input" placeholder="e.g. Desert Series" value="">
+                <div style="font-size:0.75rem; color:#888; margin-top:5px;">
+                    Used for file export renaming: <code>Title_Collection.jpg</code>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                <div class="form-group">
+                    <label class="form-label">Medium</label>
+                    <input type="text" class="form-input" value="Oil on Canvas">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price ($)</label>
+                    <input type="text" class="form-input" placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Dimensions</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="text" class="form-input" value="24" style="width:80px;"> 
+                    <span>x</span>
+                    <input type="text" class="form-input" value="36" style="width:80px;">
+                    <span style="font-size:0.8rem; color:#888;">inches</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select class="form-input">
+                    <option>Available</option>
+                    <option>Sold</option>
+                    <option>Hidden</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="slide-footer">
+            <button class="btn-cancel" onclick="closeEditor()">Cancel</button>
+            <button class="btn-save" onclick="closeEditor()">Approve & Publish</button>
+        </div>
+    </div>
+
+    <script>
+        function openEditor(id) {
+            // In a real app, fetch data for ID here
+            document.getElementById('editorPanel').classList.add('open');
+        }
+
+        function closeEditor() {
+            document.getElementById('editorPanel').classList.remove('open');
+        }
+    </script>
+
+</body>
+</html>
