@@ -12,12 +12,24 @@ create table public.profiles (
   account_type text check (account_type in ('artist', 'gallery')),
   stripe_customer_id text,
   subscription_status text default 'free',
+  is_admin boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- Enable RLS for profiles
 alter table public.profiles enable row level security;
+
+-- Helper function to check if user is admin
+create or replace function public.is_admin()
+returns boolean as $$
+begin
+  return exists (
+    select 1 from public.profiles
+    where id = auth.uid() and is_admin = true
+  );
+end;
+$$ language plpgsql security definer;
 
 -- Profiles policies
 create policy "Public profiles are viewable by everyone."
@@ -31,6 +43,14 @@ create policy "Users can insert their own profile."
 create policy "Users can update own profile."
   on public.profiles for update
   using ( auth.uid() = id );
+
+create policy "Admins can update any profile."
+  on public.profiles for update
+  using ( public.is_admin() );
+
+create policy "Admins can delete any profile."
+  on public.profiles for delete
+  using ( public.is_admin() );
 
 -- ARTWORKS TABLE
 -- Inventory of art pieces
@@ -69,6 +89,14 @@ create policy "Users can update their own artworks."
 create policy "Users can delete their own artworks."
   on public.artworks for delete
   using ( auth.uid() = user_id );
+
+create policy "Admins can update any artwork."
+  on public.artworks for update
+  using ( public.is_admin() );
+
+create policy "Admins can delete any artwork."
+  on public.artworks for delete
+  using ( public.is_admin() );
 
 -- SITE SETTINGS TABLE
 -- Site Settings Table
