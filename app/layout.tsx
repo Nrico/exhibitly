@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display, Cormorant_Garamond, Montserrat, Cinzel, Fauna_One, Lato } from 'next/font/google'
+import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 const playfair_display = Playfair_Display({ subsets: ['latin'], variable: '--font-serif', weight: ['400', '600'] })
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${playfair_display.variable} ${cormorant_garamond.variable} ${montserrat.variable} ${cinzel.variable} ${fauna_one.variable} ${lato.variable}`}>
         {children}
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

@@ -10,7 +10,6 @@ export function Sidebar({ user }: { user: any }) {
     const navItems = [
         { name: 'Dashboard', href: '/dashboard', icon: SquaresFour },
         { name: 'Inventory', href: '/dashboard/inventory', icon: ImageIcon },
-        { name: 'Export Data', href: '/dashboard/export', icon: DownloadSimple },
         { name: 'Site Design', href: '/dashboard/design', icon: Palette },
         { name: 'Settings', href: '/dashboard/settings', icon: Gear },
     ]
@@ -29,10 +28,6 @@ export function Sidebar({ user }: { user: any }) {
                 <Link href="/dashboard/inventory" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname === '/dashboard/inventory' ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
                     <ImageIcon size={18} />
                     Inventory
-                </Link>
-                <Link href="/dashboard/export" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname === '/dashboard/export' ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
-                    <DownloadSimple size={18} />
-                    Export Data
                 </Link>
                 <Link href="/dashboard/design" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname === '/dashboard/design' ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
                     <Palette size={18} />

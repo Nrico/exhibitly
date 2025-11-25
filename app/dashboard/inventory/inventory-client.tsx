@@ -7,8 +7,6 @@ import {
     UploadSimple,
     MagicWand,
     WarningCircle,
-    FilePdf,
-    FileArchive,
     CaretRight,
     CheckCircle,
     X
@@ -240,13 +238,7 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                     </div>
                 </div>
                 <div className="flex gap-2.5 opacity-50 pointer-events-none grayscale">
-                    {/* Placeholder buttons for future features */}
-                    <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 bg-white rounded-md text-sm text-[#111111]">
-                        <FilePdf size={16} /> PDF Sheet
-                    </button>
-                    <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 bg-white rounded-md text-sm text-[#111111]">
-                        <FileArchive size={16} /> Export .zip
-                    </button>
+                    {/* Placeholder buttons removed */}
                 </div>
             </div>
 

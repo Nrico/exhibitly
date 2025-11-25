@@ -17,6 +17,8 @@ export default async function SettingsPage() {
         custom_domain: ''
     }
 
+    let artworks: any[] = []
+
     if (user && user.id !== 'mock-user-id') {
         // Fetch Profile
         const { data: profileData } = await supabase
@@ -39,6 +41,17 @@ export default async function SettingsPage() {
         if (settingsData) {
             settings = settingsData
         }
+
+        // Fetch Artworks for Export
+        const { data: artworksData } = await supabase
+            .from('artworks')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+
+        if (artworksData) {
+            artworks = artworksData
+        }
     } else {
         // Mock Data Fallback
         profile = {
@@ -53,5 +66,5 @@ export default async function SettingsPage() {
         }
     }
 
-    return <SettingsForm initialProfile={profile} initialSettings={settings} />
+    return <SettingsForm initialProfile={profile} initialSettings={settings} artworks={artworks} />
 }

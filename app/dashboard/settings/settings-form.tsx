@@ -1,6 +1,6 @@
 'use client'
 
-import { UserCircle, CreditCard, MapPin, Warning, ArrowSquareOut } from '@phosphor-icons/react'
+import { UserCircle, CreditCard, MapPin, Warning, ArrowSquareOut, FileCsv } from '@phosphor-icons/react'
 import Image from 'next/image'
 import { updateProfile, updateSiteSettings } from './actions'
 import { useState, useRef } from 'react'
@@ -23,13 +23,16 @@ type SiteSettings = {
 
 export function SettingsForm({
     initialProfile,
-    initialSettings
+    initialSettings,
+    artworks = []
 }: {
     initialProfile: Profile,
-    initialSettings: SiteSettings
+    initialSettings: SiteSettings,
+    artworks?: any[]
 }) {
     const [isSaving, setIsSaving] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
+    const [isCsvExporting, setIsCsvExporting] = useState(false)
     const [isLoadingCheckout, setIsLoadingCheckout] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(initialProfile.avatar_url)
     const [pendingFile, setPendingFile] = useState<File | null>(null)
@@ -78,6 +81,35 @@ export function SettingsForm({
         } finally {
             setIsExporting(false)
         }
+    }
+
+    const handleCsvExport = () => {
+        setIsCsvExporting(true)
+
+        // Define headers
+        const headers = ['id', 'title', 'medium', 'dimensions', 'price', 'status', 'collection', 'created_at']
+
+        // Convert to CSV string
+        const csvContent = [
+            headers.join(','),
+            ...artworks.map(item => headers.map(header => {
+                const val = item[header] || ''
+                // Escape quotes and wrap in quotes if needed
+                return `"${String(val).replace(/"/g, '""')}"`
+            }).join(','))
+        ].join('\n')
+
+        // Create download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.setAttribute('href', url)
+        link.setAttribute('download', `inventory_export_${new Date().toISOString().split('T')[0]}.csv`)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+
+        setTimeout(() => setIsCsvExporting(false), 1000)
     }
 
     const handleUpgrade = async () => {
@@ -237,14 +269,24 @@ export function SettingsForm({
                                 Download a ZIP file containing your site as static HTML and all your artwork images.
                             </div>
                         </div>
-                        <button
-                            type="button"
-                            onClick={handleExport}
-                            disabled={isExporting}
-                            className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 disabled:opacity-50"
-                        >
-                            {isExporting ? 'Exporting...' : 'Export Site Data'} <DownloadSimple size={16} />
-                        </button>
+                        <div className="flex gap-3">
+                            <button
+                                type="button"
+                                onClick={handleCsvExport}
+                                disabled={isCsvExporting || artworks.length === 0}
+                                className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 disabled:opacity-50"
+                            >
+                                {isCsvExporting ? 'Generating...' : 'Export Inventory CSV'} <FileCsv size={16} />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleExport}
+                                disabled={isExporting}
+                                className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 disabled:opacity-50"
+                            >
+                                {isExporting ? 'Exporting...' : 'Export Full Site'} <DownloadSimple size={16} />
+                            </button>
+                        </div>
                     </div>
                 </div>
 

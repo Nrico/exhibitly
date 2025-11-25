@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useActionState } from 'react'
+import { useState, useActionState, useEffect } from 'react'
 import Image from 'next/image'
-import { GoogleLogo, PaintBrush, Storefront, CheckCircle } from '@phosphor-icons/react'
-import { login, signup, signInWithGoogle } from './actions'
+import { GoogleLogo, PaintBrush, Storefront, CheckCircle, XCircle } from '@phosphor-icons/react'
+import { login, signup, signInWithGoogle, checkHandleAvailability } from './actions'
+import { toast } from 'sonner'
+import Link from 'next/link'
 
 const initialState = {
     error: '',
@@ -18,12 +20,27 @@ export default function AuthPage() {
     const [loginState, loginAction, isLoginPending] = useActionState(login, initialState)
     const [signupState, signupAction, isSignupPending] = useActionState(signup, initialState)
 
-    const handleHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Handle toast notifications for server actions
+    useEffect(() => {
+        if (loginState?.error) {
+            toast.error(loginState.error)
+        }
+        if (signupState?.error) {
+            toast.error(signupState.error)
+        }
+        if (signupState?.success) {
+            toast.success(signupState.message)
+            // Optional: switch to login view or show success message
+        }
+    }, [loginState, signupState])
+
+    const handleHandleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         setHandle(value)
-        // Simple simulation of availability check
-        if (value.length > 3) {
-            setIsHandleAvailable(true)
+
+        if (value.length >= 3) {
+            const isAvailable = await checkHandleAvailability(value)
+            setIsHandleAvailable(isAvailable)
         } else {
             setIsHandleAvailable(false)
         }
@@ -76,7 +93,7 @@ export default function AuthPage() {
                             <div>
                                 <div className="flex justify-between mb-2">
                                     <label className="block text-xs font-medium text-gray-800">Password</label>
-                                    <a href="#" className="text-xs text-gray-500 hover:text-gray-900">Forgot?</a>
+                                    <Link href="/auth/forgot-password" className="text-xs text-gray-500 hover:text-gray-900">Forgot?</Link>
                                 </div>
                                 <input
                                     name="password"
@@ -87,11 +104,7 @@ export default function AuthPage() {
                                 />
                             </div>
 
-                            {loginState?.error && (
-                                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
-                                    {loginState.error}
-                                </div>
-                            )}
+                            {/* Errors handled by toast, but keeping inline for accessibility if needed */}
 
                             <button
                                 type="submit"
@@ -193,9 +206,14 @@ export default function AuthPage() {
                                         placeholder={accountType === 'gallery' ? 'high-desert-arts' : 'enrico'}
                                     />
                                 </div>
-                                {isHandleAvailable && (
+                                {isHandleAvailable && handle.length >= 3 && (
                                     <div className="text-xs text-green-700 mt-1.5 flex items-center gap-1">
                                         <CheckCircle size={14} weight="fill" /> Available
+                                    </div>
+                                )}
+                                {!isHandleAvailable && handle.length >= 3 && (
+                                    <div className="text-xs text-red-700 mt-1.5 flex items-center gap-1">
+                                        <XCircle size={14} weight="fill" /> Taken
                                     </div>
                                 )}
                             </div>
@@ -222,11 +240,7 @@ export default function AuthPage() {
                                 />
                             </div>
 
-                            {signupState?.error && (
-                                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
-                                    {signupState.error}
-                                </div>
-                            )}
+                            {/* Errors handled by toast */}
 
                             <button
                                 type="submit"
