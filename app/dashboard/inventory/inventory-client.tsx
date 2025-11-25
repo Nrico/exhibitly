@@ -171,11 +171,9 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
     }, [])
 
     // Update local state when initialArtworks changes (e.g. after server action refresh)
-    if (initialArtworks !== artworks && initialArtworks.length !== artworks.length) {
-        // Simple check to sync, ideally use useEffect but this is a quick fix for the refresh
-        // Actually, let's use useEffect or just rely on key prop in parent?
-        // Better:
-    }
+    useEffect(() => {
+        setArtworks(initialArtworks)
+    }, [initialArtworks])
     // Sync with server state on re-render if needed, but careful with drag state.
     // For now, we'll initialize state.
 
@@ -293,6 +291,21 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                 return
             }
 
+            // Optimistic Update
+            if (isCreating) {
+                // We can't easily guess the ID, so we'll rely on router.refresh() for creation
+                // But we can force a re-fetch or just wait. 
+                // Actually, for creation, the router.refresh() usually works well enough because the list grows.
+                // But let's rely on the useEffect above to catch the new prop.
+            } else if (selectedItem) {
+                // For updates, we can update the local state immediately
+                setArtworks(prev => prev.map(item =>
+                    item.id === selectedItem.id
+                        ? { ...item, ...Object.fromEntries(formData), price: formData.get('price') ? parseFloat(formData.get('price') as string) : null } as any // Cast for simplicity, ideally stricter
+                        : item
+                ))
+            }
+
             router.refresh()
             closeEditor()
         } finally {
@@ -310,6 +323,9 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                     alert(`Error: ${result.error}`)
                     return
                 }
+                // Optimistic Delete
+                setArtworks(prev => prev.filter(item => item.id !== selectedItem.id))
+
                 router.refresh()
                 closeEditor()
             }
