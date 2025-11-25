@@ -213,8 +213,8 @@ export function PortfolioLayout({
                             {filteredArtworks.map((artwork) => (
                                 <div key={artwork.id} className="group cursor-pointer" onClick={() => setSelectedArtwork(artwork)}>
                                     {/* Buffer Block */}
-                                    <div className="w-full aspect-square bg-[#f4f4f4] flex items-center justify-center mb-5 relative transition-colors duration-300 group-hover:bg-[#efefef]">
-                                        <div className="relative w-[85%] h-[85%] shadow-lg transition-transform duration-400 group-hover:scale-[1.02] group-hover:shadow-xl">
+                                    <div className="w-full aspect-square bg-[#f4f4f4] flex items-center justify-center mb-5 relative transition-colors duration-300 group-hover:bg-[#efefef] p-4">
+                                        <div className="relative w-full h-full shadow-lg transition-transform duration-400 group-hover:scale-[1.02] group-hover:shadow-xl bg-white">
                                             {artwork.image_url && (
                                                 <Image
                                                     src={artwork.image_url}

@@ -188,23 +188,21 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
         const { active, over } = event
 
         if (over && active.id !== over.id) {
-            setArtworks((items) => {
-                const oldIndex = items.findIndex((item) => item.id === active.id)
-                const newIndex = items.findIndex((item) => item.id === over.id)
+            const oldIndex = artworks.findIndex((item) => item.id === active.id)
+            const newIndex = artworks.findIndex((item) => item.id === over.id)
 
-                const newItems = arrayMove(items, oldIndex, newIndex)
+            const newItems = arrayMove(artworks, oldIndex, newIndex)
 
-                // Call server action to persist order
-                // We need to send the new order of IDs
-                const updates = newItems.map((item, index) => ({
-                    id: item.id,
-                    position: index
-                }))
+            // Optimistic update
+            setArtworks(newItems)
 
-                reorderArtworks(updates)
+            // Call server action to persist order
+            const updates = newItems.map((item, index) => ({
+                id: item.id,
+                position: index
+            }))
 
-                return newItems
-            })
+            await reorderArtworks(updates)
         }
     }
 
