@@ -13,13 +13,31 @@ export async function updateProfile(formData: FormData) {
 
     const full_name = formData.get('full_name') as string
     const email = formData.get('email') as string
-    // Note: Changing email requires a separate flow in Supabase, 
-    // so for now we might just update the profile table, not the auth user.
+    const avatarFile = formData.get('avatar') as File
 
-    const { error } = await supabase.from('profiles').update({
+    const updates: any = {
         full_name,
         // email: email // Don't update email directly in profiles for now to avoid sync issues
-    }).eq('id', user.id)
+    }
+
+    if (avatarFile && avatarFile.size > 0) {
+        const fileExt = avatarFile.name.split('.').pop()
+        const fileName = `${user.id}/avatar-${Math.random()}.${fileExt}`
+        const { error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(fileName, avatarFile, { upsert: true })
+
+        if (uploadError) {
+            console.error('Upload error:', uploadError)
+        } else {
+            const { data: { publicUrl } } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(fileName)
+            updates.avatar_url = publicUrl
+        }
+    }
+
+    const { error } = await supabase.from('profiles').update(updates).eq('id', user.id)
 
     if (error) {
         return { error: error.message }

@@ -45,7 +45,7 @@ export default function Home() {
             <Link href="/auth" className="px-8 py-4 bg-[#1a1a1a] text-white text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#333] hover:border-[#333] transition-all">
               Build Artist Portfolio
             </Link>
-            <Link href="#" className="px-8 py-4 bg-transparent text-[#1a1a1a] text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#fafafa] transition-all">
+            <Link href="/auth" className="px-8 py-4 bg-transparent text-[#1a1a1a] text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#fafafa] transition-all">
               Explore Gallery Solutions
             </Link>
           </div>
@@ -156,7 +156,7 @@ export default function Home() {
             </p>
             <span className="font-sans font-semibold mb-8 block text-xl">$79 / month</span>
             <div>
-              <Link href="#" className="inline-block px-8 py-4 bg-transparent text-[#1a1a1a] text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white transition-all">
+              <Link href="/auth" className="inline-block px-8 py-4 bg-transparent text-[#1a1a1a] text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white transition-all">
                 View Gallery Features &rarr;
               </Link>
             </div>
@@ -171,8 +171,9 @@ export default function Home() {
           <div className="font-serif text-xl font-semibold text-[#1a1a1a]">Exhibitly.</div>
           <div>Made for art in Santa Fe & the Cloud.</div>
           <div className="flex gap-5">
-            <Link href="#" className="hover:text-[#1a1a1a] transition-colors">Contact</Link>
-            <Link href="#" className="hover:text-[#1a1a1a] transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-[#1a1a1a] transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-[#1a1a1a] transition-colors">Terms</Link>
+            <a href="mailto:hello@exhibitly.co" className="hover:text-[#1a1a1a] transition-colors">Contact</a>
           </div>
         </div>
       </footer>

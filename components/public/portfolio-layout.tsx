@@ -1,7 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
-import { InstagramLogo, Globe, EnvelopeSimple } from '@phosphor-icons/react'
+import { InstagramLogo, Globe, EnvelopeSimple, X } from '@phosphor-icons/react'
 
 type Profile = {
     full_name: string | null
@@ -13,9 +14,15 @@ type Profile = {
 type SiteSettings = {
     site_title: string | null
     site_bio: string | null
+    site_bio_long: string | null
     theme: string | null
     custom_domain: string | null
     contact_email: string | null
+    phone: string | null
+    address: string | null
+    social_instagram: string | null
+    social_twitter: string | null
+    social_facebook: string | null
 }
 
 type Artwork = {
@@ -26,6 +33,7 @@ type Artwork = {
     price: number | null
     status: string | null
     image_url: string | null
+    description: string | null
     collection: string | null
 }
 
@@ -38,206 +46,367 @@ export function PortfolioLayout({
     settings: SiteSettings,
     artworks: Artwork[]
 }) {
+    const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null)
+    const [currentView, setCurrentView] = useState<'gallery' | 'about' | 'contact'>('gallery')
     const theme = settings.theme || 'minimal'
 
-    if (theme === 'dark') {
-        return (
-            <div className="min-h-screen bg-[#111111] text-white font-sans selection:bg-white selection:text-black">
-                <div className="max-w-[1600px] mx-auto p-5 md:p-10">
-                    <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
-                        <div>
-                            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-                                {settings.site_title || profile.full_name || 'Untitled Artist'}
-                            </h1>
-                            <p className="text-gray-400 max-w-xl text-lg leading-relaxed">
-                                {settings.site_bio || 'No bio available.'}
-                            </p>
-                        </div>
-                        <div className="flex gap-4">
-                            <button className="p-2 rounded-full border border-gray-800 hover:bg-white hover:text-black transition-colors">
-                                <InstagramLogo size={24} />
-                            </button>
-                            <button className="p-2 rounded-full border border-gray-800 hover:bg-white hover:text-black transition-colors">
-                                <Globe size={24} />
-                            </button>
-                            <button className="p-2 rounded-full border border-gray-800 hover:bg-white hover:text-black transition-colors">
-                                <EnvelopeSimple size={24} />
-                            </button>
-                        </div>
-                    </header>
+    // Helper to render the modal for any theme
+    const renderModal = () => (
+        selectedArtwork && (
+            <DetailModal
+                artwork={selectedArtwork}
+                onClose={() => setSelectedArtwork(null)}
+                settings={settings}
+                profile={profile}
+            />
+        )
+    )
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-                        {artworks.map((artwork) => (
-                            <div key={artwork.id} className="group cursor-pointer">
-                                <div className="relative aspect-[4/5] bg-gray-900 mb-4 overflow-hidden">
-                                    {artwork.image_url && (
-                                        <Image
-                                            src={artwork.image_url}
-                                            alt={artwork.title}
-                                            fill
-                                            className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
-                                        />
-                                    )}
-                                    {artwork.status === 'sold' && (
-                                        <div className="absolute top-4 right-4 bg-white text-black text-xs font-bold px-2 py-1 uppercase tracking-wider">
-                                            Sold
-                                        </div>
-                                    )}
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-medium mb-1">{artwork.title}</h3>
-                                    <div className="text-gray-500 text-sm flex justify-between">
-                                        <span>{artwork.medium}</span>
-                                        <span>{artwork.price ? `$${artwork.price}` : 'Inquire'}</span>
+    if (theme === 'dark') {
+        // "The Cinema" Theme - Split Screen
+        return (
+            <div className="min-h-screen bg-[#121212] text-[#e0e0e0] font-[family-name:var(--font-fauna)] selection:bg-[#c5a059] selection:text-black">
+                <div className="flex flex-col md:flex-row min-h-screen">
+
+                    {/* Fixed Sidebar */}
+                    <aside className="w-full md:w-[35%] md:h-screen md:fixed left-0 top-0 flex flex-col justify-center p-10 md:p-[60px] border-b md:border-b-0 md:border-r border-[#333] z-10 bg-[#121212]">
+                        <div>
+                            <h1 className="text-5xl md:text-6xl font-[family-name:var(--font-cinzel)] leading-[1.1] mb-5 tracking-widest text-[#e0e0e0] cursor-pointer" onClick={() => setCurrentView('gallery')}>
+                                {settings.site_title?.split(' ').map((word, i) => <span key={i} className="block">{word}</span>) || <span className="block">Untitled<br />Artist</span>}
+                            </h1>
+                            <div className="text-[#c5a059] uppercase tracking-[3px] text-sm mb-12">
+                                Collection {new Date().getFullYear()}
+                            </div>
+
+                            <nav className="space-y-4 font-[family-name:var(--font-cinzel)] text-lg text-[#888]">
+                                <button onClick={() => setCurrentView('gallery')} className={`block hover:text-[#e0e0e0] hover:translate-x-2 transition-all text-left w-full ${currentView === 'gallery' ? 'text-[#e0e0e0] border-l-2 border-[#c5a059] pl-3' : ''}`}>Gallery</button>
+                                <button onClick={() => setCurrentView('about')} className={`block hover:text-[#e0e0e0] hover:translate-x-2 transition-all text-left w-full ${currentView === 'about' ? 'text-[#e0e0e0] border-l-2 border-[#c5a059] pl-3' : ''}`}>Biography</button>
+                                <button onClick={() => setCurrentView('contact')} className={`block hover:text-[#e0e0e0] hover:translate-x-2 transition-all text-left w-full ${currentView === 'contact' ? 'text-[#e0e0e0] border-l-2 border-[#c5a059] pl-3' : ''}`}>Contact</button>
+                            </nav>
+                        </div>
+
+                        <div className="mt-12 md:mt-auto text-[#444] text-xs">
+                            &copy; {new Date().getFullYear()} {profile.full_name} Studio
+                        </div>
+                    </aside>
+
+                    {/* Scrollable Gallery */}
+                    <main className="w-full md:w-[65%] md:ml-[35%] p-8 md:p-[80px_60px]">
+                        {currentView === 'gallery' && artworks.map((artwork, index) => (
+                            <article
+                                key={artwork.id}
+                                className="mb-24 opacity-0 animate-[fadeUp_1s_forwards]"
+                                style={{ animationDelay: `${index * 0.2}s` }}
+                                onClick={() => setSelectedArtwork(artwork)}
+                            >
+                                <div className="p-4 bg-white shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform duration-500">
+                                    <div className="relative aspect-[4/3] w-full">
+                                        {artwork.image_url && (
+                                            <Image
+                                                src={artwork.image_url}
+                                                alt={artwork.title}
+                                                fill
+                                                className="object-cover contrast-[1.05]"
+                                            />
+                                        )}
                                     </div>
                                 </div>
-                            </div>
+                                <div className="mt-6 flex justify-between items-end border-b border-[#333] pb-4">
+                                    <div>
+                                        <h2 className="font-[family-name:var(--font-cinzel)] text-2xl md:text-3xl mb-1">{artwork.title}</h2>
+                                        <p className="text-[#888] text-sm italic">{artwork.medium}, {artwork.dimensions}</p>
+                                    </div>
+                                    <div className="text-right font-[family-name:var(--font-cinzel)] text-sm">
+                                        {artwork.status === 'sold' ? (
+                                            <div>
+                                                <span className="text-[#555] line-through mr-2">Sold</span>
+                                                <span className="inline-block w-2 h-2 rounded-full bg-[#aa3a3a]"></span>
+                                            </div>
+                                        ) : (
+                                            <span className="text-[#c5a059] block mt-1">{artwork.price ? `$${artwork.price.toLocaleString()}` : 'Inquire'}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </article>
                         ))}
-                    </div>
-
-                    <footer className="border-t border-gray-900 pt-10 text-center text-gray-600 text-sm">
-                        &copy; {new Date().getFullYear()} {profile.full_name}. Powered by Exhibitly.
-                    </footer>
+                        {currentView === 'about' && <AboutView profile={profile} settings={settings} theme="dark" />}
+                        {currentView === 'contact' && <ContactView profile={profile} settings={settings} theme="dark" />}
+                    </main>
                 </div>
+                {renderModal()}
             </div>
         )
     }
 
     if (theme === 'archive') {
+        // "The Archive" Theme - Buffer Blocks
         return (
-            <div className="min-h-screen bg-[#f4f4f4] text-black font-mono selection:bg-black selection:text-white">
-                <div className="p-4 md:p-8">
-                    <header className="mb-12 border-b border-black pb-4 flex justify-between items-end">
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tighter">
-                                {settings.site_title || profile.full_name || 'Untitled Artist'}
-                            </h1>
-                            <p className="text-xs max-w-md mt-2 leading-relaxed">
-                                {settings.site_bio || 'No bio available.'}
-                            </p>
+            <div className="min-h-screen bg-white text-[#111] font-[family-name:var(--font-sans)] selection:bg-black selection:text-white">
+                <div className="max-w-[1600px] mx-auto px-10 pb-24">
+                    <header className="py-[60px] flex flex-col md:flex-row justify-between items-baseline border-b border-[#eee] mb-[60px]">
+                        <div className="font-semibold text-2xl tracking-tight">
+                            {settings.site_title || profile.full_name || 'Untitled Artist'}
                         </div>
-                        <div className="flex gap-4 text-xs">
-                            <a href="#" className="hover:underline">[IG]</a>
-                            <a href="#" className="hover:underline">[WEB]</a>
-                            <a href="#" className="hover:underline">[MAIL]</a>
-                        </div>
+                        <nav className="flex gap-8 text-[#777] text-sm mt-4 md:mt-0">
+                            <button onClick={() => setCurrentView('gallery')} className={`hover:text-black transition-colors ${currentView === 'gallery' ? 'text-black font-semibold' : ''}`}>Work</button>
+                            <button onClick={() => setCurrentView('about')} className={`hover:text-black transition-colors ${currentView === 'about' ? 'text-black font-semibold' : ''}`}>About</button>
+                            <button onClick={() => setCurrentView('contact')} className={`hover:text-black transition-colors ${currentView === 'contact' ? 'text-black font-semibold' : ''}`}>Contact</button>
+                        </nav>
                     </header>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
+                    {currentView === 'gallery' && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-16">
+                            {artworks.map((artwork) => (
+                                <div key={artwork.id} className="group cursor-pointer" onClick={() => setSelectedArtwork(artwork)}>
+                                    {/* Buffer Block */}
+                                    <div className="w-full aspect-square bg-[#f4f4f4] flex items-center justify-center mb-5 relative transition-colors duration-300 group-hover:bg-[#efefef]">
+                                        <div className="relative w-[85%] h-[85%] shadow-lg transition-transform duration-400 group-hover:scale-[1.02] group-hover:shadow-xl">
+                                            {artwork.image_url && (
+                                                <Image
+                                                    src={artwork.image_url}
+                                                    alt={artwork.title}
+                                                    fill
+                                                    className="object-contain"
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="pl-1">
+                                        <div className="font-semibold text-base mb-1 text-[#111]">{artwork.title}</div>
+                                        <div className="text-[#777] text-sm mb-2">{artwork.medium}</div>
+                                        <div className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
+                                            {artwork.status === 'sold' ? (
+                                                <>
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#d9534f]"></span>
+                                                    <span className="text-[#999]">Sold</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#5cb85c]"></span>
+                                                    <span className="text-[#111]">Available — {artwork.price ? `$${artwork.price.toLocaleString()}` : 'Inquire'}</span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    {currentView === 'about' && <AboutView profile={profile} settings={settings} theme="archive" />}
+                    {currentView === 'contact' && <ContactView profile={profile} settings={settings} theme="archive" />}
+
+                    <footer className="mt-24 pt-12 border-t border-[#eee] text-center text-[#777] text-xs">
+                        &copy; {new Date().getFullYear()} {profile.full_name}
+                    </footer>
+                </div>
+                {renderModal()}
+            </div>
+        )
+    }
+
+    // Default 'minimal' theme - "The White Cube"
+    return (
+        <div className="min-h-screen bg-[#fdfdfd] text-[#2a2a2a] font-[family-name:var(--font-montserrat)] selection:bg-[#c5a059] selection:text-white">
+            <div className="max-w-[1200px] mx-auto p-5 md:p-10">
+                <header className="text-center py-[60px] mb-10">
+                    <h1 className="text-5xl md:text-6xl font-[family-name:var(--font-display)] font-normal tracking-[2px] mb-2 uppercase">
+                        {settings.site_title || profile.full_name || 'Untitled Artist'}
+                    </h1>
+                    <div className="text-[#888] text-sm uppercase tracking-[3px]">
+                        Fine Art & Illustration
+                    </div>
+
+                    <nav className="mt-8 py-4 border-t border-b border-[#eee] flex justify-center gap-8 text-sm uppercase tracking-wider">
+                        <button onClick={() => setCurrentView('gallery')} className={`hover:text-[#c5a059] transition-colors ${currentView === 'gallery' ? 'text-[#c5a059]' : ''}`}>Portfolio</button>
+                        <button onClick={() => setCurrentView('about')} className={`hover:text-[#c5a059] transition-colors ${currentView === 'about' ? 'text-[#c5a059]' : ''}`}>About</button>
+                        <button onClick={() => setCurrentView('contact')} className={`hover:text-[#c5a059] transition-colors ${currentView === 'contact' ? 'text-[#c5a059]' : ''}`}>Contact</button>
+                    </nav>
+                </header>
+
+                {/* Masonry Layout for White Cube */}
+                {currentView === 'gallery' && (
+                    <div className="columns-1 md:columns-2 lg:columns-3 gap-10 space-y-10 mb-24 px-5">
                         {artworks.map((artwork) => (
-                            <div key={artwork.id} className="group cursor-pointer">
-                                <div className="relative aspect-square bg-gray-200 mb-2 border border-black overflow-hidden">
+                            <div key={artwork.id} className="group cursor-pointer break-inside-avoid mb-10" onClick={() => setSelectedArtwork(artwork)}>
+                                <div className="w-full bg-[#eee] mb-4 overflow-hidden transition-transform duration-400 ease-out group-hover:-translate-y-1">
                                     {artwork.image_url && (
                                         <Image
                                             src={artwork.image_url}
                                             alt={artwork.title}
-                                            fill
-                                            className="object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                                            width={0}
+                                            height={0}
+                                            sizes="100vw"
+                                            style={{ width: '100%', height: 'auto' }}
+                                            className="transition-transform duration-700 group-hover:scale-[1.03] grayscale-[10%] group-hover:grayscale-0"
                                         />
                                     )}
                                 </div>
-                                <div className="text-[10px] leading-tight border-t border-black pt-1">
-                                    <div className="font-bold truncate">{artwork.title}</div>
-                                    <div className="flex justify-between text-gray-600">
-                                        <span>{artwork.medium}</span>
-                                        <span>{artwork.price ? `$${artwork.price}` : 'NFS'}</span>
+                                <div className="text-center">
+                                    <h3 className="font-[family-name:var(--font-display)] text-2xl font-semibold mb-1">{artwork.title}</h3>
+                                    <p className="text-[#888] text-xs italic mb-2">{artwork.medium}, {artwork.dimensions}</p>
+                                    <div className="flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
+                                        {artwork.status === 'sold' ? (
+                                            <>
+                                                <span className="w-2 h-2 rounded-full bg-[#c94c4c]"></span>
+                                                <span className="text-[#a0a0a0]">Sold</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="font-semibold text-[#2a2a2a]">Available</span>
+                                                <span className="text-[#ccc]">&mdash;</span>
+                                                <span className="text-[#c5a059]">{artwork.price ? `$${artwork.price.toLocaleString()}` : 'Inquire'}</span>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
+                )}
+                {currentView === 'about' && <AboutView profile={profile} settings={settings} theme="minimal" />}
+                {currentView === 'contact' && <ContactView profile={profile} settings={settings} theme="minimal" />}
 
-                    <footer className="border-t border-black pt-4 text-[10px] uppercase flex justify-between">
-                        <div>Index: {new Date().getFullYear()}</div>
-                        <div>Powered by Exhibitly</div>
-                    </footer>
+                <footer className="text-center py-12 border-t border-[#eee] text-[#888] text-xs">
+                    &copy; {new Date().getFullYear()} {profile.full_name}. All Rights Reserved.
+                </footer>
+            </div>
+            {renderModal()}
+        </div>
+    )
+}
+
+function DetailModal({ artwork, onClose, settings, profile }: { artwork: Artwork, onClose: () => void, settings: SiteSettings, profile: Profile }) {
+    return (
+        <div className="fixed inset-0 z-50 bg-white/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 overflow-y-auto animate-[fadeIn_0.3s_ease]">
+            <button
+                onClick={onClose}
+                className="absolute top-8 right-8 text-4xl text-[#aaa] hover:text-[#2a2a2a] font-[family-name:var(--font-display)] leading-none transition-colors z-50"
+            >
+                &times;
+            </button>
+
+            <div className="w-full max-w-5xl flex flex-col items-center">
+                <div className="relative w-full max-h-[70vh] aspect-[4/3] mb-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white p-2 md:p-4">
+                    {artwork.image_url && (
+                        <Image
+                            src={artwork.image_url}
+                            alt={artwork.title}
+                            fill
+                            className="object-contain"
+                        />
+                    )}
+                </div>
+
+                <div className="text-center max-w-2xl">
+                    <h2 className="text-3xl md:text-4xl font-[family-name:var(--font-display)] text-[#2a2a2a] mb-2">{artwork.title}</h2>
+                    <div className="text-[#888] text-sm mb-6">
+                        {artwork.medium} &bull; {artwork.dimensions}
+                    </div>
+
+                    {artwork.description && (
+                        <div
+                            className="text-[#555] mb-8 leading-relaxed whitespace-pre-wrap [&>p]:mb-4"
+                            dangerouslySetInnerHTML={{ __html: artwork.description }}
+                        />
+                    )}
+
+                    {artwork.status === 'available' ? (
+                        <a
+                            href={`mailto:${settings.contact_email || profile.email}?subject=Inquiry: ${artwork.title}&body=Hi, I am interested in "${artwork.title}".`}
+                            className="inline-block bg-black text-white px-8 py-3 text-sm uppercase tracking-widest hover:opacity-80 transition-opacity"
+                        >
+                            Inquire to Acquire
+                        </a>
+                    ) : (
+                        <span className="text-[#888] italic">This piece is in a private collection.</span>
+                    )}
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
+}
 
-    // Default 'minimal' theme
+function AboutView({ profile, settings, theme }: { profile: Profile, settings: SiteSettings, theme: string }) {
     return (
-        <div className="min-h-screen bg-white text-[#111] font-serif selection:bg-[#111] selection:text-white">
-            <div className="max-w-[1200px] mx-auto p-8 md:p-16">
-                <header className="text-center mb-24">
-                    <h1 className="text-4xl md:text-5xl mb-6 tracking-tight">
-                        {settings.site_title || profile.full_name || 'Untitled Artist'}
-                    </h1>
-                    <div className="w-12 h-0.5 bg-[#111] mx-auto mb-8"></div>
-                    <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed font-sans">
-                        {settings.site_bio || 'No bio available.'}
-                    </p>
-
-                    <div className="flex justify-center gap-6 mt-8">
-                        <a href="#" className="text-gray-400 hover:text-black transition-colors"><InstagramLogo size={20} /></a>
-                        <a href="#" className="text-gray-400 hover:text-black transition-colors"><Globe size={20} /></a>
-                        <a href="#" className="text-gray-400 hover:text-black transition-colors"><EnvelopeSimple size={20} /></a>
+        <div className="max-w-3xl mx-auto py-12 animate-[fadeIn_0.5s_ease]">
+            <div className="flex flex-col md:flex-row gap-12 items-start">
+                {profile.avatar_url && (
+                    <div className="w-full md:w-1/3 relative aspect-square bg-[#eee]">
+                        <Image
+                            src={profile.avatar_url}
+                            alt={profile.full_name || 'Artist'}
+                            fill
+                            className="object-cover"
+                        />
                     </div>
-                </header>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-20 mb-24">
-                    {artworks.map((artwork) => (
-                        <div key={artwork.id} className="group cursor-pointer">
-                            <div className="relative aspect-square bg-gray-50 mb-6 overflow-hidden">
-                                {artwork.image_url && (
-                                    <Image
-                                        src={artwork.image_url}
-                                        alt={artwork.title}
-                                        fill
-                                        className="object-cover transition-all duration-500 group-hover:grayscale-0 grayscale"
-                                    />
-                                )}
-                                {artwork.status === 'sold' && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <span className="font-sans text-sm tracking-widest uppercase border border-black px-4 py-2">Sold</span>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="text-center font-sans">
-                                <h3 className="text-base font-medium text-black mb-1">{artwork.title}</h3>
-                                <div className="text-gray-500 text-xs uppercase tracking-wide">
-                                    {artwork.medium} &bull; {artwork.dimensions}
-                                </div>
-                            </div>
+                )}
+                <div className="flex-1">
+                    <h2 className={`text-3xl mb-6 ${theme === 'dark' ? 'font-[family-name:var(--font-cinzel)]' : theme === 'archive' ? 'font-sans font-bold' : 'font-[family-name:var(--font-display)]'}`}>
+                        About the Artist
+                    </h2>
+                    {settings.site_bio_long ? (
+                        <div
+                            className={`whitespace-pre-wrap leading-relaxed ${theme === 'dark' ? 'text-[#aaa]' : 'text-[#444]'} [&>p]:mb-4`}
+                            dangerouslySetInnerHTML={{ __html: settings.site_bio_long }}
+                        />
+                    ) : (
+                        <div className={`whitespace-pre-wrap leading-relaxed ${theme === 'dark' ? 'text-[#aaa]' : 'text-[#444]'}`}>
+                            {settings.site_bio || "No biography available."}
                         </div>
-                    ))}
+                    )}
                 </div>
+            </div>
+        </div>
+    )
+}
 
-                <div className="max-w-xl mx-auto mb-24">
-                    <h2 className="text-2xl font-serif text-center mb-8">Contact the Artist</h2>
-                    <form action={async (formData) => {
-                        const result = await import('@/app/contact/actions').then(mod => mod.sendContactEmail(formData));
-                        if (result.success) {
-                            alert('Message sent!');
-                        } else {
-                            alert('Error sending message: ' + result.error);
-                        }
-                    }} className="space-y-4">
-                        <input type="hidden" name="artistEmail" value={settings.contact_email || profile.email || ''} />
-                        <div>
-                            <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Name</label>
-                            <input name="name" type="text" required className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-black transition-colors bg-transparent" />
-                        </div>
-                        <div>
-                            <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Email</label>
-                            <input name="email" type="email" required className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-black transition-colors bg-transparent" />
-                        </div>
-                        <div>
-                            <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Message</label>
-                            <textarea name="message" required rows={4} className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-black transition-colors bg-transparent resize-none"></textarea>
-                        </div>
-                        <div className="text-center pt-4">
-                            <button type="submit" className="bg-black text-white px-8 py-3 text-xs uppercase tracking-widest hover:bg-gray-800 transition-colors">
-                                Send Message
-                            </button>
-                        </div>
-                    </form>
-                </div>
+function ContactView({ profile, settings, theme }: { profile: Profile, settings: SiteSettings, theme: string }) {
+    return (
+        <div className="max-w-2xl mx-auto py-12 animate-[fadeIn_0.5s_ease] text-center">
+            <h2 className={`text-3xl mb-8 ${theme === 'dark' ? 'font-[family-name:var(--font-cinzel)]' : theme === 'archive' ? 'font-sans font-bold' : 'font-[family-name:var(--font-display)]'}`}>
+                Get in Touch
+            </h2>
 
-                <footer className="text-center text-gray-400 text-xs font-sans uppercase tracking-widest">
-                    &copy; {new Date().getFullYear()} {profile.full_name}
-                </footer>
+            <div className="space-y-6 mb-12">
+                {settings.contact_email && (
+                    <div>
+                        <div className={`text-xs uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-[#666]' : 'text-[#999]'}`}>Email</div>
+                        <a href={`mailto:${settings.contact_email}`} className="text-xl hover:underline">{settings.contact_email}</a>
+                    </div>
+                )}
+
+                {settings.phone && (
+                    <div>
+                        <div className={`text-xs uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-[#666]' : 'text-[#999]'}`}>Phone</div>
+                        <div className="text-lg">{settings.phone}</div>
+                    </div>
+                )}
+
+                {settings.address && (
+                    <div>
+                        <div className={`text-xs uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-[#666]' : 'text-[#999]'}`}>Studio</div>
+                        <div className="text-lg">{settings.address}</div>
+                    </div>
+                )}
+            </div>
+
+            <div className="flex justify-center gap-6">
+                {settings.social_instagram && (
+                    <a href={`https://instagram.com/${settings.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                        <InstagramLogo size={32} />
+                    </a>
+                )}
+                {settings.social_twitter && (
+                    <a href={`https://twitter.com/${settings.social_twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                        <span className="text-2xl font-bold">X</span>
+                    </a>
+                )}
+                {settings.social_facebook && (
+                    <a href={`https://facebook.com/${settings.social_facebook}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                        <Globe size={32} />
+                    </a>
+                )}
             </div>
         </div>
     )

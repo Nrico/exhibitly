@@ -104,8 +104,15 @@ create table public.site_settings (
   user_id uuid references public.profiles(id) on delete cascade not null primary key,
   site_title text,
   site_bio text,
+  site_bio_long text,
   theme text default 'minimal',
   custom_domain text unique,
+  contact_email text,
+  phone text,
+  address text,
+  social_instagram text,
+  social_twitter text,
+  social_facebook text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

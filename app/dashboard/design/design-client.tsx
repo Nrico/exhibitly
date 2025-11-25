@@ -18,15 +18,35 @@ type Theme = 'white' | 'dark' | 'archive'
 type SiteSettings = {
     site_title: string | null
     site_bio: string | null
+    site_bio_long: string | null
     theme: string | null
     custom_domain: string | null
+    contact_email: string | null
+    phone: string | null
+    address: string | null
+    social_instagram: string | null
+    social_twitter: string | null
+    social_facebook: string | null
 }
 
-export default function DesignClient({ initialSettings, username }: { initialSettings: SiteSettings, username: string }) {
+type Artwork = {
+    id: string
+    title: string
+    image_url: string | null
+}
+
+export default function DesignClient({ initialSettings, username, artworks }: { initialSettings: SiteSettings, username: string, artworks: Artwork[] }) {
     const [activeTheme, setActiveTheme] = useState<Theme>((initialSettings.theme as Theme) || 'white')
     const [siteTitle, setSiteTitle] = useState(initialSettings.site_title || 'Enrico Trujillo')
     const [siteBio, setSiteBio] = useState(initialSettings.site_bio || 'Fine Art & Digital Fabrication based in Taos, NM. Exploring the intersection of traditional saint carving and modern manufacturing.')
+    const [siteBioLong, setSiteBioLong] = useState(initialSettings.site_bio_long || '')
     const [customDomain, setCustomDomain] = useState(initialSettings.custom_domain || '')
+    const [contactEmail, setContactEmail] = useState(initialSettings.contact_email || '')
+    const [phone, setPhone] = useState(initialSettings.phone || '')
+    const [address, setAddress] = useState(initialSettings.address || '')
+    const [socialInstagram, setSocialInstagram] = useState(initialSettings.social_instagram || '')
+    const [socialTwitter, setSocialTwitter] = useState(initialSettings.social_twitter || '')
+    const [socialFacebook, setSocialFacebook] = useState(initialSettings.social_facebook || '')
     const [deviceView, setDeviceView] = useState<'mobile' | 'desktop'>('mobile')
     const [isSaving, setIsSaving] = useState(false)
 
@@ -34,9 +54,17 @@ export default function DesignClient({ initialSettings, username }: { initialSet
         setIsSaving(true)
         const formData = new FormData()
         formData.append('site_title', siteTitle)
+        formData.append('site_title', siteTitle)
         formData.append('site_bio', siteBio)
+        formData.append('site_bio_long', siteBioLong)
         formData.append('theme', activeTheme)
         formData.append('custom_domain', customDomain)
+        formData.append('contact_email', contactEmail)
+        formData.append('phone', phone)
+        formData.append('address', address)
+        formData.append('social_instagram', socialInstagram)
+        formData.append('social_twitter', socialTwitter)
+        formData.append('social_facebook', socialFacebook)
 
         const result = await saveSiteSettings(formData)
         setIsSaving(false)
@@ -147,6 +175,87 @@ export default function DesignClient({ initialSettings, username }: { initialSet
                                 onChange={(e) => setSiteBio(e.target.value)}
                             />
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2 text-[#333333]">Artist Bio (Long)</label>
+                            <div className="text-xs text-[#666] mb-2">Appears on the "About" page. Supports HTML.</div>
+                            <textarea
+                                className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors min-h-[200px] font-mono"
+                                value={siteBioLong}
+                                onChange={(e) => setSiteBioLong(e.target.value)}
+                                placeholder="<p>Write your detailed biography here...</p>"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Contact & Social */}
+                    <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
+                        <div className="font-semibold text-lg mb-5 flex items-center gap-2.5 text-[#111111]">
+                            <IdentificationCard size={24} /> Contact & Social
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Contact Email</label>
+                                <input
+                                    type="email"
+                                    value={contactEmail}
+                                    onChange={(e) => setContactEmail(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="hello@artist.com"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Phone (Optional)</label>
+                                <input
+                                    type="text"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="+1 (555) 000-0000"
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-2 text-[#333333]">Mailing Address (Optional)</label>
+                            <input
+                                type="text"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                placeholder="123 Art St, City, Country"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Instagram</label>
+                                <input
+                                    type="text"
+                                    value={socialInstagram}
+                                    onChange={(e) => setSocialInstagram(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="@username"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Twitter / X</label>
+                                <input
+                                    type="text"
+                                    value={socialTwitter}
+                                    onChange={(e) => setSocialTwitter(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="@username"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Facebook</label>
+                                <input
+                                    type="text"
+                                    value={socialFacebook}
+                                    onChange={(e) => setSocialFacebook(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="username"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     {/* Custom Domain */}
@@ -244,20 +353,37 @@ export default function DesignClient({ initialSettings, username }: { initialSet
                         </div>
 
                         <div className="grid grid-cols-1 gap-5">
-                            {[
-                                { src: 'https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=400', title: 'Morning on the Ridge' },
-                                { src: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=400', title: 'Study in Blue' },
-                                { src: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=400', title: 'High Desert Bloom' }
-                            ].map((img, i) => (
-                                <div key={i}>
-                                    <div className="relative aspect-square w-full bg-[#eee] mb-1.5">
-                                        <Image src={img.src} alt={img.title} fill className="object-cover" />
+                            {artworks.length > 0 ? (
+                                artworks.map((artwork) => (
+                                    <div key={artwork.id}>
+                                        <div className="relative aspect-square w-full bg-[#eee] mb-1.5">
+                                            {artwork.image_url ? (
+                                                <Image src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>
+                                            )}
+                                        </div>
+                                        <div className={`text-xs ${activeTheme === 'archive' ? 'font-mono' : 'font-sans'}`}>
+                                            {artwork.title}
+                                        </div>
                                     </div>
-                                    <div className={`text-xs ${activeTheme === 'archive' ? 'font-mono' : 'font-sans'}`}>
-                                        {img.title}
+                                ))
+                            ) : (
+                                // Fallback if no artworks
+                                [
+                                    { src: 'https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=400', title: 'Example Artwork 1' },
+                                    { src: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=400', title: 'Example Artwork 2' }
+                                ].map((img, i) => (
+                                    <div key={i}>
+                                        <div className="relative aspect-square w-full bg-[#eee] mb-1.5">
+                                            <Image src={img.src} alt={img.title} fill className="object-cover grayscale opacity-50" />
+                                        </div>
+                                        <div className={`text-xs ${activeTheme === 'archive' ? 'font-mono' : 'font-sans'} text-gray-400`}>
+                                            {img.title} (Placeholder)
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
 
                         <div className="text-center mt-10 text-[10px] opacity-40">

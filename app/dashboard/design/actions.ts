@@ -13,16 +13,30 @@ export async function saveSiteSettings(formData: FormData) {
 
     const site_title = formData.get('site_title') as string
     const site_bio = formData.get('site_bio') as string
+    const site_bio_long = formData.get('site_bio_long') as string
     const theme = formData.get('theme') as string
     const custom_domain = formData.get('custom_domain') as string
+    const contact_email = formData.get('contact_email') as string
+    const phone = formData.get('phone') as string
+    const address = formData.get('address') as string
+    const social_instagram = formData.get('social_instagram') as string
+    const social_twitter = formData.get('social_twitter') as string
+    const social_facebook = formData.get('social_facebook') as string
 
     // Upsert settings
     const { error } = await supabase.from('site_settings').upsert({
         user_id: user.id,
         site_title,
         site_bio,
+        site_bio_long,
         theme,
         custom_domain,
+        contact_email,
+        phone,
+        address,
+        social_instagram,
+        social_twitter,
+        social_facebook,
         updated_at: new Date().toISOString()
     })
 

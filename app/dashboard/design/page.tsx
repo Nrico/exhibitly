@@ -23,7 +23,14 @@ export default async function SiteDesignPage() {
         custom_domain: ''
     }
 
+    // Fetch Artworks
+    const { data: artworks } = await supabase
+        .from('artworks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+
     const username = user.user_metadata.username || user.email?.split('@')[0]
 
-    return <DesignClient initialSettings={initialSettings} username={username} />
+    return <DesignClient initialSettings={initialSettings} username={username} artworks={artworks || []} />
 }

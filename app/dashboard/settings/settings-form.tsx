@@ -3,7 +3,10 @@
 import { UserCircle, CreditCard, MapPin, Warning, ArrowSquareOut } from '@phosphor-icons/react'
 import Image from 'next/image'
 import { updateProfile, updateSiteSettings } from './actions'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { processImage } from '@/utils/image-processing'
+import { exportSiteData } from '@/utils/site-export'
+import { DownloadSimple } from '@phosphor-icons/react'
 
 type Profile = {
     full_name: string | null
@@ -26,19 +29,55 @@ export function SettingsForm({
     initialSettings: SiteSettings
 }) {
     const [isSaving, setIsSaving] = useState(false)
+    const [isExporting, setIsExporting] = useState(false)
     const [isLoadingCheckout, setIsLoadingCheckout] = useState(false)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(initialProfile.avatar_url)
+    const [pendingFile, setPendingFile] = useState<File | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            try {
+                // Process image immediately
+                const processedFile = await processImage(file)
+                const url = URL.createObjectURL(processedFile)
+                setPreviewUrl(url)
+                setPendingFile(processedFile)
+            } catch (error) {
+                console.error('Error processing image:', error)
+                alert('Error processing image. Please try another file.')
+            }
+        }
+    }
 
     const handleSubmit = async (formData: FormData) => {
         setIsSaving(true)
 
         // Update Profile
+        if (pendingFile) {
+            formData.set('avatar', pendingFile)
+        }
         await updateProfile(formData)
 
-        // Update Site Settings
-        await updateSiteSettings(formData)
+        // Update Site Settings - Moved to Design Tab
+        // await updateSiteSettings(formData)
 
         setIsSaving(false)
         alert('Settings saved successfully!')
+    }
+
+    const handleExport = async () => {
+        setIsExporting(true)
+        try {
+            await exportSiteData()
+            alert('Export started! Your download will begin shortly.')
+        } catch (error) {
+            console.error('Export failed:', error)
+            alert('Export failed. Please try again.')
+        } finally {
+            setIsExporting(false)
+        }
     }
 
     const handleUpgrade = async () => {
@@ -85,18 +124,30 @@ export function SettingsForm({
                     </div>
 
                     <div className="flex items-center gap-5 mb-5">
-                        <div className="w-20 h-20 rounded-full bg-gray-100 overflow-hidden relative">
+                        <div className="w-20 h-20 rounded-full bg-gray-100 overflow-hidden relative border border-gray-200">
                             <Image
-                                src={initialProfile.avatar_url || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200"}
+                                src={previewUrl || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200"}
                                 alt="Profile"
                                 fill
                                 className="object-cover"
                             />
                         </div>
                         <div>
-                            <button type="button" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors">
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors"
+                            >
                                 Change Photo
                             </button>
+                            <input
+                                type="file"
+                                name="avatar"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileSelect}
+                            />
                             <div className="text-xs text-[#999999] mt-1.5">JPG or PNG. Max 2MB.</div>
                         </div>
                     </div>
@@ -122,48 +173,20 @@ export function SettingsForm({
                     </div>
                 </div>
 
-                {/* Site Settings (Merged into Settings for simplicity in this MVP) */}
+                {/* Site Settings (Moved to Design) */}
                 <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
-                    <div className="flex justify-between items-center mb-6">
+                    <div className="flex justify-between items-center">
                         <div>
                             <div className="font-semibold text-lg flex items-center gap-2.5 text-[#111111]">
-                                <MapPin size={24} /> Site Details
+                                <MapPin size={24} /> Artist Identity & Site Design
                             </div>
                             <div className="text-sm text-[#666666] mt-1">
-                                Basic information for your public portfolio.
+                                Manage your public portfolio appearance, bio, and contact info in the Site Design tab.
                             </div>
                         </div>
-                    </div>
-
-                    <div className="mb-5">
-                        <label className="block text-sm font-medium mb-2 text-[#333333]">Site Title</label>
-                        <input
-                            name="site_title"
-                            type="text"
-                            defaultValue={initialSettings.site_title || ''}
-                            placeholder="e.g. Enrico Trujillo Art"
-                            className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
-                        />
-                    </div>
-
-                    <div className="mb-5">
-                        <label className="block text-sm font-medium mb-2 text-[#333333]">Artist Bio (Short)</label>
-                        <textarea
-                            name="site_bio"
-                            defaultValue={initialSettings.site_bio || ''}
-                            className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors min-h-[100px]"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-2 text-[#333333]">Custom Domain</label>
-                        <input
-                            name="custom_domain"
-                            type="text"
-                            defaultValue={initialSettings.custom_domain || ''}
-                            placeholder="e.g. enricotrujillo.com"
-                            className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
-                        />
+                        <a href="/dashboard/design" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 no-underline">
+                            Go to Site Design <ArrowSquareOut size={16} />
+                        </a>
                     </div>
                 </div>
 
@@ -200,6 +223,28 @@ export function SettingsForm({
                                 {isLoadingCheckout ? 'Loading...' : 'Upgrade to Pro'} <ArrowSquareOut size={16} />
                             </button>
                         )}
+                    </div>
+                </div>
+
+                {/* Data Portability */}
+                <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <div className="font-semibold text-lg flex items-center gap-2.5 text-[#111111]">
+                                <DownloadSimple size={24} /> Data Portability
+                            </div>
+                            <div className="text-sm text-[#666666] mt-1">
+                                Download a ZIP file containing your site as static HTML and all your artwork images.
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleExport}
+                            disabled={isExporting}
+                            className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {isExporting ? 'Exporting...' : 'Export Site Data'} <DownloadSimple size={16} />
+                        </button>
                     </div>
                 </div>
 

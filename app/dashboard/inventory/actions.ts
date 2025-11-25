@@ -34,6 +34,7 @@ export async function createArtwork(formData: FormData) {
     const dimensions = formData.get('dimensions') as string
     const collection = formData.get('collection') as string
     const status = formData.get('status') as string
+    const description = formData.get('description') as string
     const imageFile = formData.get('image') as File
 
     let image_url = 'https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=400'
@@ -58,6 +59,7 @@ export async function createArtwork(formData: FormData) {
     const { error } = await supabase.from('artworks').insert({
         user_id: user.id,
         title,
+        description,
         medium,
         price: price ? parseFloat(price) : null,
         dimensions,
@@ -88,10 +90,12 @@ export async function updateArtwork(id: string, formData: FormData) {
     const dimensions = formData.get('dimensions') as string
     const collection = formData.get('collection') as string
     const status = formData.get('status') as string
+    const description = formData.get('description') as string
     const imageFile = formData.get('image') as File
 
     const updates: any = {
         title,
+        description,
         medium,
         price: price ? parseFloat(price) : null,
         dimensions,

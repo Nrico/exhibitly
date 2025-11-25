@@ -15,6 +15,7 @@ import {
 } from '@phosphor-icons/react'
 import Image from 'next/image'
 import { createArtwork, updateArtwork, deleteArtwork } from '@/app/dashboard/inventory/actions'
+import { processImage } from '@/utils/image-processing'
 
 type Artwork = {
     id: string
@@ -25,6 +26,7 @@ type Artwork = {
     collection: string | null
     status: string | null
     image_url: string | null
+    description: string | null
 }
 
 export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[] }) {
@@ -46,6 +48,9 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
         return item.status === filterStatus
     })
 
+    // Derive unique collections from existing artworks
+    const uniqueCollections = Array.from(new Set(initialArtworks.map(item => item.collection).filter(Boolean))) as string[]
+
     const openEditor = (item: Artwork) => {
         setSelectedItem(item)
         setPreviewUrl(item.image_url)
@@ -53,11 +58,20 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
         setIsEditorOpen(true)
     }
 
-    const openCreateEditor = () => {
+    const [pendingFile, setPendingFile] = useState<File | null>(null)
+
+    const openCreateEditor = (file?: File) => {
         setSelectedItem(null)
-        setPreviewUrl(null)
         setIsCreating(true)
         setIsEditorOpen(true)
+
+        if (file) {
+            setPendingFile(file)
+            setPreviewUrl(URL.createObjectURL(file))
+        } else {
+            setPendingFile(null)
+            setPreviewUrl(null)
+        }
     }
 
     const closeEditor = () => {
@@ -65,15 +79,24 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
         setTimeout(() => {
             setSelectedItem(null)
             setPreviewUrl(null)
+            setPendingFile(null)
             setIsCreating(false)
         }, 300)
     }
 
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
-            const url = URL.createObjectURL(file)
-            setPreviewUrl(url)
+            try {
+                // Process image immediately upon selection
+                const processedFile = await processImage(file)
+                const url = URL.createObjectURL(processedFile)
+                setPreviewUrl(url)
+                setPendingFile(processedFile) // Store the processed file
+            } catch (error) {
+                console.error('Error processing image:', error)
+                alert('Error processing image. Please try another file.')
+            }
         }
     }
 
@@ -84,6 +107,12 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
         setIsSaving(true)
 
         try {
+            // If we have a pending processed file (from drag-drop or manual select), use it
+            // We prioritize pendingFile because it contains the optimized version
+            if (pendingFile) {
+                formData.set('image', pendingFile)
+            }
+
             let result
             if (isCreating) {
                 result = await createArtwork(formData)
@@ -136,18 +165,17 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
 
         const files = Array.from(e.dataTransfer.files)
         if (files.length > 0) {
-            // For MVP, we'll just take the first file and open the create editor with it
-            // In a real app, we'd handle batch uploads
             const file = files[0]
             if (file.type.startsWith('image/')) {
-                openCreateEditor()
-                // We need a small delay to let the editor render before setting the preview
-                // Ideally we'd pass the file to the editor, but for now we'll just set the preview
-                // and let the user re-select the file in the input (limitation of file inputs)
-                // OR we can use a hidden file input and manually set files, but that's tricky in React.
-                // Better UX for now: Open editor and show the preview, but user has to drop again or select.
-                // Actually, let's just alert for now as batch upload is complex.
-                alert('Batch upload coming soon! Please use "Add Single Item" to upload images.')
+                try {
+                    const processedFile = await processImage(file)
+                    openCreateEditor(processedFile)
+                } catch (error) {
+                    console.error('Error processing image:', error)
+                    alert('Error processing image.')
+                }
+            } else {
+                alert('Please upload an image file.')
             }
         }
     }
@@ -157,7 +185,7 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
             <header className="flex justify-between items-center mb-8">
                 <h1 className="font-serif text-4xl text-[#111111]">Inventory</h1>
                 <button
-                    onClick={openCreateEditor}
+                    onClick={() => openCreateEditor()}
                     className="bg-[#111111] text-white border-none px-4 py-2.5 rounded-md text-sm cursor-pointer flex items-center gap-2 hover:bg-[#333] transition-colors"
                 >
                     <Plus size={16} weight="bold" /> Add Single Item
@@ -211,11 +239,12 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                         <WarningCircle size={16} /> Needs Review ({initialArtworks.filter(i => i.status === 'draft').length})
                     </div>
                 </div>
-                <div className="flex gap-2.5">
-                    <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 bg-white rounded-md text-sm text-[#111111] hover:bg-gray-50 hover:border-gray-300 transition-colors">
+                <div className="flex gap-2.5 opacity-50 pointer-events-none grayscale">
+                    {/* Placeholder buttons for future features */}
+                    <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 bg-white rounded-md text-sm text-[#111111]">
                         <FilePdf size={16} /> PDF Sheet
                     </button>
-                    <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 bg-white rounded-md text-sm text-[#111111] hover:bg-gray-50 hover:border-gray-300 transition-colors">
+                    <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 bg-white rounded-md text-sm text-[#111111]">
                         <FileArchive size={16} /> Export .zip
                     </button>
                 </div>
@@ -359,16 +388,33 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                         </div>
 
                         <div className="mb-5">
+                            <label className="block text-xs font-semibold mb-1.5 text-[#444]">Description</label>
+                            <div className="text-xs text-[#888] mb-1">Supports HTML (e.g. &lt;p&gt;, &lt;b&gt;)</div>
+                            <textarea
+                                name="description"
+                                defaultValue={selectedItem?.description || ''}
+                                className="w-full p-2.5 border border-gray-200 rounded-md text-sm font-sans focus:outline-none focus:border-[#111111] transition-colors min-h-[100px]"
+                                placeholder="Describe the artwork..."
+                            />
+                        </div>
+
+                        <div className="mb-5">
                             <label className="block text-xs font-semibold mb-1.5 text-[#444]">Collection / Series</label>
                             <input
                                 name="collection"
                                 type="text"
+                                list="collection-options"
                                 defaultValue={selectedItem?.collection || ''}
-                                placeholder="e.g. Desert Series"
+                                placeholder="Select or type new collection..."
                                 className="w-full p-2.5 border border-gray-200 rounded-md text-sm font-sans focus:outline-none focus:border-[#111111] transition-colors"
                             />
+                            <datalist id="collection-options">
+                                {uniqueCollections.map(collection => (
+                                    <option key={collection} value={collection} />
+                                ))}
+                            </datalist>
                             <div className="text-xs text-[#888888] mt-1.5 font-mono">
-                                Used for file export renaming: Title_Collection.jpg
+                                Group artworks into series. Clear text to remove.
                             </div>
                         </div>
 

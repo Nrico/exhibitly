@@ -30,7 +30,7 @@ export function Sidebar({ user }: { user: any }) {
                     <ImageIcon size={18} />
                     Inventory
                 </Link>
-                <Link href="#" className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-[#888888] hover:bg-[#1a1a1a] hover:text-white transition-colors">
+                <Link href="/dashboard/export" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname === '/dashboard/export' ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
                     <DownloadSimple size={18} />
                     Export Data
                 </Link>
