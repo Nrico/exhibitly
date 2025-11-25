@@ -106,7 +106,6 @@ export default async function Dashboard() {
                                 <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Uploaded</th>
                                 <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Price</th>
                                 <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Status</th>
-                                <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -133,11 +132,6 @@ export default async function Dashboard() {
                                             {item.status === 'draft' && <MagicWand size={12} weight="fill" />}
                                             {item.status}
                                         </span>
-                                    </td>
-                                    <td className="p-4">
-                                        <button className="text-[#666666] text-sm hover:text-[#111111] hover:underline">
-                                            Edit
-                                        </button>
                                     </td>
                                 </tr>
                             ))}
