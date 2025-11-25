@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { InstagramLogo, Globe, EnvelopeSimple, X, Copy } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -50,7 +51,10 @@ export function PortfolioLayout({
     const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null)
     const [currentView, setCurrentView] = useState<'gallery' | 'about' | 'contact'>('gallery')
     const [selectedCollection, setSelectedCollection] = useState<string>('All')
-    const theme = settings.theme || 'minimal'
+
+    const searchParams = useSearchParams()
+    const previewTheme = searchParams.get('preview')
+    const theme = previewTheme || settings.theme || 'minimal'
 
     // Extract unique collections
     const uniqueCollections = Array.from(new Set(artworks.map(item => item.collection).filter(Boolean))) as string[]

@@ -89,13 +89,13 @@ export default function DesignClient({ initialSettings, username, artworks }: { 
                         </p>
                     </div>
                     <div className="flex items-center">
-                        <Link
-                            href={`/${username}`}
+                        <a
+                            href={`/${username}?preview=${activeTheme}`}
                             target="_blank"
                             className="flex items-center gap-2 text-sm font-medium text-[#111111] hover:text-[#666] transition-colors border border-gray-200 bg-white px-4 py-2 rounded-md"
                         >
-                            View Live Site <ArrowSquareOut size={16} />
-                        </Link>
+                            Preview Full Site <ArrowSquareOut size={16} />
+                        </a>
                     </div>
                 </header>
 
@@ -301,7 +301,7 @@ export default function DesignClient({ initialSettings, username, artworks }: { 
                         disabled={isSaving}
                         className="bg-[#111111] text-white px-8 py-3 rounded-md text-sm font-medium hover:bg-[#333] transition-colors disabled:opacity-50"
                     >
-                        {isSaving ? 'Saving...' : 'Publish Changes'}
+                        {isSaving ? 'Publishing...' : 'Publish Changes'}
                     </button>
                 </div>
             </div>
