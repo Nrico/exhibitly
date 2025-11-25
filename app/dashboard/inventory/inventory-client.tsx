@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
     Plus,
@@ -46,33 +46,11 @@ type Artwork = {
     position?: number
 }
 
-function SortableRow({ item, openEditor }: { item: Artwork, openEditor: (item: Artwork) => void }) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging
-    } = useSortable({ id: item.id })
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        zIndex: isDragging ? 10 : 1,
-        position: isDragging ? 'relative' as const : undefined,
-    }
-
+function RowContent({ item, openEditor, dragHandle }: { item: Artwork, openEditor: (item: Artwork) => void, dragHandle?: React.ReactNode }) {
     return (
-        <tr
-            ref={setNodeRef}
-            style={style}
-            className={`border-b border-gray-50 last:border-none hover:bg-[#fcfcfc] transition-colors ${isDragging ? 'bg-gray-50 shadow-md' : ''}`}
-        >
+        <>
             <td className="p-4 w-[40px]">
-                <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-2">
-                    <DotsSixVertical size={20} />
-                </div>
+                {dragHandle}
             </td>
             <td className="p-4 pl-0" onClick={() => openEditor(item)}>
                 <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden relative cursor-pointer">
@@ -116,6 +94,58 @@ function SortableRow({ item, openEditor }: { item: Artwork, openEditor: (item: A
             <td className="p-4 text-[#ccc] cursor-pointer" onClick={() => openEditor(item)}>
                 <CaretRight size={16} />
             </td>
+        </>
+    )
+}
+
+function SortableRow({ item, openEditor }: { item: Artwork, openEditor: (item: Artwork) => void }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: item.id })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 10 : 1,
+        position: isDragging ? 'relative' as const : undefined,
+    }
+
+    return (
+        <tr
+            ref={setNodeRef}
+            style={style}
+            className={`border-b border-gray-50 last:border-none hover:bg-[#fcfcfc] transition-colors ${isDragging ? 'bg-gray-50 shadow-md' : ''}`}
+        >
+            <RowContent
+                item={item}
+                openEditor={openEditor}
+                dragHandle={
+                    <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-2">
+                        <DotsSixVertical size={20} />
+                    </div>
+                }
+            />
+        </tr>
+    )
+}
+
+function StaticRow({ item, openEditor }: { item: Artwork, openEditor: (item: Artwork) => void }) {
+    return (
+        <tr className="border-b border-gray-50 last:border-none hover:bg-[#fcfcfc] transition-colors">
+            <RowContent
+                item={item}
+                openEditor={openEditor}
+                dragHandle={
+                    <div className="text-gray-300 p-2 cursor-not-allowed">
+                        <DotsSixVertical size={20} />
+                    </div>
+                }
+            />
         </tr>
     )
 }
@@ -134,6 +164,11 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
 
     const [artworks, setArtworks] = useState<Artwork[]>(initialArtworks)
     const [filterStatus, setFilterStatus] = useState<'all' | 'available' | 'sold' | 'draft'>('all')
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     // Update local state when initialArtworks changes (e.g. after server action refresh)
     if (initialArtworks !== artworks && initialArtworks.length !== artworks.length) {
@@ -433,11 +468,46 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
 
             {/* DATA GRID */}
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                >
+                {mounted ? (
+                    <DndContext
+                        id="inventory-dnd-context"
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <table className="w-full border-collapse">
+                            <thead>
+                                <tr className="bg-[#fafafa] border-b border-gray-200 text-left">
+                                    <th className="p-4 w-[40px]"></th>
+                                    <th className="p-4 pl-0 text-xs uppercase text-[#666666] font-semibold w-[60px]">Image</th>
+                                    <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Title / Description</th>
+                                    <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Collection</th>
+                                    <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Medium</th>
+                                    <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Price</th>
+                                    <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Status</th>
+                                    <th className="p-4 w-[50px]"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredArtworks.length === 0 && (
+                                    <tr>
+                                        <td colSpan={8} className="p-8 text-center text-[#666666]">
+                                            No artworks found. Add one to get started.
+                                        </td>
+                                    </tr>
+                                )}
+                                <SortableContext
+                                    items={filteredArtworks.map(item => item.id)}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    {filteredArtworks.map((item) => (
+                                        <SortableRow key={item.id} item={item} openEditor={openEditor} />
+                                    ))}
+                                </SortableContext>
+                            </tbody>
+                        </table>
+                    </DndContext>
+                ) : (
                     <table className="w-full border-collapse">
                         <thead>
                             <tr className="bg-[#fafafa] border-b border-gray-200 text-left">
@@ -459,17 +529,12 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                                     </td>
                                 </tr>
                             )}
-                            <SortableContext
-                                items={filteredArtworks.map(item => item.id)}
-                                strategy={verticalListSortingStrategy}
-                            >
-                                {filteredArtworks.map((item) => (
-                                    <SortableRow key={item.id} item={item} openEditor={openEditor} />
-                                ))}
-                            </SortableContext>
+                            {filteredArtworks.map((item) => (
+                                <StaticRow key={item.id} item={item} openEditor={openEditor} />
+                            ))}
                         </tbody>
                     </table>
-                </DndContext>
+                )}
             </div>
 
             {/* SLIDE-OVER EDIT PANEL */}
