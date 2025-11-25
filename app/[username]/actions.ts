@@ -33,6 +33,7 @@ export async function getArtistData(username: string) {
         .select('*')
         .eq('user_id', profile.id)
         .in('status', ['available', 'sold', 'Live']) // 'Live' was used in mock data, 'available' in new schema
+        .order('position', { ascending: true })
         .order('created_at', { ascending: false })
 
     return {

@@ -147,3 +147,29 @@ export async function deleteArtwork(id: string) {
     revalidatePath('/dashboard/inventory')
     return { success: true }
 }
+
+export async function reorderArtworks(items: { id: string, position: number }[]) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    // Perform updates in a transaction-like manner (or just parallel promises)
+    // Supabase doesn't support easy transactions via client yet, so we'll just loop.
+    // For a small number of items (20-50), this is fine.
+
+    const updates = items.map(item =>
+        supabase
+            .from('artworks')
+            .update({ position: item.position })
+            .eq('id', item.id)
+            .eq('user_id', user.id)
+    )
+
+    await Promise.all(updates)
+
+    revalidatePath('/dashboard/inventory')
+    return { success: true }
+}
