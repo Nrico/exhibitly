@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { InstagramLogo, Globe, EnvelopeSimple, X } from '@phosphor-icons/react'
+import { InstagramLogo, Globe, EnvelopeSimple, X, Copy } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 type Profile = {
     full_name: string | null
@@ -67,6 +68,7 @@ export function PortfolioLayout({
                 onClose={() => setSelectedArtwork(null)}
                 settings={settings}
                 profile={profile}
+                theme={theme}
             />
         )
     )
@@ -123,43 +125,43 @@ export function PortfolioLayout({
 
                     {/* Scrollable Gallery */}
                     <main className="w-full md:w-[65%] md:ml-[35%] p-8 md:p-[80px_60px]">
-                        {currentView === 'gallery' && filteredArtworks.map((artwork, index) => (
-                            <article
-                                key={artwork.id}
-                                className="mb-24 opacity-0 animate-[fadeUp_1s_forwards]"
-                                style={{ animationDelay: `${index * 0.2}s` }}
-                                onClick={() => setSelectedArtwork(artwork)}
-                            >
-                                <div className="p-4 bg-white shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform duration-500">
-                                    <div className="relative aspect-[4/3] w-full">
-                                        {artwork.image_url && (
-                                            <Image
-                                                src={artwork.image_url}
-                                                alt={artwork.title}
-                                                fill
-                                                className="object-cover contrast-[1.05]"
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="mt-6 flex justify-between items-end border-b border-[#333] pb-4">
-                                    <div>
-                                        <h2 className="font-[family-name:var(--font-cinzel)] text-2xl md:text-3xl mb-1">{artwork.title}</h2>
-                                        <p className="text-[#888] text-sm italic">{artwork.medium}, {artwork.dimensions}</p>
-                                    </div>
-                                    <div className="text-right font-[family-name:var(--font-cinzel)] text-sm">
-                                        {artwork.status === 'sold' ? (
-                                            <div>
-                                                <span className="text-[#555] line-through mr-2">Sold</span>
-                                                <span className="inline-block w-2 h-2 rounded-full bg-[#aa3a3a]"></span>
+                        {currentView === 'gallery' && (
+                            <div className="columns-1 md:columns-2 gap-10 space-y-10">
+                                {filteredArtworks.map((artwork, index) => (
+                                    <article
+                                        key={artwork.id}
+                                        className="break-inside-avoid mb-10 opacity-0 animate-[fadeUp_1s_forwards] cursor-pointer group"
+                                        style={{ animationDelay: `${index * 0.1}s` }}
+                                        onClick={() => setSelectedArtwork(artwork)}
+                                    >
+                                        <div className="bg-white p-2 shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
+                                            {artwork.image_url && (
+                                                <Image
+                                                    src={artwork.image_url}
+                                                    alt={artwork.title}
+                                                    width={0}
+                                                    height={0}
+                                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                                    style={{ width: '100%', height: 'auto' }}
+                                                    className="block contrast-[1.05]"
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="mt-4 border-b border-[#333] pb-2">
+                                            <h2 className="font-[family-name:var(--font-cinzel)] text-xl text-[#e0e0e0] mb-1">{artwork.title}</h2>
+                                            <div className="flex justify-between items-baseline text-xs font-serif text-[#888]">
+                                                <span>{artwork.medium}</span>
+                                                {artwork.status === 'sold' ? (
+                                                    <span className="text-[#aa3a3a]">Sold</span>
+                                                ) : (
+                                                    <span className="text-[#c5a059]">{artwork.price ? `$${artwork.price.toLocaleString()}` : 'Inquire'}</span>
+                                                )}
                                             </div>
-                                        ) : (
-                                            <span className="text-[#c5a059] block mt-1">{artwork.price ? `$${artwork.price.toLocaleString()}` : 'Inquire'}</span>
-                                        )}
-                                    </div>
-                                </div>
-                            </article>
-                        ))}
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        )}
                         {currentView === 'about' && <AboutView profile={profile} settings={settings} theme="dark" />}
                         {currentView === 'contact' && <ContactView profile={profile} settings={settings} theme="dark" />}
                     </main>
@@ -349,50 +351,191 @@ export function PortfolioLayout({
     )
 }
 
-function DetailModal({ artwork, onClose, settings, profile }: { artwork: Artwork, onClose: () => void, settings: SiteSettings, profile: Profile }) {
+function DetailModal({ artwork, onClose, settings, profile, theme }: { artwork: Artwork, onClose: () => void, settings: SiteSettings, profile: Profile, theme: string }) {
+
+    // Helper for the inquiry button to avoid code duplication
+    const InquiryButton = ({ className, iconColor }: { className?: string, iconColor?: string }) => (
+        <div className="flex flex-col gap-3 items-start">
+            <a
+                href={`mailto:${settings.contact_email || profile.email}?subject=Inquiry: ${artwork.title}&body=Hi, I am interested in "${artwork.title}".`}
+                onClick={(e) => {
+                    const email = settings.contact_email || profile.email
+                    if (email) {
+                        navigator.clipboard.writeText(email)
+                        toast.success('Email copied to clipboard!')
+                    }
+                }}
+                className={className}
+            >
+                Inquire to Acquire
+            </a>
+            <div className={`text-[10px] uppercase tracking-wider flex items-center gap-1 ${iconColor || 'text-[#888]'}`}>
+                <EnvelopeSimple size={12} />
+                {settings.contact_email || profile.email}
+            </div>
+        </div>
+    )
+
+    // CINEMA THEME (Dark, Split Screen)
+    if (theme === 'dark') {
+        return (
+            <div className="fixed inset-0 z-50 bg-[#0a0a0a]/98 backdrop-blur-md flex items-center justify-center animate-[fadeIn_0.3s_ease]">
+                <button
+                    onClick={onClose}
+                    className="absolute top-6 right-6 text-4xl text-[#666] hover:text-[#c5a059] transition-colors z-50"
+                >
+                    <X size={32} />
+                </button>
+
+                <div className="w-full h-full flex flex-col md:flex-row">
+                    {/* Image Side */}
+                    <div className="w-full md:w-2/3 h-[50vh] md:h-full relative bg-black flex items-center justify-center p-8">
+                        {artwork.image_url && (
+                            <div className="relative w-full h-full">
+                                <Image
+                                    src={artwork.image_url}
+                                    alt={artwork.title}
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Details Side */}
+                    <div className="w-full md:w-1/3 h-[50vh] md:h-full bg-[#111] text-[#e0e0e0] p-8 md:p-12 overflow-y-auto flex flex-col justify-center border-l border-[#222]">
+                        <h2 className="text-3xl md:text-4xl font-[family-name:var(--font-cinzel)] mb-2 text-[#c5a059]">{artwork.title}</h2>
+                        <div className="text-[#888] text-sm italic mb-8 font-serif">
+                            {artwork.medium} &mdash; {artwork.dimensions}
+                        </div>
+
+                        {artwork.description && (
+                            <div
+                                className="text-[#ccc] mb-10 leading-relaxed whitespace-pre-wrap [&>p]:mb-4 font-light tracking-wide"
+                                dangerouslySetInnerHTML={{ __html: artwork.description }}
+                            />
+                        )}
+
+                        <div className="mt-auto">
+                            {artwork.status === 'available' ? (
+                                <InquiryButton
+                                    className="inline-block border border-[#c5a059] text-[#c5a059] px-8 py-3 text-sm uppercase tracking-[3px] hover:bg-[#c5a059] hover:text-black transition-all duration-300 cursor-pointer"
+                                    iconColor="text-[#666]"
+                                />
+                            ) : (
+                                <div className="flex items-center gap-2 text-[#666] italic border-t border-[#333] pt-4">
+                                    <span className="w-2 h-2 rounded-full bg-[#aa3a3a]"></span>
+                                    Private Collection
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    // ARCHIVE THEME (Clean, Structured)
+    if (theme === 'archive') {
+        return (
+            <div className="fixed inset-0 z-50 bg-white/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 overflow-y-auto animate-[fadeIn_0.3s_ease]">
+                <div className="bg-white w-full max-w-6xl min-h-[600px] shadow-2xl border border-[#eee] relative flex flex-col md:flex-row">
+                    <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 text-[#111] hover:text-[#666] z-50 p-2 bg-white/80 rounded-full"
+                    >
+                        <X size={24} />
+                    </button>
+
+                    {/* Image Area */}
+                    <div className="w-full md:w-3/5 bg-[#f4f4f4] p-8 md:p-12 flex items-center justify-center relative min-h-[400px]">
+                        {artwork.image_url && (
+                            <div className="relative w-full h-full shadow-lg">
+                                <Image
+                                    src={artwork.image_url}
+                                    alt={artwork.title}
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Info Area */}
+                    <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col bg-white">
+                        <div className="mb-8 pb-8 border-b border-[#eee]">
+                            <h2 className="text-2xl font-bold text-[#111] mb-2">{artwork.title}</h2>
+                            <div className="text-[#555] text-sm font-mono">
+                                {artwork.medium}<br />
+                                {artwork.dimensions}
+                            </div>
+                        </div>
+
+                        {artwork.description && (
+                            <div
+                                className="text-[#333] mb-8 leading-relaxed whitespace-pre-wrap [&>p]:mb-4 text-sm"
+                                dangerouslySetInnerHTML={{ __html: artwork.description }}
+                            />
+                        )}
+
+                        <div className="mt-auto pt-8">
+                            {artwork.status === 'available' ? (
+                                <InquiryButton
+                                    className="block w-full text-center bg-black text-white px-6 py-4 text-sm font-bold uppercase tracking-wide hover:bg-[#333] transition-colors cursor-pointer"
+                                />
+                            ) : (
+                                <div className="bg-[#f9f9f9] p-4 text-center text-[#999] text-sm font-semibold uppercase tracking-wide">
+                                    Sold
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    // WHITE CUBE / MINIMAL (Default)
     return (
-        <div className="fixed inset-0 z-50 bg-white/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 overflow-y-auto animate-[fadeIn_0.3s_ease]">
+        <div className="fixed inset-0 z-50 bg-white/98 backdrop-blur-md flex items-center justify-center p-4 md:p-8 overflow-y-auto animate-[fadeIn_0.3s_ease]">
             <button
                 onClick={onClose}
-                className="absolute top-8 right-8 text-4xl text-[#aaa] hover:text-[#2a2a2a] font-[family-name:var(--font-display)] leading-none transition-colors z-50"
+                className="absolute top-8 right-8 text-4xl text-[#ddd] hover:text-[#2a2a2a] font-[family-name:var(--font-display)] leading-none transition-colors z-50"
             >
                 &times;
             </button>
 
             <div className="w-full max-w-5xl flex flex-col items-center">
-                <div className="relative w-full max-h-[70vh] aspect-[4/3] mb-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white p-2 md:p-4">
+                <div className="relative w-full max-h-[70vh] aspect-[4/3] mb-10 p-2 md:p-4">
                     {artwork.image_url && (
                         <Image
                             src={artwork.image_url}
                             alt={artwork.title}
                             fill
-                            className="object-contain"
+                            className="object-contain drop-shadow-xl"
                         />
                     )}
                 </div>
 
-                <div className="text-center max-w-2xl">
-                    <h2 className="text-3xl md:text-4xl font-[family-name:var(--font-display)] text-[#2a2a2a] mb-2">{artwork.title}</h2>
-                    <div className="text-[#888] text-sm mb-6">
+                <div className="text-center max-w-2xl animate-[fadeUp_0.5s_ease-out]">
+                    <h2 className="text-3xl md:text-4xl font-[family-name:var(--font-display)] text-[#2a2a2a] mb-3">{artwork.title}</h2>
+                    <div className="text-[#888] text-xs uppercase tracking-[2px] mb-8">
                         {artwork.medium} &bull; {artwork.dimensions}
                     </div>
 
                     {artwork.description && (
                         <div
-                            className="text-[#555] mb-8 leading-relaxed whitespace-pre-wrap [&>p]:mb-4"
+                            className="text-[#555] mb-10 leading-relaxed whitespace-pre-wrap [&>p]:mb-4 font-light"
                             dangerouslySetInnerHTML={{ __html: artwork.description }}
                         />
                     )}
 
                     {artwork.status === 'available' ? (
-                        <a
-                            href={`mailto:${settings.contact_email || profile.email}?subject=Inquiry: ${artwork.title}&body=Hi, I am interested in "${artwork.title}".`}
-                            className="inline-block bg-black text-white px-8 py-3 text-sm uppercase tracking-widest hover:opacity-80 transition-opacity"
-                        >
-                            Inquire to Acquire
-                        </a>
+                        <InquiryButton
+                            className="inline-block bg-transparent border border-[#2a2a2a] text-[#2a2a2a] px-10 py-3 text-xs uppercase tracking-[3px] hover:bg-[#2a2a2a] hover:text-white transition-all duration-300 cursor-pointer"
+                        />
                     ) : (
-                        <span className="text-[#888] italic">This piece is in a private collection.</span>
+                        <span className="text-[#ccc] text-sm uppercase tracking-widest">Private Collection</span>
                     )}
                 </div>
             </div>
