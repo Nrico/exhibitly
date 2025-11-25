@@ -99,6 +99,7 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
     }
 
     const [isSaving, setIsSaving] = useState(false)
+    const [uploadProgress, setUploadProgress] = useState<{ current: number, total: number } | null>(null)
 
     const handleSave = async (formData: FormData) => {
         if (isSaving) return // Prevent double submission
@@ -163,17 +164,62 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
 
         const files = Array.from(e.dataTransfer.files)
         if (files.length > 0) {
-            const file = files[0]
-            if (file.type.startsWith('image/')) {
-                try {
-                    const processedFile = await processImage(file)
-                    openCreateEditor(processedFile)
-                } catch (error) {
-                    console.error('Error processing image:', error)
-                    alert('Error processing image.')
+            // Filter for images only
+            const imageFiles = files.filter(file => file.type.startsWith('image/'))
+
+            if (imageFiles.length === 0) {
+                alert('Please upload image files.')
+                return
+            }
+
+            // Batch Upload Logic
+            setUploadProgress({ current: 0, total: imageFiles.length })
+
+            try {
+                let successCount = 0
+
+                for (let i = 0; i < imageFiles.length; i++) {
+                    const file = imageFiles[i]
+                    setUploadProgress({ current: i + 1, total: imageFiles.length })
+
+                    try {
+                        // 1. Process Image
+                        const processedFile = await processImage(file)
+
+                        // 2. Prepare Form Data
+                        const formData = new FormData()
+                        formData.set('image', processedFile)
+                        // Use filename as title (remove extension)
+                        const title = file.name.replace(/\.[^/.]+$/, "")
+                        formData.set('title', title)
+                        formData.set('status', 'draft')
+
+                        // 3. Create Artwork
+                        const result = await createArtwork(formData)
+
+                        if (!result?.error) {
+                            successCount++
+                        } else {
+                            console.error(`Failed to upload ${file.name}:`, result.error)
+                        }
+                    } catch (err) {
+                        console.error(`Error processing ${file.name}:`, err)
+                    }
                 }
-            } else {
-                alert('Please upload an image file.')
+
+                router.refresh()
+
+                if (successCount === imageFiles.length) {
+                    // All good
+                } else {
+                    alert(`Uploaded ${successCount} of ${imageFiles.length} images. Check console for errors.`)
+                }
+
+            } catch (error) {
+                console.error('Batch upload error:', error)
+                alert('An error occurred during batch upload.')
+            } finally {
+                setUploadProgress(null)
             }
         }
     }
@@ -197,16 +243,25 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                 onDrop={onDrop}
                 className={`bg-white border-2 border-dashed rounded-lg p-10 text-center mb-10 transition-all cursor-pointer group ${isDragging ? 'border-[#111] bg-[#fafafa]' : 'border-[#ccc] hover:border-[#111] hover:bg-[#fafafa]'}`}
             >
-                <div className="flex justify-center mb-2.5">
-                    <UploadSimple size={32} className={`transition-colors ${isDragging ? 'text-[#111]' : 'text-[#ccc] group-hover:text-[#111]'}`} />
-                </div>
-                <div className="font-semibold text-lg mb-1.5 text-[#111111]">Drag & Drop Batch Upload</div>
-                <div className="text-[#666666] text-sm">
-                    Max 20 images per batch.
-                    <span className="text-[#f57f17] font-medium ml-1.5 inline-flex items-center gap-1">
-                        <MagicWand size={16} weight="fill" /> AI Auto-Tagging Enabled
-                    </span>
-                </div>
+                {uploadProgress ? (
+                    <div className="flex flex-col items-center justify-center py-4">
+                        <div className="w-12 h-12 border-4 border-gray-200 border-t-[#111] rounded-full animate-spin mb-4"></div>
+                        <div className="font-semibold text-lg text-[#111111]">Uploading...</div>
+                        <div className="text-[#666666] text-sm mt-1">
+                            Processing image {uploadProgress.current} of {uploadProgress.total}
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <div className="flex justify-center mb-2.5">
+                            <UploadSimple size={32} className={`transition-colors ${isDragging ? 'text-[#111]' : 'text-[#ccc] group-hover:text-[#111]'}`} />
+                        </div>
+                        <div className="font-semibold text-lg mb-1.5 text-[#111111]">Drag & Drop Batch Upload</div>
+                        <div className="text-[#666666] text-sm">
+                            Drop multiple images to create draft artworks.
+                        </div>
+                    </>
+                )}
             </div>
 
             {/* TOOLBAR */}
@@ -332,13 +387,7 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                         </button>
                     </div>
 
-                    {/* AI Warning Banner (Only show for drafts/new items for now as a demo) */}
-                    {(isCreating || selectedItem?.status === 'draft') && (
-                        <div className="bg-[#fff8e1] text-[#f57f17] px-5 py-2.5 text-xs font-medium flex items-center gap-2 border-b border-black/5">
-                            <MagicWand size={16} weight="fill" />
-                            Data generated by AI. Please verify.
-                        </div>
-                    )}
+                    {/* AI Warning Banner REMOVED */}
 
                     <div className="p-5 overflow-y-auto flex-1">
                         <div className="text-center mb-5">
