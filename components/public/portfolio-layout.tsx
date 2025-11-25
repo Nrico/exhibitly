@@ -356,29 +356,114 @@ export function PortfolioLayout({
 }
 
 function DetailModal({ artwork, onClose, settings, profile, theme }: { artwork: Artwork, onClose: () => void, settings: SiteSettings, profile: Profile, theme: string }) {
+    const [view, setView] = useState<'details' | 'inquire'>('details')
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-    // Helper for the inquiry button to avoid code duplication
+    // Import action dynamically or pass as prop if needed, but for now assuming direct import works in client component if it's a server action
+    // We need to import it at the top level, but since I'm replacing the whole file content in chunks, I'll add the import in a separate step or assume it's available.
+    // Actually, I should add the import first. Let me do that in a separate step to be safe.
+    // Wait, I can't easily add import in the same step if I'm replacing a chunk at the bottom.
+    // I will assume I can add the import in a separate step.
+
+    // ... wait, I need to use the action. 
+    // I'll define the form handler here.
+
+    const handleInquirySubmit = async (formData: FormData) => {
+        setIsSubmitting(true)
+        // Append hidden fields
+        formData.append('artworkId', artwork.id)
+        formData.append('artworkTitle', artwork.title)
+        formData.append('artistEmail', settings.contact_email || profile.email || '')
+
+        // We need to import sendInquiry. Since I can't add the import line in this chunk, 
+        // I will use a dynamic import or just assume I'll add the import line in the next step.
+        // Let's try to use the action passed as a prop or imported. 
+        // For this tool call, I will write the logic assuming `sendInquiry` is available, and then I will add the import at the top of the file.
+
+        // Actually, to avoid errors, I should probably add the import first. 
+        // But I'm already in this tool call.
+        // I'll use a placeholder and fix the import immediately after.
+
+        const { sendInquiry } = await import('@/app/actions/inquiry')
+
+        const result = await sendInquiry(formData)
+        setIsSubmitting(false)
+
+        if (result.success) {
+            setSubmitStatus('success')
+        } else {
+            setSubmitStatus('error')
+            toast.error(result.error || 'Failed to send inquiry')
+        }
+    }
+
+    // Helper for the inquiry button
     const InquiryButton = ({ className, iconColor }: { className?: string, iconColor?: string }) => (
-        <div className="flex flex-col gap-3 items-start">
-            <a
-                href={`mailto:${settings.contact_email || profile.email}?subject=Inquiry: ${artwork.title}&body=Hi, I am interested in "${artwork.title}".`}
-                onClick={(e) => {
-                    const email = settings.contact_email || profile.email
-                    if (email) {
-                        navigator.clipboard.writeText(email)
-                        toast.success('Email copied to clipboard!')
-                    }
-                }}
-                className={className}
-            >
-                Inquire to Acquire
-            </a>
-            <div className={`text-[10px] uppercase tracking-wider flex items-center gap-1 ${iconColor || 'text-[#888]'}`}>
-                <EnvelopeSimple size={12} />
-                {settings.contact_email || profile.email}
-            </div>
-        </div>
+        <button
+            onClick={() => setView('inquire')}
+            className={className}
+        >
+            Inquire to Acquire
+        </button>
     )
+
+    // INQUIRY FORM VIEW
+    if (view === 'inquire') {
+        return (
+            <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-[fadeIn_0.3s_ease]">
+                <div className={`w-full max-w-md bg-white p-8 rounded-xl shadow-2xl relative ${theme === 'dark' ? 'bg-[#1a1a1a] text-[#e0e0e0] border border-[#333]' : ''}`}>
+                    <button
+                        onClick={() => setView('details')}
+                        className="absolute top-4 right-4 text-[#999] hover:text-black transition-colors"
+                    >
+                        <X size={24} />
+                    </button>
+
+                    {submitStatus === 'success' ? (
+                        <div className="text-center py-10">
+                            <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <EnvelopeSimple size={32} />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">Inquiry Sent!</h3>
+                            <p className="text-[#666] mb-6">The artist has received your message. check your email for a confirmation.</p>
+                            <button onClick={onClose} className="bg-black text-white px-6 py-2 rounded-full text-sm font-medium">
+                                Close
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <h3 className="text-xl font-bold mb-1">Inquire about "{artwork.title}"</h3>
+                            <p className="text-sm text-[#666] mb-6">Send a message directly to the artist.</p>
+
+                            <form action={handleInquirySubmit} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1 text-[#666]">Your Name</label>
+                                    <input required name="name" type="text" className={`w-full p-3 border rounded-md text-sm outline-none focus:border-black transition-colors ${theme === 'dark' ? 'bg-[#333] border-[#444] text-white focus:border-[#c5a059]' : 'border-gray-200'}`} placeholder="Jane Doe" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1 text-[#666]">Your Email</label>
+                                    <input required name="email" type="email" className={`w-full p-3 border rounded-md text-sm outline-none focus:border-black transition-colors ${theme === 'dark' ? 'bg-[#333] border-[#444] text-white focus:border-[#c5a059]' : 'border-gray-200'}`} placeholder="jane@example.com" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider mb-1 text-[#666]">Message</label>
+                                    <textarea required name="message" rows={4} className={`w-full p-3 border rounded-md text-sm outline-none focus:border-black transition-colors ${theme === 'dark' ? 'bg-[#333] border-[#444] text-white focus:border-[#c5a059]' : 'border-gray-200'}`} defaultValue={`Hi, I am interested in "${artwork.title}". Is it still available?`} />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={`w-full py-3 rounded-md font-bold uppercase tracking-wider text-sm transition-all ${theme === 'dark' ? 'bg-[#c5a059] text-black hover:bg-[#d4b06a]' : 'bg-black text-white hover:bg-[#333]'} disabled:opacity-50`}
+                                >
+                                    {isSubmitting ? 'Sending...' : 'Send Inquiry'}
+                                </button>
+                            </form>
+                        </>
+                    )}
+                </div>
+            </div>
+        )
+    }
 
     // CINEMA THEME (Dark, Split Screen)
     if (theme === 'dark') {
