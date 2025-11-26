@@ -5,10 +5,11 @@ import { PlusCircle, MagicWand } from '@phosphor-icons/react/dist/ssr'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { signOut } from '@/app/auth/actions'
+import { getImpersonatedUser } from '@/utils/impersonation'
 
 export default async function Dashboard() {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { user } = await getImpersonatedUser(supabase)
 
     if (!user) {
         return redirect('/auth')

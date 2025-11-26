@@ -13,7 +13,7 @@ export default function Home() {
             <Link href="/auth" className="ml-8 text-sm font-medium text-[#1a1a1a] hover:opacity-70 transition-opacity">
               Login
             </Link>
-            <Link href="/auth" className="ml-5 px-5 py-2 bg-[#1a1a1a] text-white text-sm font-medium uppercase tracking-wider hover:bg-[#333] transition-colors">
+            <Link href="/auth?view=signup" className="ml-5 px-5 py-2 bg-[#1a1a1a] text-white text-sm font-medium uppercase tracking-wider hover:bg-[#333] transition-colors">
               Get Started
             </Link>
           </nav>
@@ -42,10 +42,10 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-5">
-            <Link href="/auth" className="px-8 py-4 bg-[#1a1a1a] text-white text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#333] hover:border-[#333] transition-all">
+            <Link href="/auth?view=signup" className="px-8 py-4 bg-[#1a1a1a] text-white text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#333] hover:border-[#333] transition-all">
               Build Artist Portfolio
             </Link>
-            <Link href="/auth" className="px-8 py-4 bg-transparent text-[#1a1a1a] text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#fafafa] transition-all">
+            <Link href="/gallery" className="px-8 py-4 bg-transparent text-[#1a1a1a] text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#fafafa] transition-all">
               Explore Gallery Solutions
             </Link>
           </div>
@@ -74,7 +74,7 @@ export default function Home() {
               <span className="font-serif text-3xl text-[#666666] opacity-30 mb-5 block">03.</span>
               <h3 className="font-serif text-3xl mb-4 font-normal">Zero-Maintenance Design</h3>
               <p className="text-[#666666] leading-relaxed">
-                A platform you don't have to manage. No plugins, no updates, no broken themes. Just a pristine environment that always works.
+                A platform you don&apos;t have to manage. No plugins, no updates, no broken themes. Just a pristine environment that always works.
               </p>
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function Home() {
             </p>
             <span className="font-sans font-semibold mb-8 block text-xl">$12 / month</span>
             <div>
-              <Link href="/auth" className="inline-block px-8 py-4 bg-[#1a1a1a] text-white text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#333] hover:border-[#333] transition-all">
+              <Link href="/auth?view=signup" className="inline-block px-8 py-4 bg-[#1a1a1a] text-white text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#333] hover:border-[#333] transition-all">
                 Start Artist Trial &rarr;
               </Link>
             </div>
@@ -151,12 +151,12 @@ export default function Home() {
           <div className="p-16 md:p-20 flex flex-col justify-center hover:bg-[#fafafa] transition-colors duration-500 group">
             <span className="text-xs uppercase tracking-[2px] text-[#666666] mb-5">For Galleries & Collectives</span>
             <h2 className="font-serif text-5xl mb-5 font-normal leading-[1.1]">The Gallery<br />Platform.</h2>
-            <p className="text-lg text-[#666666] mb-10 max-w-[400px] leading-relaxed">
-              Manage your roster of artists, curate digital exhibitions, and highlight seasonal events from one unified dashboard.
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              The professional platform for artists to manage inventory, track sales, and present their work to the world. It&apos;s time to get organized.
             </p>
             <span className="font-sans font-semibold mb-8 block text-xl">$79 / month</span>
             <div>
-              <Link href="/auth" className="inline-block px-8 py-4 bg-transparent text-[#1a1a1a] text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white transition-all">
+              <Link href="/gallery" className="inline-block px-8 py-4 bg-transparent text-[#1a1a1a] text-sm font-medium uppercase tracking-[1.5px] border border-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white transition-all">
                 View Gallery Features &rarr;
               </Link>
             </div>
@@ -173,7 +173,7 @@ export default function Home() {
           <div className="flex gap-5">
             <Link href="/privacy" className="hover:text-[#1a1a1a] transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-[#1a1a1a] transition-colors">Terms</Link>
-            <a href="mailto:hello@exhibitly.co" className="hover:text-[#1a1a1a] transition-colors">Contact</a>
+            <a href="mailto:support@exhibitly.app" className="hover:text-[#1a1a1a] transition-colors">Contact</a>
           </div>
         </div>
       </footer>

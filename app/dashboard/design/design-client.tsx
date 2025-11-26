@@ -4,14 +4,11 @@ import { useState } from 'react'
 import {
     PaintBrushBroad,
     IdentificationCard,
-    Globe,
     DeviceMobile,
     Monitor,
     ArrowSquareOut
 } from '@phosphor-icons/react'
-import Image from 'next/image'
 import { saveSiteSettings } from './actions'
-import Link from 'next/link'
 
 type Theme = 'white' | 'dark' | 'archive'
 
@@ -35,12 +32,13 @@ type Artwork = {
     image_url: string | null
 }
 
-export default function DesignClient({ initialSettings, username, artworks }: { initialSettings: SiteSettings, username: string, artworks: Artwork[] }) {
+export default function DesignClient({ initialSettings, username }: { initialSettings: SiteSettings, username: string, artworks: Artwork[] }) {
     const [activeTheme, setActiveTheme] = useState<Theme>((initialSettings.theme as Theme) || 'white')
-    const [siteTitle, setSiteTitle] = useState(initialSettings.site_title || 'Enrico Trujillo')
-    const [siteBio, setSiteBio] = useState(initialSettings.site_bio || 'Fine Art & Digital Fabrication based in Taos, NM. Exploring the intersection of traditional saint carving and modern manufacturing.')
+    const [siteTitle, setSiteTitle] = useState(initialSettings.site_title || '')
+    const [siteBio, setSiteBio] = useState(initialSettings.site_bio || '')
     const [siteBioLong, setSiteBioLong] = useState(initialSettings.site_bio_long || '')
     const [customDomain, setCustomDomain] = useState(initialSettings.custom_domain || '')
+
     const [contactEmail, setContactEmail] = useState(initialSettings.contact_email || '')
     const [phone, setPhone] = useState(initialSettings.phone || '')
     const [address, setAddress] = useState(initialSettings.address || '')
@@ -53,7 +51,6 @@ export default function DesignClient({ initialSettings, username, artworks }: { 
     const handleSave = async () => {
         setIsSaving(true)
         const formData = new FormData()
-        formData.append('site_title', siteTitle)
         formData.append('site_title', siteTitle)
         formData.append('site_bio', siteBio)
         formData.append('site_bio_long', siteBioLong)
@@ -85,7 +82,7 @@ export default function DesignClient({ initialSettings, username, artworks }: { 
                     <div>
                         <h1 className="font-serif text-4xl text-[#111111] mb-2">Site Design</h1>
                         <p className="text-[#666666] text-sm max-w-[500px] leading-relaxed">
-                            Customize the "container" for your art. Changes are saved automatically to draft, but require publishing to go live.
+                            Customize the &quot;container&quot; for your art. Changes are saved automatically to draft, but require publishing to go live.
                         </p>
                     </div>
                 </header>
@@ -172,6 +169,25 @@ export default function DesignClient({ initialSettings, username, artworks }: { 
                                 onChange={(e) => setSiteBio(e.target.value)}
                             />
                         </div>
+                        <div className="mt-5">
+                            <label className="block text-sm font-medium mb-2 text-[#333333]">Artist Bio (Long / About Page)</label>
+                            <textarea
+                                className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors min-h-[200px]"
+                                value={siteBioLong}
+                                onChange={(e) => setSiteBioLong(e.target.value)}
+                                placeholder="HTML is supported for the long bio."
+                            />
+                        </div>
+                        <div className="mt-5">
+                            <label className="block text-sm font-medium mb-2 text-[#333333]">Custom Domain</label>
+                            <input
+                                type="text"
+                                value={customDomain}
+                                onChange={(e) => setCustomDomain(e.target.value)}
+                                className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                placeholder="example.com"
+                            />
+                        </div>
                     </div>
 
                     {/* Contact & Social */}
@@ -190,6 +206,26 @@ export default function DesignClient({ initialSettings, username, artworks }: { 
                                     placeholder="hello@artist.com"
                                 />
                             </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Phone</label>
+                                <input
+                                    type="tel"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="+1 (555) 000-0000"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Address / Studio</label>
+                                <input
+                                    type="text"
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="123 Art St, New York, NY"
+                                />
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 gap-4">
                             <div>
@@ -200,6 +236,26 @@ export default function DesignClient({ initialSettings, username, artworks }: { 
                                     onChange={(e) => setSocialInstagram(e.target.value)}
                                     className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
                                     placeholder="@username"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Twitter / X</label>
+                                <input
+                                    type="text"
+                                    value={socialTwitter}
+                                    onChange={(e) => setSocialTwitter(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="@username"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[#333333]">Facebook</label>
+                                <input
+                                    type="text"
+                                    value={socialFacebook}
+                                    onChange={(e) => setSocialFacebook(e.target.value)}
+                                    className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                    placeholder="facebook.com/username"
                                 />
                             </div>
                         </div>
@@ -250,8 +306,8 @@ export default function DesignClient({ initialSettings, username, artworks }: { 
                 </div>
 
                 <div className={`transition-all duration-500 ease-in-out relative bg-white overflow-hidden ${deviceView === 'mobile'
-                        ? 'w-[375px] h-[812px] rounded-[40px] border-[12px] border-[#111] shadow-[0_30px_80px_rgba(0,0,0,0.2)]'
-                        : 'w-full h-full rounded-md border border-gray-200 shadow-xl'
+                    ? 'w-[375px] h-[812px] rounded-[40px] border-[12px] border-[#111] shadow-[0_30px_80px_rgba(0,0,0,0.2)]'
+                    : 'w-full h-full rounded-md border border-gray-200 shadow-xl'
                     }`}>
                     {deviceView === 'mobile' && (
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[25px] bg-[#111] rounded-b-[15px] z-10 pointer-events-none"></div>

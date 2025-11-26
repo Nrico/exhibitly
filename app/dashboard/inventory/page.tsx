@@ -1,9 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
 import { InventoryClient } from './inventory-client'
+import { getImpersonatedUser } from '@/utils/impersonation'
 
 export default async function InventoryPage() {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { user } = await getImpersonatedUser(supabase)
 
     let artworks = []
 

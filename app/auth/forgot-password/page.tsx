@@ -33,13 +33,16 @@ export default function ForgotPasswordPage() {
     return (
         <div className="min-h-screen bg-white flex flex-col justify-center items-center p-4">
             <div className="w-full max-w-md">
-                <Link href="/auth" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-8 transition-colors">
-                    <ArrowLeft size={16} /> Back to Login
-                </Link>
-
+                <div className="text-center mt-6">
+                    <Link href="/auth" className="text-sm text-gray-500 hover:text-black transition-colors">
+                        &larr; Back to Login
+                    </Link>
+                </div>
                 <div className="mb-8">
                     <h1 className="font-serif text-3xl font-medium mb-2 text-gray-900">Reset Password</h1>
-                    <p className="text-gray-500 text-sm">Enter your email and we'll send you a link to reset your password.</p>
+                    <p className="text-sm text-gray-500 mb-6">
+                        Enter your email address and we&apos;ll send you a link to reset your password.
+                    </p>
                 </div>
 
                 {isSuccess ? (

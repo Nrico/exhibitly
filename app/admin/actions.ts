@@ -2,6 +2,9 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { IMPERSONATION_COOKIE } from '@/utils/impersonation'
 
 export async function deleteArtwork(artworkId: string) {
     const supabase = await createClient()
@@ -48,4 +51,39 @@ export async function deleteUser(userId: string) {
         console.error('Delete user error:', error)
         return { error: 'Failed to delete user' }
     }
+}
+
+export async function impersonateUser(userId: string) {
+    const supabase = await createClient()
+
+    // Verify current user is admin
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', user.id)
+        .single()
+
+    if (!profile?.is_admin) {
+        throw new Error('Unauthorized')
+    }
+
+    // Set cookie
+    const cookieStore = await cookies()
+    cookieStore.set(IMPERSONATION_COOKIE, userId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/'
+    })
+
+    redirect('/dashboard')
+}
+
+export async function stopImpersonation() {
+    const cookieStore = await cookies()
+    cookieStore.delete(IMPERSONATION_COOKIE)
+    redirect('/admin')
 }

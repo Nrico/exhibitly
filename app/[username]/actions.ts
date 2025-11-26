@@ -32,14 +32,39 @@ export async function getArtistData(username: string) {
         .from('artworks')
         .select('*')
         .eq('user_id', profile.id)
-        .in('status', ['available', 'sold', 'Live']) // 'Live' was used in mock data, 'available' in new schema
+        .in('status', ['available', 'sold', 'Live'])
         .order('position', { ascending: true })
         .order('created_at', { ascending: false })
 
+    // 4. Get Gallery Data (if applicable)
+    let artists = []
+    let exhibitions = []
+
+    if (profile.account_type === 'gallery') {
+        const { data: artistsData } = await supabase
+            .from('artists')
+            .select('*')
+            .eq('user_id', profile.id)
+            .order('created_at', { ascending: false })
+
+        if (artistsData) artists = artistsData
+
+        const { data: exhibitionsData } = await supabase
+            .from('exhibitions')
+            .select('*')
+            .eq('user_id', profile.id)
+            .eq('status', 'published')
+            .order('start_date', { ascending: false })
+
+        if (exhibitionsData) exhibitions = exhibitionsData
+    }
+
     return {
         profile,
-        settings: settings || {}, // Handle case where settings might not exist yet
-        artworks: artworks || []
+        settings: settings || {},
+        artworks: artworks || [],
+        artists,
+        exhibitions
     }
 }
 

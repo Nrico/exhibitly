@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder_for_build';
 
 export const stripe = new Stripe(stripeKey, {
-    apiVersion: '2025-11-17.clover' as any,
+    apiVersion: '2024-11-20.acacia' as any, // Using latest stable or specific version
     appInfo: {
         name: 'Exhibitly',
         version: '0.1.0',

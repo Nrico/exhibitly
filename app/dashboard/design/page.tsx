@@ -1,9 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
 import DesignClient from './design-client'
+import { getImpersonatedUser } from '@/utils/impersonation'
 
 export default async function SiteDesignPage() {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { user } = await getImpersonatedUser(supabase)
 
     if (!user) {
         return <div>Unauthorized</div>

@@ -15,7 +15,7 @@ export default function TermsOfService() {
 
                 <div className="prose prose-gray max-w-none">
                     <p className="mb-6">
-                        Please read these Terms of Service ("Terms") carefully before using the Exhibitly website and service operated by Exhibitly ("us", "we", or "our").
+                        Please read these Terms of Service (&quot;Terms&quot;) carefully before using the Exhibitly website and service operated by Exhibitly (&quot;us&quot;, &quot;we&quot;, or &quot;our&quot;).
                     </p>
 
                     <h2 className="text-xl font-serif font-medium mt-8 mb-4">1. Acceptance of Terms</h2>
@@ -30,7 +30,7 @@ export default function TermsOfService() {
 
                     <h2 className="text-xl font-serif font-medium mt-8 mb-4">3. Content</h2>
                     <p className="mb-6">
-                        Our Service allows you to post, link, store, share and otherwise make available certain information, text, graphics, videos, or other material ("Content"). You are responsible for the Content that you post to the Service, including its legality, reliability, and appropriateness.
+                        Our Service allows you to post, link, store, share and otherwise make available certain information, text, graphics, videos, or other material (&quot;Content&quot;). You are responsible for the Content that you post to the Service, including its legality, reliability, and appropriateness.
                     </p>
                     <p className="mb-6">
                         By posting Content to the Service, you grant us the right and license to use, modify, publicly perform, publicly display, reproduce, and distribute such Content on and through the Service. You retain any and all of your rights to any Content you submit, post or display on or through the Service and you are responsible for protecting those rights.
@@ -42,7 +42,7 @@ export default function TermsOfService() {
                     </p>
                     <ul className="list-disc pl-5 mb-6 space-y-2">
                         <li>In any way that violates any applicable national or international law or regulation.</li>
-                        <li>To transmit, or procure the sending of, any advertising or promotional material, including any "junk mail", "chain letter," "spam," or any other similar solicitation.</li>
+                        <li>To transmit, or procure the sending of, any advertising or promotional material, including any &quot;junk mail&quot;, &quot;chain letter,&quot; &quot;spam,&quot; or any other similar solicitation.</li>
                         <li>To impersonate or attempt to impersonate the Company, a Company employee, another user, or any other person or entity.</li>
                     </ul>
 

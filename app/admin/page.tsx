@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { CheckCircle, XCircle } from '@phosphor-icons/react/dist/ssr'
 import { DeleteUserButton } from './components/delete-user-button'
+import { ImpersonateButton } from './components/impersonate-button'
 
 export default async function AdminPage() {
     const supabase = await createClient()
@@ -88,7 +89,10 @@ export default async function AdminPage() {
                                         View Site
                                     </a>
                                     {!profile.is_admin && (
-                                        <DeleteUserButton id={profile.id} />
+                                        <div className="flex items-center gap-2">
+                                            <ImpersonateButton id={profile.id} />
+                                            <DeleteUserButton id={profile.id} />
+                                        </div>
                                     )}
                                 </td>
                             </tr>

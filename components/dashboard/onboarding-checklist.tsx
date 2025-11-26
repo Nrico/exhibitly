@@ -4,9 +4,11 @@ import { CheckCircle, Circle, ArrowRight } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
+import { Profile, SiteSettings } from '@/types'
+
 type Props = {
-    profile: any
-    settings: any
+    profile: Profile
+    settings: SiteSettings
     artworkCount: number
     username: string
 }
@@ -49,7 +51,7 @@ export function OnboardingChecklist({ profile, settings, artworkCount, username 
         return (
             <div className="bg-[#111111] text-white rounded-xl p-6 mb-8 shadow-sm flex items-center justify-between">
                 <div>
-                    <h2 className="text-xl font-serif mb-1">You're all set! 🎉</h2>
+                    <h2 className="text-xl font-serif mb-1">You&apos;re all set! 🎉</h2>
                     <p className="text-sm text-gray-400">Your portfolio is ready to share with the world.</p>
                 </div>
                 <Link
@@ -66,9 +68,11 @@ export function OnboardingChecklist({ profile, settings, artworkCount, username 
     return (
         <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm">
             <div className="flex justify-between items-end mb-4">
-                <div>
-                    <h2 className="text-xl font-serif text-[#111111] mb-1">Getting Started</h2>
-                    <p className="text-sm text-[#666666]">Complete these steps to launch your portfolio.</p>
+                <div className="flex-1">
+                    <h3 className="font-medium text-[#111111]">Complete your setup</h3>
+                    <p className="text-xs text-[#666666] mt-1">
+                        You&apos;re {Math.round(progress)}% of the way there. Finish these steps to launch your portfolio.
+                    </p>
                 </div>
                 <div className="text-right">
                     <div className="text-2xl font-bold text-[#111111]">{Math.round(progress)}%</div>

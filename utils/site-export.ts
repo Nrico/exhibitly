@@ -58,7 +58,9 @@ export async function exportSiteData() {
     saveAs(content, `${settings.site_title || 'portfolio'}_export.zip`)
 }
 
-function generateStaticHtml(profile: any, settings: any, artworks: any[]) {
+import { Profile, SiteSettings, Artwork } from '@/types'
+
+function generateStaticHtml(profile: Profile, settings: SiteSettings, artworks: Artwork[]) {
     return `
 <!DOCTYPE html>
 <html lang="en">

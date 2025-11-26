@@ -1,18 +1,21 @@
 'use client'
 
-import { useState, useActionState, useEffect } from 'react'
+import { useState, useActionState, useEffect, Suspense } from 'react'
 import Image from 'next/image'
 import { GoogleLogo, PaintBrush, Storefront, CheckCircle, XCircle } from '@phosphor-icons/react'
 import { login, signup, signInWithGoogle, checkHandleAvailability } from './actions'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 const initialState = {
     error: '',
 }
 
-export default function AuthPage() {
-    const [view, setView] = useState<'login' | 'signup'>('login')
+function AuthContent() {
+    const searchParams = useSearchParams()
+    const initialView = searchParams.get('view') === 'signup' ? 'signup' : 'login'
+    const [view, setView] = useState<'login' | 'signup'>(initialView)
     const [accountType, setAccountType] = useState<'artist' | 'gallery'>('artist')
     const [handle, setHandle] = useState('')
     const [isHandleAvailable, setIsHandleAvailable] = useState(false)
@@ -264,5 +267,13 @@ export default function AuthPage() {
                 )}
             </div>
         </div>
+    )
+}
+
+export default function AuthPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <AuthContent />
+        </Suspense>
     )
 }

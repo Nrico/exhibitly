@@ -1,4 +1,4 @@
-import { getArtistData, recordView } from './actions'
+import { getPublicProfileData, recordView } from '@/app/actions/public-profile'
 import { PortfolioLayout } from '@/components/public/portfolio-layout'
 import { notFound } from 'next/navigation'
 
@@ -6,7 +6,7 @@ import { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
     const { username } = await params
-    const { profile, settings, artworks } = await getArtistData(username)
+    const { profile, settings, artworks } = await getPublicProfileData(username)
 
     if (!profile) {
         return {
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
 
 export default async function ArtistPage({ params }: { params: Promise<{ username: string }> }) {
     const { username } = await params
-    const { profile, settings, artworks, error } = await getArtistData(username)
+    const { profile, settings, artworks, artists, exhibitions, error } = await getPublicProfileData(username)
 
     if (error || !profile) {
         notFound()
@@ -59,6 +59,8 @@ export default async function ArtistPage({ params }: { params: Promise<{ usernam
             profile={profile}
             settings={settings}
             artworks={artworks as any[]}
+            artists={artists}
+            exhibitions={exhibitions}
         />
     )
 }

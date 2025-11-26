@@ -1,9 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
 import { SettingsForm } from './settings-form'
+import { getImpersonatedUser } from '@/utils/impersonation'
 
 export default async function SettingsPage() {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { user } = await getImpersonatedUser(supabase)
 
     let profile = {
         full_name: '',

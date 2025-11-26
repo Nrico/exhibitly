@@ -2,11 +2,13 @@
 
 import { UserCircle, CreditCard, MapPin, Warning, ArrowSquareOut, FileCsv } from '@phosphor-icons/react'
 import Image from 'next/image'
-import { updateProfile, updateSiteSettings } from './actions'
+import { updateProfile } from './actions'
+import { createPortalSession } from '@/app/actions/stripe'
 import { useState, useRef } from 'react'
 import { processImage } from '@/utils/image-processing'
 import { exportSiteData } from '@/utils/site-export'
 import { DownloadSimple } from '@phosphor-icons/react'
+import Link from 'next/link'
 
 type Profile = {
     full_name: string | null
@@ -23,7 +25,6 @@ type SiteSettings = {
 
 export function SettingsForm({
     initialProfile,
-    initialSettings,
     artworks = []
 }: {
     initialProfile: Profile,
@@ -216,9 +217,9 @@ export function SettingsForm({
                                 Manage your public portfolio appearance, bio, and contact info in the Site Design tab.
                             </div>
                         </div>
-                        <a href="/dashboard/design" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 no-underline">
+                        <Link href="/dashboard/design" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 no-underline">
                             Go to Site Design <ArrowSquareOut size={16} />
-                        </a>
+                        </Link>
                     </div>
                 </div>
 
@@ -242,9 +243,11 @@ export function SettingsForm({
                             <div className="text-xs text-[#666666] mt-0.5">{isPro ? 'Next invoice: December 20, 2025' : 'Upgrade to remove limits.'}</div>
                         </div>
                         {isPro ? (
-                            <a href="#" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 no-underline">
-                                Manage Billing on Stripe <ArrowSquareOut size={16} />
-                            </a>
+                            <form action={createPortalSession}>
+                                <button type="submit" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 cursor-pointer">
+                                    Manage Billing on Stripe <ArrowSquareOut size={16} />
+                                </button>
+                            </form>
                         ) : (
                             <button
                                 type="button"

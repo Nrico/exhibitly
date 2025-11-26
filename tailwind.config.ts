@@ -39,6 +39,34 @@ const config: Config = {
         'accent-green-dashboard': '#2e7d32',
         'accent-red-dashboard': '#c62828',
         'accent-yellow-dashboard': '#f57f17',
+
+        // Theme: Cinema
+        'cinema-bg': '#121212',
+        'cinema-bg-secondary': '#111111', // Sidebar/Details
+        'cinema-text': '#e0e0e0',
+        'cinema-text-muted': '#888888',
+        'cinema-gold': '#c5a059',
+        'cinema-gold-hover': '#d4b06a',
+        'cinema-border': '#333333',
+        'cinema-red': '#aa3a3a',
+
+        // Theme: Archive
+        'archive-bg': '#ffffff',
+        'archive-bg-secondary': '#bfbfbf', // Image buffer (darkened for visibility)
+        'archive-bg-hover': '#efefef',
+        'archive-text': '#111111',
+        'archive-text-muted': '#777777',
+        'archive-border': '#eeeeee',
+        'archive-red': '#d9534f',
+        'archive-green': '#5cb85c',
+
+        // Theme: White Cube (Minimal)
+        'whitecube-bg': '#fdfdfd',
+        'whitecube-text': '#2a2a2a',
+        'whitecube-text-muted': '#888888',
+        'whitecube-border': '#eeeeee',
+        'whitecube-red': '#c94c4c',
+        'whitecube-accent': '#c5a059',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
