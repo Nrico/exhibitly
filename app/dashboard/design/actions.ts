@@ -32,7 +32,7 @@ export async function saveSiteSettings(formData: FormData) {
         site_bio,
         site_bio_long,
         theme,
-        custom_domain,
+        custom_domain: custom_domain || null,
         contact_email,
         phone,
         address,

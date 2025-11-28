@@ -69,7 +69,10 @@ export async function getPublicProfileData(username: string) {
                 *,
                 exhibition_artworks (
                     position,
-                    artwork: artworks (*)
+                    artwork: artworks (
+                        *,
+                        artist: artists (full_name)
+                    )
                 )
             `)
             .eq('user_id', profile.id)

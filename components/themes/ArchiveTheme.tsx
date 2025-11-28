@@ -43,8 +43,8 @@ export default function ArchiveTheme({ view }: { view?: string }) {
                 {filteredArtworks.map((artwork) => (
                     <div key={artwork.id} className="group cursor-pointer" onClick={() => setSelectedArtwork(artwork)}>
                         {/* Buffer Block */}
-                        <div className="w-full aspect-square bg-archive-bg-secondary flex items-center justify-center mb-5 relative transition-colors duration-300 group-hover:bg-archive-bg-hover p-8">
-                            <div className="relative w-full h-full transition-transform duration-400 group-hover:scale-[1.02]">
+                        <div className="w-full aspect-square bg-archive-bg-secondary flex items-center justify-center mb-5 relative transition-colors duration-300 group-hover:bg-archive-bg-hover">
+                            <div className="relative w-[85%] h-[85%] transition-transform duration-400 group-hover:scale-[1.02]">
                                 {artwork.image_url && (
                                     <Image
                                         src={artwork.image_url}

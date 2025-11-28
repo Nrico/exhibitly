@@ -20,6 +20,8 @@ export async function getArtists() {
 
     if (!user) return []
 
+    console.log('Fetching artists for user:', user.id)
+
     const { data: artists, error } = await supabase
         .from('artists')
         .select('*')
@@ -31,6 +33,7 @@ export async function getArtists() {
         return []
     }
 
+    console.log('Fetched artists count:', artists?.length)
     return artists
 }
 
@@ -47,12 +50,12 @@ export async function createArtist(prevState: any, formData: FormData) {
     }
 
     const rawData = {
-        fullName: formData.get('fullName') as string,
-        bio: formData.get('bio') as string,
+        fullName: (formData.get('fullName') as string) || '',
+        bio: (formData.get('bio') as string) || '',
     }
 
     const imageFile = formData.get('image') as File
-    let avatarUrl = formData.get('avatarUrl') as string
+    let avatarUrl = (formData.get('avatarUrl') as string) || undefined
 
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop()
@@ -97,12 +100,12 @@ export async function updateArtist(prevState: any, formData: FormData) {
 
     const id = formData.get('id') as string
     const rawData = {
-        fullName: formData.get('fullName') as string,
-        bio: formData.get('bio') as string,
+        fullName: (formData.get('fullName') as string) || '',
+        bio: (formData.get('bio') as string) || '',
     }
 
     const imageFile = formData.get('image') as File
-    let avatarUrl = formData.get('avatarUrl') as string
+    let avatarUrl = (formData.get('avatarUrl') as string) || undefined
 
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop()

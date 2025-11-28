@@ -9,9 +9,11 @@ import { ExhibitionDetail } from './ExhibitionDetail'
 
 type GalleryExhibitionsProps = {
     exhibitions: Exhibition[]
+    variant?: 'masonry' | 'square'
+    mutedTextClass?: string
 }
 
-export function GalleryExhibitions({ exhibitions }: GalleryExhibitionsProps) {
+export function GalleryExhibitions({ exhibitions, variant = 'square', mutedTextClass }: GalleryExhibitionsProps) {
     const searchParams = useSearchParams()
     const router = useRouter()
     const pathname = usePathname()
@@ -26,6 +28,8 @@ export function GalleryExhibitions({ exhibitions }: GalleryExhibitionsProps) {
                     <ExhibitionDetail
                         exhibition={exhibition}
                         onBack={() => router.push(`${pathname}?view=exhibitions`)}
+                        variant={variant}
+                        mutedTextClass={mutedTextClass}
                     />
                 </div>
             )
@@ -39,17 +43,21 @@ export function GalleryExhibitions({ exhibitions }: GalleryExhibitionsProps) {
         return start && end && now >= start && now <= end
     })
 
-    const upcomingExhibitions = exhibitions.filter(e => {
-        const now = new Date()
-        const start = e.start_date ? new Date(e.start_date) : null
-        return start && now < start
-    })
+    const upcomingExhibitions = exhibitions
+        .filter(e => {
+            const now = new Date()
+            const start = e.start_date ? new Date(e.start_date) : null
+            return start && now < start
+        })
+        .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
 
-    const pastExhibitions = exhibitions.filter(e => {
-        const now = new Date()
-        const end = e.end_date ? new Date(e.end_date) : null
-        return end && now > end
-    })
+    const pastExhibitions = exhibitions
+        .filter(e => {
+            const now = new Date()
+            const end = e.end_date ? new Date(e.end_date) : null
+            return end && now > end
+        })
+        .sort((a, b) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime())
 
     const ExhibitionCard = ({ exhibition }: { exhibition: Exhibition }) => (
         <Link href={`?view=exhibitions&id=${exhibition.id}`} className="group block">

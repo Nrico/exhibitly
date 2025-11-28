@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus } from '@phosphor-icons/react'
 import { Artist } from '@/types'
@@ -12,6 +12,11 @@ import { processImage } from '@/utils/image-processing'
 export function RosterClient({ initialArtists }: { initialArtists: Artist[] }) {
     const router = useRouter()
     const [artists, setArtists] = useState<Artist[]>(initialArtists)
+
+    // Sync state with prop when server revalidates
+    useEffect(() => {
+        setArtists(initialArtists)
+    }, [initialArtists])
 
     const [isEditorOpen, setIsEditorOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState<Artist | null>(null)

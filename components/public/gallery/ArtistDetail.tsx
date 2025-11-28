@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Artist, Artwork } from '@/types'
 import { usePortfolio } from '@/components/public/portfolio-context'
 
-export function ArtistDetail({ artist, onBack }: { artist: Artist, onBack: () => void }) {
+export function ArtistDetail({ artist, onBack, variant = 'square', mutedTextClass = 'text-gray-600' }: { artist: Artist, onBack: () => void, variant?: 'masonry' | 'square', mutedTextClass?: string }) {
     const { setSelectedArtwork } = usePortfolio()
 
     return (
@@ -32,7 +32,7 @@ export function ArtistDetail({ artist, onBack }: { artist: Artist, onBack: () =>
 
                     {artist.bio ? (
                         <div
-                            className="prose prose-base md:prose-lg text-gray-600 font-light leading-relaxed whitespace-pre-wrap"
+                            className={`prose prose-base md:prose-lg font-light leading-relaxed whitespace-pre-wrap ${mutedTextClass}`}
                         >
                             {artist.bio}
                         </div>
@@ -45,39 +45,80 @@ export function ArtistDetail({ artist, onBack }: { artist: Artist, onBack: () =>
             <h2 className="font-serif text-xl md:text-2xl mb-6 md:mb-8 border-b border-gray-200 pb-4">Available Works</h2>
 
             {artist.artworks && artist.artworks.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-                    {artist.artworks.map((artwork) => (
-                        <div
-                            key={artwork.id}
-                            className="group cursor-pointer"
-                            onClick={() => setSelectedArtwork(artwork)}
-                        >
-                            <div className="relative aspect-[4/5] mb-4 bg-gray-100 overflow-hidden">
-                                {artwork.image_url && (
-                                    <Image
-                                        src={artwork.image_url}
-                                        alt={artwork.title}
-                                        fill
-                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                )}
-                            </div>
-                            <div className="text-center">
-                                <h3 className="font-serif text-lg mb-1">{artwork.title}</h3>
-                                <p className="text-xs text-gray-500 uppercase tracking-wider">
-                                    {artwork.medium}
-                                </p>
-                                <div className="text-xs font-semibold uppercase tracking-wide mt-2">
-                                    {artwork.status === 'sold' ? (
-                                        <span className="text-red-600">Sold</span>
-                                    ) : (
-                                        <span className="text-gray-900">{artwork.price ? `$${artwork.price.toLocaleString()}` : 'Inquire'}</span>
+                variant === 'masonry' ? (
+                    <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+                        {artist.artworks.map((artwork) => (
+                            <div
+                                key={artwork.id}
+                                className="group cursor-pointer break-inside-avoid mb-8"
+                                onClick={() => setSelectedArtwork(artwork)}
+                            >
+                                <div className="w-full bg-gray-100 mb-4 overflow-hidden">
+                                    {artwork.image_url && (
+                                        <Image
+                                            src={artwork.image_url}
+                                            alt={artwork.title}
+                                            width={0}
+                                            height={0}
+                                            sizes="100vw"
+                                            style={{ width: '100%', height: 'auto' }}
+                                            className="transition-transform duration-700 group-hover:scale-[1.03]"
+                                        />
                                     )}
                                 </div>
+                                <div className="text-center">
+                                    <h3 className="font-serif text-lg mb-1">{artwork.title}</h3>
+                                    <p className="text-xs text-gray-500 uppercase tracking-wider">
+                                        {artwork.medium}
+                                    </p>
+                                    <div className="text-xs font-semibold uppercase tracking-wide mt-2">
+                                        {artwork.status === 'sold' ? (
+                                            <span className="text-red-600">Sold</span>
+                                        ) : (
+                                            <span className="text-gray-900">{artwork.price ? `$${artwork.price.toLocaleString()}` : 'Inquire'}</span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                        {artist.artworks.map((artwork) => (
+                            <div
+                                key={artwork.id}
+                                className="group cursor-pointer"
+                                onClick={() => setSelectedArtwork(artwork)}
+                            >
+                                <div className="relative aspect-square mb-4 bg-gray-100 flex items-center justify-center">
+                                    <div className="relative w-[85%] h-[85%] transition-transform duration-700 group-hover:scale-105">
+                                        {artwork.image_url && (
+                                            <Image
+                                                src={artwork.image_url}
+                                                alt={artwork.title}
+                                                fill
+                                                className="object-contain"
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="font-serif text-lg mb-1">{artwork.title}</h3>
+                                    <p className="text-xs text-gray-500 uppercase tracking-wider">
+                                        {artwork.medium}
+                                    </p>
+                                    <div className="text-xs font-semibold uppercase tracking-wide mt-2">
+                                        {artwork.status === 'sold' ? (
+                                            <span className="text-red-600">Sold</span>
+                                        ) : (
+                                            <span className="text-gray-900">{artwork.price ? `$${artwork.price.toLocaleString()}` : 'Inquire'}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
             ) : (
                 <div className="text-center py-20">
                     <p className="text-gray-400 italic">No artworks listed for this artist.</p>

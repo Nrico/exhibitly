@@ -38,6 +38,9 @@ export type Artwork = {
     position?: number
     year?: string | null
     created_at?: string
+    artist?: {
+        full_name: string
+    } | null
 }
 
 export type Artist = {

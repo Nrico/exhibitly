@@ -28,8 +28,8 @@ export default function WhiteCubeTheme({ view }: { view?: string }) {
     const renderContent = () => {
         if (isGalleryAccount) {
             if (view === 'home') return <GalleryHome profile={profile} settings={settings} artists={artists || []} exhibitions={exhibitions || []} />
-            if (view === 'artists') return <GalleryRoster artists={artists || []} />
-            if (view === 'exhibitions') return <GalleryExhibitions exhibitions={exhibitions || []} />
+            if (view === 'artists') return <GalleryRoster artists={artists || []} variant="masonry" />
+            if (view === 'exhibitions') return <GalleryExhibitions exhibitions={exhibitions || []} variant="masonry" />
             if (view === 'about') return <AboutView />
             if (view === 'contact') return <ContactView />
         }

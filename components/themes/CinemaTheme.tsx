@@ -28,8 +28,8 @@ export default function CinemaTheme({ view }: { view?: string }) {
     const renderContent = () => {
         if (isGalleryAccount) {
             if (view === 'home') return <GalleryHome profile={profile} settings={settings} artists={artists || []} exhibitions={exhibitions || []} />
-            if (view === 'artists') return <GalleryRoster artists={artists || []} />
-            if (view === 'exhibitions') return <GalleryExhibitions exhibitions={exhibitions || []} />
+            if (view === 'artists') return <GalleryRoster artists={artists || []} variant="masonry" mutedTextClass="text-cinema-text-muted" />
+            if (view === 'exhibitions') return <GalleryExhibitions exhibitions={exhibitions || []} variant="masonry" mutedTextClass="text-cinema-text-muted" />
             if (view === 'about') return <AboutView />
             if (view === 'contact') return <ContactView />
         }
@@ -91,17 +91,17 @@ export default function CinemaTheme({ view }: { view?: string }) {
                             {settings.site_subtitle || `Collection ${new Date().getFullYear()}`}
                         </div>
 
-                        <nav className="space-y-4 font-[family-name:var(--font-cinzel)] text-lg text-gray-500">
+                        <nav className="space-y-4 font-[family-name:var(--font-cinzel)] text-lg text-cinema-text-muted">
                             {isGalleryAccount ? (
                                 <>
-                                    <a href="?view=home" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'home' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Home</a>
-                                    <a href="?view=artists" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'artists' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Artists</a>
-                                    <a href="?view=exhibitions" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'exhibitions' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Exhibitions</a>
-                                    <a href="?view=about" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'about' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>About</a>
-                                    <a href="?view=contact" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'contact' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Contact</a>
+                                    <a href="?view=home" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'home' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-cinema-text-muted'}`}>Home</a>
+                                    <a href="?view=artists" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'artists' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-cinema-text-muted'}`}>Artists</a>
+                                    <a href="?view=exhibitions" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'exhibitions' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-cinema-text-muted'}`}>Exhibitions</a>
+                                    <a href="?view=about" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'about' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-cinema-text-muted'}`}>About</a>
+                                    <a href="?view=contact" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'contact' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-cinema-text-muted'}`}>Contact</a>
                                 </>
                             ) : (
-                                <button onClick={() => setCurrentView('gallery')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'gallery' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Gallery</button>
+                                <button onClick={() => setCurrentView('gallery')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'gallery' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-cinema-text-muted'}`}>Gallery</button>
                             )}
 
                             {/* Collection Sub-nav for Cinema (Only for Artist Gallery View) */}
@@ -109,7 +109,7 @@ export default function CinemaTheme({ view }: { view?: string }) {
                                 <div className="pl-6 space-y-2 mt-2 mb-4 text-sm font-sans tracking-wider">
                                     <button
                                         onClick={() => setSelectedCollection('All')}
-                                        className={`block text-left transition-colors ${selectedCollection === 'All' ? 'text-cinema-gold' : 'text-gray-500 hover:text-gray-300'}`}
+                                        className={`block text-left transition-colors ${selectedCollection === 'All' ? 'text-cinema-gold' : 'text-cinema-text-muted hover:text-gray-300'}`}
                                     >
                                         All Works
                                     </button>
@@ -117,7 +117,7 @@ export default function CinemaTheme({ view }: { view?: string }) {
                                         <button
                                             key={col}
                                             onClick={() => setSelectedCollection(col)}
-                                            className={`block text-left transition-colors ${selectedCollection === col ? 'text-cinema-gold' : 'text-gray-500 hover:text-gray-300'}`}
+                                            className={`block text-left transition-colors ${selectedCollection === col ? 'text-cinema-gold' : 'text-cinema-text-muted hover:text-gray-300'}`}
                                         >
                                             {col}
                                         </button>
@@ -127,14 +127,14 @@ export default function CinemaTheme({ view }: { view?: string }) {
 
                             {!isGalleryAccount && (
                                 <>
-                                    <button onClick={() => setCurrentView('about')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'about' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>About</button>
-                                    <button onClick={() => setCurrentView('contact')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'contact' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Contact</button>
+                                    <button onClick={() => setCurrentView('about')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'about' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-cinema-text-muted'}`}>About</button>
+                                    <button onClick={() => setCurrentView('contact')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'contact' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-cinema-text-muted'}`}>Contact</button>
                                 </>
                             )}
                         </nav>
                     </div>
 
-                    <div className="mt-12 md:mt-auto text-gray-600 text-xs">
+                    <div className="mt-12 md:mt-auto text-cinema-text-muted text-xs">
                         &copy; {new Date().getFullYear()} {profile.full_name} Studio
                     </div>
                 </aside>

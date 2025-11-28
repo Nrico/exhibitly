@@ -8,9 +8,11 @@ import { ArtistDetail } from './ArtistDetail'
 
 type GalleryRosterProps = {
     artists: Artist[]
+    variant?: 'masonry' | 'square'
+    mutedTextClass?: string
 }
 
-export function GalleryRoster({ artists }: GalleryRosterProps) {
+export function GalleryRoster({ artists, variant = 'square', mutedTextClass }: GalleryRosterProps) {
     const searchParams = useSearchParams()
     const router = useRouter()
     const pathname = usePathname()
@@ -25,6 +27,8 @@ export function GalleryRoster({ artists }: GalleryRosterProps) {
                     <ArtistDetail
                         artist={artist}
                         onBack={() => router.push(`${pathname}?view=artists`)}
+                        variant={variant}
+                        mutedTextClass={mutedTextClass}
                     />
                 </div>
             )

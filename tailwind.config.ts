@@ -44,7 +44,7 @@ const config: Config = {
         'cinema-bg': '#121212',
         'cinema-bg-secondary': '#111111', // Sidebar/Details
         'cinema-text': '#e0e0e0',
-        'cinema-text-muted': '#888888',
+        'cinema-text-muted': '#8a8175', // Toasted/Warm grey
         'cinema-gold': '#c5a059',
         'cinema-gold-hover': '#d4b06a',
         'cinema-border': '#333333',

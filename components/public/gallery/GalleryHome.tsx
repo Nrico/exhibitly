@@ -13,8 +13,36 @@ type GalleryHomeProps = {
 }
 
 export function GalleryHome({ profile, settings, exhibitions, artists }: GalleryHomeProps) {
-    const featuredExhibition = exhibitions[0]
-    const recentExhibitions = exhibitions.filter(e => e.id !== featuredExhibition?.id).slice(0, 3)
+    // Categorize and Sort Exhibitions
+    const now = new Date()
+
+    const currentExhibitions = exhibitions.filter(e => {
+        const start = e.start_date ? new Date(e.start_date) : null
+        const end = e.end_date ? new Date(e.end_date) : null
+        return start && end && now >= start && now <= end
+    })
+
+    const upcomingExhibitions = exhibitions
+        .filter(e => {
+            const start = e.start_date ? new Date(e.start_date) : null
+            return start && now < start
+        })
+        .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
+
+    const pastExhibitions = exhibitions
+        .filter(e => {
+            const end = e.end_date ? new Date(e.end_date) : null
+            return end && now > end
+        })
+        .sort((a, b) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime())
+
+    // Select Featured Exhibition (Priority: Current -> Upcoming -> Past)
+    const featuredExhibition = currentExhibitions[0] || upcomingExhibitions[0] || pastExhibitions[0]
+
+    // Filter out featured from lists to avoid duplication
+    const displayUpcoming = upcomingExhibitions.filter(e => e.id !== featuredExhibition?.id).slice(0, 3)
+    const displayPast = pastExhibitions.filter(e => e.id !== featuredExhibition?.id).slice(0, 3)
+
     const featuredArtists = artists.slice(0, 4)
 
     return (
@@ -33,7 +61,10 @@ export function GalleryHome({ profile, settings, exhibitions, artists }: Gallery
                     )}
                     <div className="absolute inset-0 bg-black/30" />
                     <div className="relative z-10 text-center text-white max-w-4xl px-6">
-                        <span className="uppercase tracking-widest text-sm mb-4 block">Current Exhibition</span>
+                        <span className="uppercase tracking-widest text-sm mb-4 block">
+                            {currentExhibitions.includes(featuredExhibition) ? 'Current Exhibition' :
+                                upcomingExhibitions.includes(featuredExhibition) ? 'Upcoming Exhibition' : 'Featured Exhibition'}
+                        </span>
                         <h1 className="font-serif text-5xl md:text-7xl mb-6">{featuredExhibition.title}</h1>
                         <div className="flex items-center justify-center gap-4 text-lg mb-8">
                             <span>{featuredExhibition.start_date ? new Date(featuredExhibition.start_date).toLocaleDateString() : 'Now Open'}</span>
@@ -68,7 +99,7 @@ export function GalleryHome({ profile, settings, exhibitions, artists }: Gallery
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {featuredArtists.map(artist => (
-                            <div key={artist.id} className="group cursor-pointer">
+                            <Link key={artist.id} href={`?view=artists&id=${artist.id}`} className="group cursor-pointer block">
                                 <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-gray-100">
                                     {artist.avatar_url ? (
                                         <Image
@@ -83,18 +114,47 @@ export function GalleryHome({ profile, settings, exhibitions, artists }: Gallery
                                 </div>
                                 <h3 className="font-serif text-xl mb-1">{artist.full_name}</h3>
                                 <p className="text-sm text-gray-500 line-clamp-2">{artist.bio}</p>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </section>
             )}
 
-            {/* Recent Exhibitions */}
-            {recentExhibitions.length > 0 && (
+            {/* Upcoming Exhibitions */}
+            {displayUpcoming.length > 0 && (
                 <section className="container mx-auto px-6">
-                    <h2 className="font-serif text-3xl mb-12">Recent Exhibitions</h2>
+                    <h2 className="font-serif text-3xl mb-12">Upcoming Exhibitions</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {recentExhibitions.map(exhibition => (
+                        {displayUpcoming.map(exhibition => (
+                            <Link key={exhibition.id} href={`?view=exhibitions&id=${exhibition.id}`} className="group block">
+                                <div className="relative aspect-video mb-4 overflow-hidden bg-gray-100">
+                                    {exhibition.cover_image_url ? (
+                                        <Image
+                                            src={exhibition.cover_image_url}
+                                            alt={exhibition.title}
+                                            fill
+                                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
+                                    )}
+                                </div>
+                                <h3 className="font-serif text-xl mb-2 group-hover:underline">{exhibition.title}</h3>
+                                <p className="text-sm text-gray-500">
+                                    {exhibition.start_date ? new Date(exhibition.start_date).toLocaleDateString() : ''}
+                                </p>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* Past Exhibitions */}
+            {displayPast.length > 0 && (
+                <section className="container mx-auto px-6">
+                    <h2 className="font-serif text-3xl mb-12">Past Exhibitions</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {displayPast.map(exhibition => (
                             <Link key={exhibition.id} href={`?view=exhibitions&id=${exhibition.id}`} className="group block">
                                 <div className="relative aspect-video mb-4 overflow-hidden bg-gray-100">
                                     {exhibition.cover_image_url ? (
