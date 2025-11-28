@@ -26,6 +26,7 @@ export type SiteSettings = {
 
 export type Artwork = {
     id: string
+    user_id: string
     title: string
     medium: string | null
     dimensions: string | null
