@@ -5,11 +5,14 @@ import { ViewingRoom, RoomItem } from '@/types'
 import { EnvelopeSimple, Copy, Check, X } from '@phosphor-icons/react'
 import * as Dialog from '@radix-ui/react-dialog'
 
+import { toast } from 'sonner'
+
 export function EmailGenerator({ room, heroItem }: { room: ViewingRoom, heroItem?: RoomItem }) {
     const [isOpen, setIsOpen] = useState(false)
     const [copied, setCopied] = useState(false)
 
-    const roomUrl = `${window.location.origin}/view/${room.slug}`
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
+    const roomUrl = `${origin}/view/${room.slug}`
     const imageUrl = heroItem?.artwork?.image_url || 'https://via.placeholder.com/600x400'
 
     // Outlook-safe HTML (Tables, inline styles)
@@ -73,20 +76,31 @@ export function EmailGenerator({ room, heroItem }: { room: ViewingRoom, heroItem
 </html>
     `
 
-    const handleCopy = () => {
-        const type = "text/html";
-        const blob = new Blob([emailHtml], { type });
-        const data = [new ClipboardItem({ [type]: blob })];
+    const handleCopy = async () => {
+        try {
+            const htmlBlob = new Blob([emailHtml], { type: "text/html" });
+            const textBlob = new Blob([emailHtml], { type: "text/plain" });
 
-        navigator.clipboard.write(data).then(
-            () => {
-                setCopied(true)
-                setTimeout(() => setCopied(false), 2000)
-            },
-            () => {
-                alert("Clipboard write failed. Please copy manually.")
+            await navigator.clipboard.write([
+                new ClipboardItem({
+                    "text/html": htmlBlob,
+                    "text/plain": textBlob,
+                }),
+            ]);
+
+            setCopied(true)
+            toast.success('Email template copied to clipboard')
+            setTimeout(() => setCopied(false), 2000)
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+            // Fallback to simple text copy if rich copy fails
+            try {
+                await navigator.clipboard.writeText(emailHtml);
+                toast.success('HTML code copied (Rich copy failed)')
+            } catch (fallbackErr) {
+                toast.error('Failed to copy to clipboard')
             }
-        );
+        }
     }
 
     return (

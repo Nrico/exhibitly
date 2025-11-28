@@ -3,7 +3,8 @@ import { getImpersonatedUser } from '@/utils/impersonation'
 import { redirect } from 'next/navigation'
 import { RoomBuilder } from '@/components/dashboard/viewing-rooms/RoomBuilder'
 
-export default async function RoomBuilderPage({ params }: { params: { id: string } }) {
+export default async function RoomBuilderPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     const supabase = await createClient()
     const { user } = await getImpersonatedUser(supabase)
 
@@ -13,7 +14,7 @@ export default async function RoomBuilderPage({ params }: { params: { id: string
     const { data: room } = await supabase
         .from('viewing_rooms')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', id)
         .eq('gallery_id', user.id)
         .single()
 

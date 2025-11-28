@@ -12,6 +12,7 @@ const fauna_one = Fauna_One({ subsets: ['latin'], variable: '--font-fauna', weig
 const lato = Lato({ subsets: ['latin'], variable: '--font-lato', weight: ['300', '400', '700'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://exhibitly.co'),
   title: 'Exhibitly | The Digital Standard for Fine Art',
   description: 'The minimalist platform designed specifically for independent artists and curated galleries.',
 }

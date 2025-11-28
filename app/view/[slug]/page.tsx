@@ -3,8 +3,10 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, EnvelopeSimple } from '@phosphor-icons/react/dist/ssr'
+import { ArtworkLightbox } from '@/components/public/viewing-room/ArtworkLightbox'
 
-export default async function ViewingRoomPage({ params }: { params: { slug: string } }) {
+export default async function ViewingRoomPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params
     const supabase = await createClient()
 
     // Fetch Room
@@ -14,11 +16,18 @@ export default async function ViewingRoomPage({ params }: { params: { slug: stri
             *,
             gallery:profiles(*)
         `)
-        .eq('slug', params.slug)
-        .eq('status', 'active')
+        .eq('slug', slug)
         .single()
 
     if (!room) notFound()
+
+    // Check Access
+    const { data: { user } } = await supabase.auth.getUser()
+    const isOwner = user?.id === room.gallery_id
+
+    if (room.status !== 'active' && !isOwner) {
+        notFound()
+    }
 
     // Fetch Items
     const { data: items } = await supabase
@@ -67,16 +76,15 @@ export default async function ViewingRoomPage({ params }: { params: { slug: stri
 
             {/* Hero Artwork */}
             {heroItem.artwork && (
-                <section className="min-h-screen flex items-center justify-center p-10 md:p-20 bg-white">
-                    <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
-                        <div className="relative aspect-[3/4] md:aspect-square bg-gray-50">
-                            <Image
-                                src={heroItem.artwork.image_url || ''}
-                                alt={heroItem.artwork.title}
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
+                <section className="min-h-screen flex flex-col items-center justify-center p-10 md:p-20 bg-white">
+
+
+
+                    <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center mb-20">
+                        <ArtworkLightbox
+                            src={heroItem.artwork.image_url || ''}
+                            alt={heroItem.artwork.title}
+                        />
                         <div>
                             <div className="text-xs uppercase tracking-widest text-gray-400 mb-4">Featured Work</div>
                             <h2 className="font-serif text-4xl mb-2">{heroItem.artwork.title}</h2>
@@ -90,6 +98,13 @@ export default async function ViewingRoomPage({ params }: { params: { slug: stri
                             </div>
                         </div>
                     </div>
+
+                    {/* Artist Bio Section (New) */}
+                    {heroItem.artwork.artist_id && (
+                        <div className="max-w-3xl w-full mx-auto border-t border-gray-100 pt-20">
+                            <ArtistBio artistId={heroItem.artwork.artist_id} />
+                        </div>
+                    )}
                 </section>
             )}
 
@@ -123,6 +138,33 @@ export default async function ViewingRoomPage({ params }: { params: { slug: stri
             <footer className="py-20 text-center text-gray-400 text-xs uppercase tracking-widest">
                 &copy; {new Date().getFullYear()} {room.gallery.full_name}
             </footer>
+        </div>
+    )
+}
+
+async function ArtistBio({ artistId }: { artistId: string }) {
+    const supabase = await createClient()
+    const { data: artist } = await supabase
+        .from('artists')
+        .select('*')
+        .eq('id', artistId)
+        .single()
+
+    if (!artist) return null
+
+    return (
+        <div className="flex flex-col md:flex-row gap-10 items-start">
+            {artist.avatar_url && (
+                <div className="relative w-32 h-32 flex-shrink-0 bg-gray-100 rounded-full overflow-hidden">
+                    <Image src={artist.avatar_url} alt={artist.full_name} fill className="object-cover" />
+                </div>
+            )}
+            <div>
+                <h3 className="font-serif text-2xl mb-4">{artist.full_name}</h3>
+                <div className="text-gray-600 leading-relaxed max-w-2xl whitespace-pre-wrap">
+                    {artist.bio}
+                </div>
+            </div>
         </div>
     )
 }

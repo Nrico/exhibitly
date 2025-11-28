@@ -1,10 +1,14 @@
 'use client'
 
 import Image from 'next/image'
+import { createSingleArtworkRoom } from '@/app/dashboard/viewing-rooms/actions'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import {
     CaretRight,
     CheckCircle,
-    DotsSixVertical
+    DotsSixVertical,
+    Eye
 } from '@phosphor-icons/react'
 import {
     useSortable
@@ -14,6 +18,20 @@ import { Artwork } from '@/types'
 
 export function RowContent({ item, openEditor, dragHandle, artists = [] }: { item: Artwork, openEditor: (item: Artwork) => void, dragHandle?: React.ReactNode, artists?: any[] }) {
     const artistName = item.artist_id ? artists.find(a => a.id === item.artist_id)?.full_name : null
+    const router = useRouter()
+
+    async function onCreateRoom(e: React.MouseEvent) {
+        e.stopPropagation()
+        toast.promise(createSingleArtworkRoom(item.id), {
+            loading: 'Creating Private View...',
+            success: (result) => {
+                if (result.error) throw new Error(result.error)
+                router.push(`/dashboard/viewing-rooms/${result.roomId}`)
+                return 'Private View created'
+            },
+            error: (err) => err.message
+        })
+    }
 
     return (
         <>
@@ -62,8 +80,17 @@ export function RowContent({ item, openEditor, dragHandle, artists = [] }: { ite
                     {item.status}
                 </span>
             </td>
-            <td className="p-4 text-[#ccc] cursor-pointer" onClick={() => openEditor(item)}>
-                <CaretRight size={16} />
+            <td className="p-4 text-[#ccc] flex items-center justify-end gap-2">
+                <button
+                    onClick={onCreateRoom}
+                    className="p-2 text-gray-400 hover:text-[#111] hover:bg-gray-100 rounded-full transition-colors"
+                    title="Create Private View"
+                >
+                    <Eye size={18} />
+                </button>
+                <div onClick={() => openEditor(item)} className="p-2 cursor-pointer hover:text-[#111]">
+                    <CaretRight size={16} />
+                </div>
             </td>
         </>
     )

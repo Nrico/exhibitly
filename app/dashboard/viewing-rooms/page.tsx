@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Eye } from '@phosphor-icons/react/dist/ssr'
 import { createViewingRoom } from './actions'
+import { DeleteRoomButton } from '@/components/dashboard/viewing-rooms/DeleteRoomButton'
 
 export default async function ViewingRoomsPage() {
     const supabase = await createClient()
@@ -72,7 +73,7 @@ export default async function ViewingRoomsPage() {
                                     }`}>
                                     {room.status}
                                 </div>
-                                <Eye size={20} className="text-gray-400 group-hover:text-[#111]" />
+                                <DeleteRoomButton roomId={room.id} title={room.title} />
                             </div>
                             <h3 className="font-serif text-xl text-[#111] mb-2 group-hover:underline decoration-1 underline-offset-4">{room.title}</h3>
                             <div className="text-xs text-gray-500 font-mono">

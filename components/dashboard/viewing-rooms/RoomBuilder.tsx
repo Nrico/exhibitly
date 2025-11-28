@@ -6,7 +6,7 @@ import { updateViewingRoom, addRoomItem, removeRoomItem, updateRoomItemOrder } f
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, Trash, Star, ArrowLeft, Copy, Check } from '@phosphor-icons/react'
+import { Plus, Trash, Star, ArrowLeft, Copy, Check, ArrowSquareOut } from '@phosphor-icons/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { toast } from 'sonner'
@@ -125,7 +125,7 @@ export function RoomBuilder({ room, initialItems, inventory }: { room: ViewingRo
     }
 
     return (
-        <div className="flex h-screen bg-gray-50 -m-8"> {/* Negative margin to break out of dashboard padding */}
+        <div className="flex flex-col lg:flex-row h-[calc(100vh-140px)] bg-gray-50 border border-gray-200 rounded-lg overflow-hidden shadow-sm">
 
             {/* Left: Configuration */}
             <div className="w-[400px] bg-white border-r border-gray-200 flex flex-col">
@@ -156,20 +156,34 @@ export function RoomBuilder({ room, initialItems, inventory }: { room: ViewingRo
                                 <option value="archived">Archived</option>
                             </select>
                         </div>
-                        <button
-                            onClick={handleSaveSettings}
-                            disabled={isSaving}
-                            className="w-full bg-black text-white rounded py-2 text-sm hover:bg-gray-800 disabled:opacity-50"
-                        >
-                            {isSaving ? 'Saving...' : 'Save Settings'}
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleSaveSettings}
+                                disabled={isSaving}
+                                className="flex-1 bg-black text-white rounded py-2 text-sm hover:bg-gray-800 disabled:opacity-50"
+                            >
+                                {isSaving ? 'Saving...' : 'Save Settings'}
+                            </button>
+                            <a
+                                href={`/view/${room.slug}`}
+                                target="_blank"
+                                className="px-3 py-2 border border-gray-200 rounded hover:bg-gray-50 text-gray-700 flex items-center justify-center"
+                                title="Preview Room"
+                            >
+                                <ArrowSquareOut size={18} />
+                            </a>
+                        </div>
 
                         <div className="pt-4 border-t border-gray-100">
                             <label className="block text-xs font-medium text-gray-500 mb-1">Public Link</label>
                             <div className="flex gap-2">
-                                <code className="flex-1 bg-gray-100 p-2 rounded text-xs truncate">
-                                    /view/{room.slug}
-                                </code>
+                                <a
+                                    href={`/view/${room.slug}`}
+                                    target="_blank"
+                                    className="flex-1 bg-gray-100 p-2 rounded text-xs truncate hover:bg-gray-200 hover:underline text-gray-600 flex items-center gap-1"
+                                >
+                                    /view/{room.slug} <ArrowSquareOut size={12} />
+                                </a>
                                 <button onClick={copyLink} className="p-2 border border-gray-200 rounded hover:bg-gray-50">
                                     {copied ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
                                 </button>
