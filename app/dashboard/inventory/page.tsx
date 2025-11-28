@@ -2,12 +2,14 @@ import { createClient } from '@/utils/supabase/server'
 import { InventoryClient } from './inventory-client'
 import { getImpersonatedUser } from '@/utils/impersonation'
 
+import { Artist, Artwork } from '@/types'
+
 export default async function InventoryPage() {
     const supabase = await createClient()
     const { user } = await getImpersonatedUser(supabase)
 
-    let artworks = []
-    let artists = []
+    let artworks: Artwork[] = []
+    let artists: Artist[] = []
 
     if (user && user.id !== 'mock-user-id') {
         const { data: artworksData } = await supabase
@@ -23,7 +25,7 @@ export default async function InventoryPage() {
         // Fetch Artists for Dropdown
         const { data: artistsData } = await supabase
             .from('artists')
-            .select('id, full_name')
+            .select('*')
             .eq('user_id', user.id)
             .order('full_name', { ascending: true })
 
@@ -41,7 +43,11 @@ export default async function InventoryPage() {
                 medium: 'Oil on Canvas',
                 price: null,
                 status: 'draft',
-                image_url: 'https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=100'
+                image_url: 'https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=100',
+                description: '',
+                user_id: 'mock-user-id',
+                created_at: new Date().toISOString(),
+                artist: undefined
             },
             {
                 id: '2',
@@ -51,7 +57,11 @@ export default async function InventoryPage() {
                 medium: 'Acrylic',
                 price: 850,
                 status: 'available',
-                image_url: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=100'
+                image_url: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=100',
+                description: 'A study in blue tones.',
+                user_id: 'mock-user-id',
+                created_at: new Date().toISOString(),
+                artist: undefined
             }
         ]
     }
