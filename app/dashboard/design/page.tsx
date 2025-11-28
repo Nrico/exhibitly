@@ -34,7 +34,7 @@ export default async function SiteDesignPage() {
     // Fetch Profile for Username
     const { data: profile } = await supabase
         .from('profiles')
-        .select('username')
+        .select('username, account_type')
         .eq('id', user.id)
         .single()
 
