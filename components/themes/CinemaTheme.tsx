@@ -30,6 +30,8 @@ export default function CinemaTheme({ view }: { view?: string }) {
             if (view === 'home') return <GalleryHome profile={profile} settings={settings} artists={artists || []} exhibitions={exhibitions || []} />
             if (view === 'artists') return <GalleryRoster artists={artists || []} />
             if (view === 'exhibitions') return <GalleryExhibitions exhibitions={exhibitions || []} />
+            if (view === 'about') return <AboutView />
+            if (view === 'contact') return <ContactView />
         }
 
         if (currentView === 'about') return <AboutView />
@@ -86,7 +88,7 @@ export default function CinemaTheme({ view }: { view?: string }) {
                             {settings.site_title?.split(' ').map((word, i) => <span key={i} className="block">{word}</span>) || <span className="block">Untitled<br />Artist</span>}
                         </h1>
                         <div className="text-cinema-gold uppercase tracking-[3px] text-sm mb-12">
-                            Collection {new Date().getFullYear()}
+                            {settings.site_subtitle || `Collection ${new Date().getFullYear()}`}
                         </div>
 
                         <nav className="space-y-4 font-[family-name:var(--font-cinzel)] text-lg text-gray-500">
@@ -95,6 +97,8 @@ export default function CinemaTheme({ view }: { view?: string }) {
                                     <a href="?view=home" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'home' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Home</a>
                                     <a href="?view=artists" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'artists' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Artists</a>
                                     <a href="?view=exhibitions" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'exhibitions' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Exhibitions</a>
+                                    <a href="?view=about" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'about' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>About</a>
+                                    <a href="?view=contact" className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${view === 'contact' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Contact</a>
                                 </>
                             ) : (
                                 <button onClick={() => setCurrentView('gallery')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'gallery' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Gallery</button>
@@ -121,8 +125,12 @@ export default function CinemaTheme({ view }: { view?: string }) {
                                 </div>
                             )}
 
-                            <button onClick={() => setCurrentView('about')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'about' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Biography</button>
-                            <button onClick={() => setCurrentView('contact')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'contact' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Contact</button>
+                            {!isGalleryAccount && (
+                                <>
+                                    <button onClick={() => setCurrentView('about')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'about' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>About</button>
+                                    <button onClick={() => setCurrentView('contact')} className={`block hover:text-gray-200 hover:translate-x-2 transition-all text-left w-full ${currentView === 'contact' ? 'text-gray-100 border-l-2 border-cinema-gold pl-3' : 'text-gray-500'}`}>Contact</button>
+                                </>
+                            )}
                         </nav>
                     </div>
 

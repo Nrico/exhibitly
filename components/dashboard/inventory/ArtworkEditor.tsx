@@ -15,6 +15,7 @@ type ArtworkEditorProps = {
     onSave: (formData: FormData) => Promise<void>
     onDelete: () => Promise<void>
     onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
+    artists: any[]
 }
 
 export function ArtworkEditor({
@@ -26,7 +27,8 @@ export function ArtworkEditor({
     onClose,
     onSave,
     onDelete,
-    onFileSelect
+    onFileSelect,
+    artists = []
 }: ArtworkEditorProps) {
     const [isSaving, setIsSaving] = useState(false)
 
@@ -80,6 +82,22 @@ export function ArtworkEditor({
                                     onChange={onFileSelect}
                                 />
                             </div>
+                        </div>
+
+                        <div className="mb-5">
+                            <label className="block text-xs font-semibold mb-1.5 text-[#444]">Artist</label>
+                            <select
+                                name="artist_id"
+                                defaultValue={selectedItem?.artist_id || ''}
+                                className="w-full p-2.5 border border-gray-200 rounded-md text-sm font-sans focus:outline-none focus:border-[#111111] transition-colors bg-white"
+                            >
+                                <option value="">Select Artist (Optional)</option>
+                                {artists.map((artist: any) => (
+                                    <option key={artist.id} value={artist.id}>
+                                        {artist.full_name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="mb-5">

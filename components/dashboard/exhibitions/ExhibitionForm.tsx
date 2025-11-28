@@ -42,7 +42,7 @@ export function ExhibitionForm({
             <div
                 className={`fixed top-0 right-0 w-[500px] h-full bg-white border-l border-gray-200 shadow-[-5px_0_30px_rgba(0,0,0,0.1)] z-50 transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
             >
-                <form action={handleSubmit} className="flex flex-col h-full">
+                <form key={selectedItem?.id || 'new'} action={handleSubmit} className="flex flex-col h-full">
                     <div className="p-5 border-b border-gray-200 flex justify-between items-center bg-[#fafafa]">
                         <h3 className="font-semibold text-lg text-[#111111]">
                             {isCreating ? 'Create Exhibition' : 'Edit Exhibition'}

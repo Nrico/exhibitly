@@ -12,6 +12,7 @@ export async function saveSiteSettings(formData: FormData) {
     }
 
     const site_title = formData.get('site_title') as string
+    const site_subtitle = formData.get('site_subtitle') as string
     const site_bio = formData.get('site_bio') as string
     const site_bio_long = formData.get('site_bio_long') as string
     const theme = formData.get('theme') as string
@@ -27,6 +28,7 @@ export async function saveSiteSettings(formData: FormData) {
     const { error } = await supabase.from('site_settings').upsert({
         user_id: user.id,
         site_title,
+        site_subtitle,
         site_bio,
         site_bio_long,
         theme,

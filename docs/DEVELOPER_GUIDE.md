@@ -84,9 +84,23 @@ Themes are implemented as separate components in `components/themes/`.
 
 The project is optimized for deployment on **Vercel**.
 
-1.  Connect your GitHub repository to Vercel.
-2.  Add the Environment Variables in Vercel Project Settings.
-3.  Deploy.
+1.  **Connect to Vercel**:
+    - Go to [Vercel Dashboard](https://vercel.com/dashboard) and click "Add New Project".
+    - Import your `exhibitly` repository.
+
+2.  **Configure Environment Variables**:
+    - In the "Environment Variables" section of the import flow, add the following keys (copy values from your `.env.local`):
+        - `NEXT_PUBLIC_SUPABASE_URL`
+        - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+        - `SUPABASE_SERVICE_ROLE_KEY` (if used for admin tasks)
+        - `RESEND_API_KEY`
+        - `STRIPE_SECRET_KEY`
+        - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+        - `NEXT_PUBLIC_BASE_URL` (Set this to your production domain, e.g., `https://your-project.vercel.app`)
+
+3.  **Deploy**:
+    - Click "Deploy". Vercel will build the project.
+    - Once deployed, your app will be live and SSL secured automatically.
 
 ## Database Schema
 

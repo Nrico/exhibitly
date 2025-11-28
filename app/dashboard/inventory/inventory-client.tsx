@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Plus } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { createArtwork, updateArtwork, deleteArtwork, reorderArtworks } from '@/app/dashboard/inventory/actions'
@@ -15,7 +15,7 @@ import { ArtworkEditor } from '@/components/dashboard/inventory/ArtworkEditor'
 import { BatchUpload } from '@/components/dashboard/inventory/BatchUpload'
 import { InventoryToolbar } from '@/components/dashboard/inventory/InventoryToolbar'
 
-export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[] }) {
+export function InventoryClient({ initialArtworks, initialArtists = [] }: { initialArtworks: Artwork[], initialArtists?: any[] }) {
     const router = useRouter()
 
     const [isEditorOpen, setIsEditorOpen] = useState(false)
@@ -30,9 +30,15 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
     const [pendingFile, setPendingFile] = useState<File | null>(null)
     const [uploadProgress, setUploadProgress] = useState<{ current: number, total: number } | null>(null)
 
+    const searchParams = useSearchParams()
+
     useEffect(() => {
         setMounted(true)
-    }, [])
+        if (searchParams.get('new') === 'true') {
+            // Small delay to ensure UI is ready
+            setTimeout(() => openCreateEditor(), 100)
+        }
+    }, [searchParams])
 
     useEffect(() => {
         setArtworks(initialArtworks)
@@ -257,6 +263,7 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                 mounted={mounted}
                 openEditor={openEditor}
                 handleDragEnd={handleDragEnd}
+                artists={initialArtists}
             />
 
             <ArtworkEditor
@@ -269,6 +276,7 @@ export function InventoryClient({ initialArtworks }: { initialArtworks: Artwork[
                 onSave={handleSave}
                 onDelete={handleDelete}
                 onFileSelect={handleFileSelect}
+                artists={initialArtists}
             />
         </div>
     )

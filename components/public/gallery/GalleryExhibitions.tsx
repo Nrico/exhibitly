@@ -4,11 +4,34 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Exhibition } from '@/types'
 
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import { ExhibitionDetail } from './ExhibitionDetail'
+
 type GalleryExhibitionsProps = {
     exhibitions: Exhibition[]
 }
 
 export function GalleryExhibitions({ exhibitions }: GalleryExhibitionsProps) {
+    const searchParams = useSearchParams()
+    const router = useRouter()
+    const pathname = usePathname()
+    const exhibitionId = searchParams.get('id')
+
+    // If an ID is present, find and render the exhibition detail
+    if (exhibitionId) {
+        const exhibition = exhibitions.find(e => e.id === exhibitionId)
+        if (exhibition) {
+            return (
+                <div className="container mx-auto px-6 py-10">
+                    <ExhibitionDetail
+                        exhibition={exhibition}
+                        onBack={() => router.push(`${pathname}?view=exhibitions`)}
+                    />
+                </div>
+            )
+        }
+    }
+
     const currentExhibitions = exhibitions.filter(e => {
         const now = new Date()
         const start = e.start_date ? new Date(e.start_date) : null
@@ -52,7 +75,7 @@ export function GalleryExhibitions({ exhibitions }: GalleryExhibitionsProps) {
     )
 
     return (
-        <div className="container mx-auto px-6 py-20 space-y-20">
+        <div className="container mx-auto px-6 py-20 space-y-20 animate-[fadeIn_0.5s_ease]">
             {currentExhibitions.length > 0 && (
                 <section>
                     <h2 className="font-serif text-3xl mb-10 border-b border-black pb-4">Current Exhibitions</h2>

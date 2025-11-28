@@ -29,9 +29,31 @@ export async function POST(req: Request) {
         if (userId) {
             await supabase
                 .from('profiles')
-                .update({ subscription_status: 'active' })
+                .update({ subscription_status: 'active', stripe_customer_id: session.customer as string })
                 .eq('id', userId);
         }
+    }
+
+    if (event.type === 'customer.subscription.updated') {
+        const subscription = event.data.object as Stripe.Subscription;
+        // Check status: active, past_due, unpaid, canceled, incomplete, incomplete_expired, trialing
+        // We map 'active' and 'trialing' to 'active', others to 'free' (or specific status if we want)
+        const status = ['active', 'trialing'].includes(subscription.status) ? 'active' : 'free';
+
+        // Find profile by stripe_customer_id
+        await supabase
+            .from('profiles')
+            .update({ subscription_status: status })
+            .eq('stripe_customer_id', subscription.customer as string);
+    }
+
+    if (event.type === 'customer.subscription.deleted') {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        await supabase
+            .from('profiles')
+            .update({ subscription_status: 'free' })
+            .eq('stripe_customer_id', subscription.customer as string);
     }
 
     return new NextResponse(null, { status: 200 });

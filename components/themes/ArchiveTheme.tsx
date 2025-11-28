@@ -30,6 +30,8 @@ export default function ArchiveTheme({ view }: { view?: string }) {
             if (view === 'home') return <GalleryHome profile={profile} settings={settings} artists={artists || []} exhibitions={exhibitions || []} />
             if (view === 'artists') return <GalleryRoster artists={artists || []} />
             if (view === 'exhibitions') return <GalleryExhibitions exhibitions={exhibitions || []} />
+            if (view === 'about') return <AboutView />
+            if (view === 'contact') return <ContactView />
         }
 
         if (currentView === 'about') return <AboutView />
@@ -90,12 +92,16 @@ export default function ArchiveTheme({ view }: { view?: string }) {
                                 <a href="?view=home" className={`hover:text-black transition-colors ${view === 'home' ? 'text-black font-semibold' : ''}`}>Home</a>
                                 <a href="?view=artists" className={`hover:text-black transition-colors ${view === 'artists' ? 'text-black font-semibold' : ''}`}>Artists</a>
                                 <a href="?view=exhibitions" className={`hover:text-black transition-colors ${view === 'exhibitions' ? 'text-black font-semibold' : ''}`}>Exhibitions</a>
+                                <a href="?view=about" className={`hover:text-black transition-colors ${view === 'about' ? 'text-black font-semibold' : ''}`}>About</a>
+                                <a href="?view=contact" className={`hover:text-black transition-colors ${view === 'contact' ? 'text-black font-semibold' : ''}`}>Contact</a>
                             </>
                         ) : (
-                            <button onClick={() => setCurrentView('gallery')} className={`hover:text-black transition-colors ${currentView === 'gallery' ? 'text-black font-semibold' : ''}`}>Work</button>
+                            <>
+                                <button onClick={() => setCurrentView('gallery')} className={`hover:text-black transition-colors ${currentView === 'gallery' ? 'text-black font-semibold' : ''}`}>Work</button>
+                                <button onClick={() => setCurrentView('about')} className={`hover:text-black transition-colors ${currentView === 'about' ? 'text-black font-semibold' : ''}`}>About</button>
+                                <button onClick={() => setCurrentView('contact')} className={`hover:text-black transition-colors ${currentView === 'contact' ? 'text-black font-semibold' : ''}`}>Contact</button>
+                            </>
                         )}
-                        <button onClick={() => setCurrentView('about')} className={`hover:text-black transition-colors ${currentView === 'about' ? 'text-black font-semibold' : ''}`}>About</button>
-                        <button onClick={() => setCurrentView('contact')} className={`hover:text-black transition-colors ${currentView === 'contact' ? 'text-black font-semibold' : ''}`}>Contact</button>
                     </nav>
                 </header>
 

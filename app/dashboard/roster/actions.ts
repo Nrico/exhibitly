@@ -4,6 +4,9 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { getImpersonatedUser } from '@/utils/impersonation'
+import { uploadToR2 } from '@/utils/r2'
+import { checkLimit } from '@/utils/limits'
+import { sanitizeFileName } from '@/lib/utils'
 
 const artistSchema = z.object({
     fullName: z.string().min(1, 'Name is required'),
@@ -37,6 +40,12 @@ export async function createArtist(prevState: any, formData: FormData) {
 
     if (!user) return { error: 'Unauthorized' }
 
+    // Check limits
+    const { allowed, limit } = await checkLimit(supabase, user.id, 'artists')
+    if (!allowed) {
+        return { error: `You have reached the limit of ${limit} artists for your plan. Please upgrade to add more.` }
+    }
+
     const rawData = {
         fullName: formData.get('fullName') as string,
         bio: formData.get('bio') as string,
@@ -47,18 +56,14 @@ export async function createArtist(prevState: any, formData: FormData) {
 
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop()
-        const fileName = `${user.id}/${Math.random()}.${fileExt}`
-        const { error: uploadError } = await supabase.storage
-            .from('avatars')
-            .upload(fileName, imageFile)
+        const sanitizedName = sanitizeFileName(rawData.fullName)
+        const timestamp = Date.now()
+        const fileName = `${user.id}/${sanitizedName}-${timestamp}.${fileExt}`
 
-        if (uploadError) {
-            console.error('Upload error:', uploadError)
-        } else {
-            const { data: { publicUrl } } = supabase.storage
-                .from('avatars')
-                .getPublicUrl(fileName)
-            avatarUrl = publicUrl
+        try {
+            avatarUrl = await uploadToR2(imageFile, fileName, imageFile.type)
+        } catch (error) {
+            console.error('Upload error:', error)
         }
     }
 
@@ -101,18 +106,14 @@ export async function updateArtist(prevState: any, formData: FormData) {
 
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop()
-        const fileName = `${user.id}/${Math.random()}.${fileExt}`
-        const { error: uploadError } = await supabase.storage
-            .from('avatars')
-            .upload(fileName, imageFile)
+        const sanitizedName = sanitizeFileName(rawData.fullName)
+        const timestamp = Date.now()
+        const fileName = `${user.id}/${sanitizedName}-${timestamp}.${fileExt}`
 
-        if (uploadError) {
-            console.error('Upload error:', uploadError)
-        } else {
-            const { data: { publicUrl } } = supabase.storage
-                .from('avatars')
-                .getPublicUrl(fileName)
-            avatarUrl = publicUrl
+        try {
+            avatarUrl = await uploadToR2(imageFile, fileName, imageFile.type)
+        } catch (error) {
+            console.error('Upload error:', error)
         }
     }
 

@@ -12,7 +12,9 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { Artwork } from '@/types'
 
-export function RowContent({ item, openEditor, dragHandle }: { item: Artwork, openEditor: (item: Artwork) => void, dragHandle?: React.ReactNode }) {
+export function RowContent({ item, openEditor, dragHandle, artists = [] }: { item: Artwork, openEditor: (item: Artwork) => void, dragHandle?: React.ReactNode, artists?: any[] }) {
+    const artistName = item.artist_id ? artists.find(a => a.id === item.artist_id)?.full_name : null
+
     return (
         <>
             <td className="p-4 w-[40px]">
@@ -35,6 +37,9 @@ export function RowContent({ item, openEditor, dragHandle }: { item: Artwork, op
                 ) : (
                     <span className="text-[#ccc] text-sm">--</span>
                 )}
+            </td>
+            <td className="p-4 text-sm text-[#111111] cursor-pointer" onClick={() => openEditor(item)}>
+                {artistName || <span className="text-[#ccc]">--</span>}
             </td>
             <td className="p-4 text-sm text-[#111111] cursor-pointer" onClick={() => openEditor(item)}>{item.medium}</td>
             <td className={`p-4 text-sm cursor-pointer ${!item.price ? 'text-[#aaa]' : 'text-[#111111]'}`} onClick={() => openEditor(item)}>
@@ -64,7 +69,7 @@ export function RowContent({ item, openEditor, dragHandle }: { item: Artwork, op
     )
 }
 
-export function SortableRow({ item, openEditor }: { item: Artwork, openEditor: (item: Artwork) => void }) {
+export function SortableRow({ item, openEditor, artists = [] }: { item: Artwork, openEditor: (item: Artwork) => void, artists?: any[] }) {
     const {
         attributes,
         listeners,
@@ -90,6 +95,7 @@ export function SortableRow({ item, openEditor }: { item: Artwork, openEditor: (
             <RowContent
                 item={item}
                 openEditor={openEditor}
+                artists={artists}
                 dragHandle={
                     <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-2">
                         <DotsSixVertical size={20} />
@@ -100,12 +106,13 @@ export function SortableRow({ item, openEditor }: { item: Artwork, openEditor: (
     )
 }
 
-export function StaticRow({ item, openEditor }: { item: Artwork, openEditor: (item: Artwork) => void }) {
+export function StaticRow({ item, openEditor, artists = [] }: { item: Artwork, openEditor: (item: Artwork) => void, artists?: any[] }) {
     return (
         <tr className="border-b border-gray-50 last:border-none hover:bg-[#fcfcfc] transition-colors">
             <RowContent
                 item={item}
                 openEditor={openEditor}
+                artists={artists}
                 dragHandle={
                     <div className="text-gray-300 p-2 cursor-not-allowed">
                         <DotsSixVertical size={20} />

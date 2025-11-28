@@ -14,6 +14,7 @@ type Theme = 'white' | 'dark' | 'archive'
 
 type SiteSettings = {
     site_title: string | null
+    site_subtitle: string | null
     site_bio: string | null
     site_bio_long: string | null
     theme: string | null
@@ -32,9 +33,11 @@ type Artwork = {
     image_url: string | null
 }
 
-export default function DesignClient({ initialSettings, username }: { initialSettings: SiteSettings, username: string, artworks: Artwork[] }) {
+export default function DesignClient({ initialSettings, username, artworks, accountType }: { initialSettings: SiteSettings, username: string, artworks: Artwork[], accountType: string }) {
+    console.log('DesignClient - Received Username:', username)
     const [activeTheme, setActiveTheme] = useState<Theme>((initialSettings.theme as Theme) || 'white')
     const [siteTitle, setSiteTitle] = useState(initialSettings.site_title || '')
+    const [siteSubtitle, setSiteSubtitle] = useState(initialSettings.site_subtitle || '')
     const [siteBio, setSiteBio] = useState(initialSettings.site_bio || '')
     const [siteBioLong, setSiteBioLong] = useState(initialSettings.site_bio_long || '')
     const [customDomain, setCustomDomain] = useState(initialSettings.custom_domain || '')
@@ -48,10 +51,13 @@ export default function DesignClient({ initialSettings, username }: { initialSet
     const [deviceView, setDeviceView] = useState<'mobile' | 'desktop'>('mobile')
     const [isSaving, setIsSaving] = useState(false)
 
+    const isGallery = accountType === 'gallery'
+
     const handleSave = async () => {
         setIsSaving(true)
         const formData = new FormData()
         formData.append('site_title', siteTitle)
+        formData.append('site_subtitle', siteSubtitle)
         formData.append('site_bio', siteBio)
         formData.append('site_bio_long', siteBioLong)
         formData.append('theme', activeTheme)
@@ -161,8 +167,18 @@ export default function DesignClient({ initialSettings, username }: { initialSet
                                 className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
                             />
                         </div>
+                        <div className="mb-5">
+                            <label className="block text-sm font-medium mb-2 text-[#333333]">Site Subtitle</label>
+                            <input
+                                type="text"
+                                value={siteSubtitle}
+                                onChange={(e) => setSiteSubtitle(e.target.value)}
+                                className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
+                                placeholder="e.g. Fine Art & Illustration"
+                            />
+                        </div>
                         <div>
-                            <label className="block text-sm font-medium mb-2 text-[#333333]">Artist Bio (Short)</label>
+                            <label className="block text-sm font-medium mb-2 text-[#333333]">{isGallery ? 'Gallery Bio (Short)' : 'Artist Bio (Short)'}</label>
                             <textarea
                                 className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors min-h-[100px]"
                                 value={siteBio}
@@ -170,7 +186,7 @@ export default function DesignClient({ initialSettings, username }: { initialSet
                             />
                         </div>
                         <div className="mt-5">
-                            <label className="block text-sm font-medium mb-2 text-[#333333]">Artist Bio (Long / About Page)</label>
+                            <label className="block text-sm font-medium mb-2 text-[#333333]">{isGallery ? 'Gallery Bio (Long / About Page)' : 'Artist Bio (Long / About Page)'}</label>
                             <textarea
                                 className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors min-h-[200px]"
                                 value={siteBioLong}

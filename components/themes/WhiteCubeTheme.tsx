@@ -30,6 +30,8 @@ export default function WhiteCubeTheme({ view }: { view?: string }) {
             if (view === 'home') return <GalleryHome profile={profile} settings={settings} artists={artists || []} exhibitions={exhibitions || []} />
             if (view === 'artists') return <GalleryRoster artists={artists || []} />
             if (view === 'exhibitions') return <GalleryExhibitions exhibitions={exhibitions || []} />
+            if (view === 'about') return <AboutView />
+            if (view === 'contact') return <ContactView />
         }
 
         if (currentView === 'about') return <AboutView />
@@ -85,7 +87,7 @@ export default function WhiteCubeTheme({ view }: { view?: string }) {
                         {settings.site_title || profile.full_name || 'Untitled Artist'}
                     </h1>
                     <div className="text-whitecube-text-muted text-sm uppercase tracking-[3px]">
-                        Fine Art & Illustration
+                        {settings.site_subtitle || 'Fine Art & Illustration'}
                     </div>
 
                     <nav className="mt-8 py-4 border-t border-b border-whitecube-border flex justify-center gap-8 text-sm uppercase tracking-wider">
@@ -94,12 +96,16 @@ export default function WhiteCubeTheme({ view }: { view?: string }) {
                                 <a href="?view=home" className={`hover:text-whitecube-accent transition-colors ${view === 'home' ? 'text-whitecube-accent' : ''}`}>Home</a>
                                 <a href="?view=artists" className={`hover:text-whitecube-accent transition-colors ${view === 'artists' ? 'text-whitecube-accent' : ''}`}>Artists</a>
                                 <a href="?view=exhibitions" className={`hover:text-whitecube-accent transition-colors ${view === 'exhibitions' ? 'text-whitecube-accent' : ''}`}>Exhibitions</a>
+                                <a href="?view=about" className={`hover:text-whitecube-accent transition-colors ${view === 'about' ? 'text-whitecube-accent' : ''}`}>About</a>
+                                <a href="?view=contact" className={`hover:text-whitecube-accent transition-colors ${view === 'contact' ? 'text-whitecube-accent' : ''}`}>Contact</a>
                             </>
                         ) : (
-                            <button onClick={() => setCurrentView('gallery')} className={`hover:text-whitecube-accent transition-colors ${currentView === 'gallery' ? 'text-whitecube-accent' : ''}`}>Portfolio</button>
+                            <>
+                                <button onClick={() => setCurrentView('gallery')} className={`hover:text-whitecube-accent transition-colors ${currentView === 'gallery' ? 'text-whitecube-accent' : ''}`}>Portfolio</button>
+                                <button onClick={() => setCurrentView('about')} className={`hover:text-whitecube-accent transition-colors ${currentView === 'about' ? 'text-whitecube-accent' : ''}`}>About</button>
+                                <button onClick={() => setCurrentView('contact')} className={`hover:text-whitecube-accent transition-colors ${currentView === 'contact' ? 'text-whitecube-accent' : ''}`}>Contact</button>
+                            </>
                         )}
-                        <button onClick={() => setCurrentView('about')} className={`hover:text-whitecube-accent transition-colors ${currentView === 'about' ? 'text-whitecube-accent' : ''}`}>About</button>
-                        <button onClick={() => setCurrentView('contact')} className={`hover:text-whitecube-accent transition-colors ${currentView === 'contact' ? 'text-whitecube-accent' : ''}`}>Contact</button>
                     </nav>
 
                     {/* Collection Filter for White Cube (Only for Artist Gallery View) */}

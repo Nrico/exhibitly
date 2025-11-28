@@ -4,6 +4,9 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { getImpersonatedUser } from '@/utils/impersonation'
+import { uploadToR2 } from '@/utils/r2'
+import { checkLimit } from '@/utils/limits'
+import { sanitizeFileName } from '@/lib/utils'
 
 const exhibitionSchema = z.object({
     title: z.string().min(1, 'Title is required'),
@@ -40,34 +43,37 @@ export async function createExhibition(prevState: any, formData: FormData) {
 
     if (!user) return { error: 'Unauthorized' }
 
+    // Check limits
+    const { allowed, limit } = await checkLimit(supabase, user.id, 'exhibitions')
+    if (!allowed) {
+        return { error: `You have reached the limit of ${limit} exhibitions for your plan. Please upgrade to add more.` }
+    }
+
     const rawData = {
         title: formData.get('title') as string,
-        description: formData.get('description') as string,
-        startDate: formData.get('startDate') as string || undefined,
-        endDate: formData.get('endDate') as string || undefined,
+        description: (formData.get('description') as string) || undefined,
+        startDate: (formData.get('startDate') as string) || undefined,
+        endDate: (formData.get('endDate') as string) || undefined,
         status: formData.get('status') as 'draft' | 'published' | 'archived',
     }
 
     const imageFile = formData.get('coverImage') as File
-    let coverImageUrl = formData.get('coverImageUrl') as string
+    let coverImageUrl = (formData.get('coverImageUrl') as string) || undefined
 
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop()
-        const fileName = `${user.id}/exhibitions/${Math.random()}.${fileExt}`
-        // Use 'artworks' bucket for now as it's public, or create 'exhibitions' bucket?
-        // Let's reuse 'artworks' bucket but organize by folder, or 'avatars'?
-        // 'artworks' bucket seems appropriate for exhibition covers too.
-        const { error: uploadError } = await supabase.storage
-            .from('artworks')
-            .upload(fileName, imageFile)
+        const sanitizedTitle = sanitizeFileName(rawData.title)
+        const timestamp = Date.now()
+        const fileName = `${user.id}/exhibitions/${sanitizedTitle}-${timestamp}.${fileExt}`
 
-        if (uploadError) {
-            console.error('Upload error:', uploadError)
-        } else {
-            const { data: { publicUrl } } = supabase.storage
-                .from('artworks')
-                .getPublicUrl(fileName)
-            coverImageUrl = publicUrl
+        console.log('Attempting to upload exhibition cover:', fileName)
+
+        try {
+            coverImageUrl = await uploadToR2(imageFile, fileName, imageFile.type)
+            console.log('Upload successful:', coverImageUrl)
+        } catch (error) {
+            console.error('Upload error:', error)
+            return { error: `Image upload failed: ${(error as Error).message}` }
         }
     }
 
@@ -105,29 +111,29 @@ export async function updateExhibition(prevState: any, formData: FormData) {
     const id = formData.get('id') as string
     const rawData = {
         title: formData.get('title') as string,
-        description: formData.get('description') as string,
-        startDate: formData.get('startDate') as string || undefined,
-        endDate: formData.get('endDate') as string || undefined,
+        description: (formData.get('description') as string) || undefined,
+        startDate: (formData.get('startDate') as string) || undefined,
+        endDate: (formData.get('endDate') as string) || undefined,
         status: formData.get('status') as 'draft' | 'published' | 'archived',
     }
 
     const imageFile = formData.get('coverImage') as File
-    let coverImageUrl = formData.get('coverImageUrl') as string
+    let coverImageUrl = (formData.get('coverImageUrl') as string) || undefined
 
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop()
-        const fileName = `${user.id}/exhibitions/${Math.random()}.${fileExt}`
-        const { error: uploadError } = await supabase.storage
-            .from('artworks')
-            .upload(fileName, imageFile)
+        const sanitizedTitle = sanitizeFileName(rawData.title)
+        const timestamp = Date.now()
+        const fileName = `${user.id}/exhibitions/${sanitizedTitle}-${timestamp}.${fileExt}`
 
-        if (uploadError) {
-            console.error('Upload error:', uploadError)
-        } else {
-            const { data: { publicUrl } } = supabase.storage
-                .from('artworks')
-                .getPublicUrl(fileName)
-            coverImageUrl = publicUrl
+        console.log('Attempting to upload exhibition cover:', fileName)
+
+        try {
+            coverImageUrl = await uploadToR2(imageFile, fileName, imageFile.type)
+            console.log('Upload successful:', coverImageUrl)
+        } catch (error) {
+            console.error('Upload error:', error)
+            return { error: `Image upload failed: ${(error as Error).message}` }
         }
     }
 

@@ -240,12 +240,12 @@ export function SettingsForm({
                     <div className="flex justify-between items-center p-5 bg-[#f9fafb] rounded-md border border-gray-200">
                         <div>
                             <div className="font-semibold text-sm text-[#111111]">{isPro ? '$12.00 / month' : '$0.00 / month'}</div>
-                            <div className="text-xs text-[#666666] mt-0.5">{isPro ? 'Next invoice: December 20, 2025' : 'Upgrade to remove limits.'}</div>
+                            <div className="text-xs text-[#666666] mt-0.5">{isPro ? 'Manage your payment method or cancel subscription.' : 'Upgrade to remove limits.'}</div>
                         </div>
                         {isPro ? (
                             <form action={createPortalSession}>
                                 <button type="submit" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 cursor-pointer">
-                                    Manage Billing on Stripe <ArrowSquareOut size={16} />
+                                    Manage Subscription / Cancel <ArrowSquareOut size={16} />
                                 </button>
                             </form>
                         ) : (

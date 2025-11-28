@@ -5,10 +5,13 @@ export type Profile = {
     username: string | null
     email: string | null
     account_type: 'artist' | 'gallery'
+    subscription_status?: string
 }
 
 export type SiteSettings = {
+    user_id: string
     site_title: string | null
+    site_subtitle: string | null
     site_bio: string | null
     site_bio_long: string | null
     theme: string | null
@@ -33,6 +36,7 @@ export type Artwork = {
     collection: string | null
     artist_id?: string | null
     position?: number
+    year?: string | null
     created_at?: string
 }
 
@@ -43,19 +47,42 @@ export type Artist = {
     bio: string | null
     avatar_url: string | null
     created_at: string
+    artworks?: Artwork[]
 }
 
 export type Exhibition = {
     id: string
     user_id: string
     title: string
+    start_date: string
+    end_date: string
+    location: string
     description: string | null
-    start_date: string | null
-    end_date: string | null
-    is_featured: boolean
-    cover_image_url: string | null
     status: 'draft' | 'published' | 'archived'
+    cover_image_url: string | null
     created_at: string
+    artworks?: Artwork[]
+}
+
+export type ViewingRoom = {
+    id: string
+    gallery_id: string
+    title: string
+    slug: string
+    status: 'draft' | 'active' | 'archived'
+    expires_at: string | null
+    created_at: string
+    updated_at: string
+}
+
+export type RoomItem = {
+    id: string
+    room_id: string
+    artwork_id: string
+    is_highlight: boolean
+    sort_order: number
+    created_at: string
+    artwork?: Artwork // For joined queries
 }
 
 export type ExhibitionArtwork = {

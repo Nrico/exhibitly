@@ -3,9 +3,13 @@ import { OnboardingChecklist } from '@/components/dashboard/onboarding-checklist
 import { StatsCards } from '@/components/dashboard/stats-cards'
 import { PlusCircle, MagicWand } from '@phosphor-icons/react/dist/ssr'
 import Image from 'next/image'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { signOut } from '@/app/auth/actions'
 import { getImpersonatedUser } from '@/utils/impersonation'
+
+import { getUsage } from '@/utils/limits'
+import { UsageIndicator, UpgradePrompt } from '@/components/dashboard/usage-indicator'
 
 export default async function Dashboard() {
     const supabase = await createClient()
@@ -28,6 +32,9 @@ export default async function Dashboard() {
         .select('*')
         .eq('user_id', user.id)
         .single()
+
+    // Fetch Usage
+    const { status, usage, limits } = await getUsage(supabase, user.id)
 
     // Fetch recent uploads
     const { data: recentUploads } = await supabase
@@ -71,9 +78,9 @@ export default async function Dashboard() {
                         <div className="text-sm text-[#666666]">{currentDate}</div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <button className="bg-[#111111] text-white border-none px-6 py-3 rounded-md text-sm cursor-pointer flex items-center gap-2 hover:bg-[#333] transition-colors">
+                        <Link href="/dashboard/inventory?new=true" className="bg-[#111111] text-white border-none px-6 py-3 rounded-md text-sm cursor-pointer flex items-center gap-2 hover:bg-[#333] transition-colors no-underline">
                             <PlusCircle size={18} /> Upload New Work
-                        </button>
+                        </Link>
                         <form action={signOut}>
                             <button className="px-4 py-2 bg-white border border-gray-200 rounded-md text-sm hover:bg-gray-50">
                                 Sign Out
@@ -82,20 +89,39 @@ export default async function Dashboard() {
                     </div>
                 </header>
 
-                <OnboardingChecklist
-                    profile={profile}
-                    settings={settings}
-                    artworkCount={recentUploads?.length || 0}
-                    username={profile?.username}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    <div className="md:col-span-2 space-y-8">
+                        <OnboardingChecklist
+                            profile={profile}
+                            settings={settings}
+                            artworkCount={recentUploads?.length || 0}
+                            username={profile?.username}
+                        />
 
-                <StatsCards
-                    totalViews={totalViews || 0}
-                    totalArtworks={totalArtworks || 0}
-                    soldArtworks={soldArtworks || 0}
-                    availableArtworks={availableArtworks || 0}
-                    username={profile?.username}
-                />
+                        <StatsCards
+                            totalViews={totalViews || 0}
+                            totalArtworks={totalArtworks || 0}
+                            soldArtworks={soldArtworks || 0}
+                            availableArtworks={availableArtworks || 0}
+                            username={profile?.username}
+                        />
+                    </div>
+                    <div className="space-y-6">
+                        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-gray-500">Plan Usage</h3>
+                            <div className="space-y-6">
+                                <UsageIndicator type="artworks" count={usage.artworks} limit={limits.artworks} label="Artworks" />
+                                {profile?.account_type === 'gallery' && (
+                                    <>
+                                        <UsageIndicator type="artists" count={usage.artists} limit={limits.artists} label="Artists" />
+                                        <UsageIndicator type="exhibitions" count={usage.exhibitions} limit={limits.exhibitions} label="Exhibitions" />
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        {status === 'free' && <UpgradePrompt />}
+                    </div>
+                </div>
 
                 <h2 className="text-lg font-semibold mb-5 text-[#111111]">Recent Uploads</h2>
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

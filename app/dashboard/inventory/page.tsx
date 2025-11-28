@@ -7,21 +7,31 @@ export default async function InventoryPage() {
     const { user } = await getImpersonatedUser(supabase)
 
     let artworks = []
+    let artists = []
 
     if (user && user.id !== 'mock-user-id') {
-        const { data } = await supabase
+        const { data: artworksData } = await supabase
             .from('artworks')
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
 
-        if (data) {
-            artworks = data
-        } else {
-            console.error('Error fetching artworks:', await supabase.from('artworks').select('*').eq('user_id', user.id).then(res => res.error))
+        if (artworksData) {
+            artworks = artworksData
+        }
+
+        // Fetch Artists for Dropdown
+        const { data: artistsData } = await supabase
+            .from('artists')
+            .select('id, full_name')
+            .eq('user_id', user.id)
+            .order('full_name', { ascending: true })
+
+        if (artistsData) {
+            artists = artistsData
         }
     } else {
-        // Fallback for mock user or if DB connection fails/tables don't exist yet
+        // Fallback for mock user
         artworks = [
             {
                 id: '1',
@@ -46,5 +56,5 @@ export default async function InventoryPage() {
         ]
     }
 
-    return <InventoryClient initialArtworks={artworks} />
+    return <InventoryClient initialArtworks={artworks} initialArtists={artists} />
 }

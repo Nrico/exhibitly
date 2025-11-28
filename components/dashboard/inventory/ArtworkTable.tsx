@@ -22,9 +22,10 @@ type ArtworkTableProps = {
     mounted: boolean
     openEditor: (item: Artwork) => void
     handleDragEnd: (event: DragEndEvent) => void
+    artists?: any[]
 }
 
-export function ArtworkTable({ artworks, mounted, openEditor, handleDragEnd }: ArtworkTableProps) {
+export function ArtworkTable({ artworks, mounted, openEditor, handleDragEnd, artists = [] }: ArtworkTableProps) {
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
@@ -42,6 +43,7 @@ export function ArtworkTable({ artworks, mounted, openEditor, handleDragEnd }: A
                             <th className="p-4 pl-0 text-xs uppercase text-[#666666] font-semibold w-[60px]">Image</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Title / Description</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Collection</th>
+                            <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Artist</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Medium</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Price</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Status</th>
@@ -51,13 +53,13 @@ export function ArtworkTable({ artworks, mounted, openEditor, handleDragEnd }: A
                     <tbody>
                         {artworks.length === 0 && (
                             <tr>
-                                <td colSpan={8} className="p-8 text-center text-[#666666]">
+                                <td colSpan={9} className="p-8 text-center text-[#666666]">
                                     No artworks found. Add one to get started.
                                 </td>
                             </tr>
                         )}
                         {artworks.map((item) => (
-                            <StaticRow key={item.id} item={item} openEditor={openEditor} />
+                            <StaticRow key={item.id} item={item} openEditor={openEditor} artists={artists} />
                         ))}
                     </tbody>
                 </table>
@@ -80,6 +82,7 @@ export function ArtworkTable({ artworks, mounted, openEditor, handleDragEnd }: A
                             <th className="p-4 pl-0 text-xs uppercase text-[#666666] font-semibold w-[60px]">Image</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Title / Description</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Collection</th>
+                            <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Artist</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Medium</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Price</th>
                             <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Status</th>
@@ -89,7 +92,7 @@ export function ArtworkTable({ artworks, mounted, openEditor, handleDragEnd }: A
                     <tbody>
                         {artworks.length === 0 && (
                             <tr>
-                                <td colSpan={8} className="p-8 text-center text-[#666666]">
+                                <td colSpan={9} className="p-8 text-center text-[#666666]">
                                     No artworks found. Add one to get started.
                                 </td>
                             </tr>
@@ -99,7 +102,7 @@ export function ArtworkTable({ artworks, mounted, openEditor, handleDragEnd }: A
                             strategy={verticalListSortingStrategy}
                         >
                             {artworks.map((item) => (
-                                <SortableRow key={item.id} item={item} openEditor={openEditor} />
+                                <SortableRow key={item.id} item={item} openEditor={openEditor} artists={artists} />
                             ))}
                         </SortableContext>
                     </tbody>

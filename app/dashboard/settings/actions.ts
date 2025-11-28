@@ -3,6 +3,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { getImpersonatedUser } from '@/utils/impersonation'
+import { uploadToR2 } from '@/utils/r2'
+import { sanitizeFileName } from '@/lib/utils'
 
 export async function updateProfile(formData: FormData) {
     const supabase = await createClient()
@@ -23,18 +25,14 @@ export async function updateProfile(formData: FormData) {
 
     if (avatarFile && avatarFile.size > 0) {
         const fileExt = avatarFile.name.split('.').pop()
-        const fileName = `${user.id}/avatar-${Math.random()}.${fileExt}`
-        const { error: uploadError } = await supabase.storage
-            .from('avatars')
-            .upload(fileName, avatarFile, { upsert: true })
+        const sanitizedName = sanitizeFileName(full_name || 'user')
+        const timestamp = Date.now()
+        const fileName = `${user.id}/${sanitizedName}-${timestamp}.${fileExt}`
 
-        if (uploadError) {
-            console.error('Upload error:', uploadError)
-        } else {
-            const { data: { publicUrl } } = supabase.storage
-                .from('avatars')
-                .getPublicUrl(fileName)
-            updates.avatar_url = publicUrl
+        try {
+            updates.avatar_url = await uploadToR2(avatarFile, fileName, avatarFile.type)
+        } catch (error) {
+            console.error('Upload error:', error)
         }
     }
 

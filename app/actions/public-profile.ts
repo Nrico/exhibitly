@@ -47,16 +47,47 @@ export async function getPublicProfileData(username: string) {
             .eq('user_id', profile.id)
             .order('created_at', { ascending: false })
 
-        if (artistsData) artists = artistsData
+        if (artistsData) {
+            // Fetch artworks for these artists
+            const artistIds = artistsData.map(a => a.id)
+            const { data: artistArtworks } = await supabase
+                .from('artworks')
+                .select('*')
+                .in('artist_id', artistIds)
+                .in('status', ['available', 'sold', 'Live'])
+                .order('created_at', { ascending: false })
+
+            artists = artistsData.map(artist => ({
+                ...artist,
+                artworks: artistArtworks?.filter(w => w.artist_id === artist.id) || []
+            }))
+        }
 
         const { data: exhibitionsData } = await supabase
             .from('exhibitions')
-            .select('*')
+            .select(`
+                *,
+                exhibition_artworks (
+                    position,
+                    artwork: artworks (*)
+                )
+            `)
             .eq('user_id', profile.id)
             .eq('status', 'published')
             .order('start_date', { ascending: false })
 
-        if (exhibitionsData) exhibitions = exhibitionsData
+        if (exhibitionsData) {
+            // Transform the data to match the expected structure if needed, 
+            // or just pass it through. The type definition might need updating.
+            // We want exhibition.artworks to be an array of Artworks.
+            exhibitions = exhibitionsData.map(ex => ({
+                ...ex,
+                artworks: ex.exhibition_artworks
+                    ?.sort((a: any, b: any) => a.position - b.position)
+                    .map((ea: any) => ea.artwork)
+                    .filter(Boolean) || []
+            }))
+        }
     }
 
     return {

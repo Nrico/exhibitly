@@ -13,7 +13,7 @@ type GalleryHomeProps = {
 }
 
 export function GalleryHome({ profile, settings, exhibitions, artists }: GalleryHomeProps) {
-    const featuredExhibition = exhibitions.find(e => e.is_featured) || exhibitions[0]
+    const featuredExhibition = exhibitions[0]
     const recentExhibitions = exhibitions.filter(e => e.id !== featuredExhibition?.id).slice(0, 3)
     const featuredArtists = artists.slice(0, 4)
 

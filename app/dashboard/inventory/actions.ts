@@ -5,6 +5,9 @@ import { revalidatePath } from 'next/cache'
 import { getImpersonatedUser } from '@/utils/impersonation'
 
 import { Resend } from 'resend'
+import { uploadToR2 } from '@/utils/r2'
+import { checkLimit } from '@/utils/limits'
+import { sanitizeFileName } from '@/lib/utils'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -61,6 +64,12 @@ export async function createArtwork(formData: FormData) {
         return { error: 'Unauthorized' }
     }
 
+    // Check limits
+    const { allowed, limit } = await checkLimit(supabase, user.id, 'artworks')
+    if (!allowed) {
+        return { error: `You have reached the limit of ${limit} artworks for your plan. Please upgrade to add more.` }
+    }
+
     // Ensure profile exists (self-healing for old accounts)
     const { data: profile } = await supabase.from('profiles').select('id').eq('id', user.id).single()
     if (!profile) {
@@ -86,24 +95,24 @@ export async function createArtwork(formData: FormData) {
     const status = formData.get('status') as string
     const description = formData.get('description') as string
     const imageFile = formData.get('image') as File
+
     const shouldNotify = formData.get('notify_subscribers') === 'true'
+    const artistId = (formData.get('artist_id') as string) || null
 
     let image_url = 'https://images.unsplash.com/photo-1579783902614-a3fb39279cdb?q=80&w=400'
 
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop()
-        const fileName = `${user.id}/${Math.random()}.${fileExt}`
-        const { error: uploadError } = await supabase.storage
-            .from('artworks')
-            .upload(fileName, imageFile)
+        const sanitizedTitle = sanitizeFileName(title)
+        const sanitizedArtist = sanitizeFileName(user.user_metadata.full_name || 'artist')
+        const timestamp = Date.now()
+        const fileName = `${user.id}/${sanitizedTitle}-${sanitizedArtist}-${timestamp}.${fileExt}`
 
-        if (uploadError) {
-            console.error('Upload error:', uploadError)
-        } else {
-            const { data: { publicUrl } } = supabase.storage
-                .from('artworks')
-                .getPublicUrl(fileName)
-            image_url = publicUrl
+        try {
+            image_url = await uploadToR2(imageFile, fileName, imageFile.type)
+        } catch (error) {
+            console.error('Upload error:', error)
+            // Fallback or handle error
         }
     }
 
@@ -116,7 +125,9 @@ export async function createArtwork(formData: FormData) {
         dimensions,
         collection,
         status,
-        image_url
+
+        image_url,
+        artist_id: artistId
     }).select().single()
 
     if (error) {
@@ -148,7 +159,14 @@ export async function updateArtwork(id: string, formData: FormData) {
     const status = formData.get('status') as string
     const description = formData.get('description') as string
     const imageFile = formData.get('image') as File
+
     const shouldNotify = formData.get('notify_subscribers') === 'true'
+    const artistId = (formData.get('artist_id') as string) || null
+
+    console.log('updateArtwork called for ID:', id)
+    console.log('Status:', status)
+    console.log('Artist ID:', artistId)
+    console.log('User ID:', user.id)
 
     const updates: any = {
         title,
@@ -157,23 +175,23 @@ export async function updateArtwork(id: string, formData: FormData) {
         price: price ? parseFloat(price) : null,
         dimensions,
         collection,
-        status
+        status,
+        artist_id: artistId
     }
+
+    console.log('Updates payload:', updates)
 
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop()
-        const fileName = `${user.id}/${Math.random()}.${fileExt}`
-        const { error: uploadError } = await supabase.storage
-            .from('artworks')
-            .upload(fileName, imageFile)
+        const sanitizedTitle = sanitizeFileName(title)
+        const sanitizedArtist = sanitizeFileName(user.user_metadata.full_name || 'artist')
+        const timestamp = Date.now()
+        const fileName = `${user.id}/${sanitizedTitle}-${sanitizedArtist}-${timestamp}.${fileExt}`
 
-        if (uploadError) {
-            console.error('Upload error:', uploadError)
-        } else {
-            const { data: { publicUrl } } = supabase.storage
-                .from('artworks')
-                .getPublicUrl(fileName)
-            updates.image_url = publicUrl
+        try {
+            updates.image_url = await uploadToR2(imageFile, fileName, imageFile.type)
+        } catch (error) {
+            console.error('Upload error:', error)
         }
     }
 

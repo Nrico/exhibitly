@@ -22,11 +22,15 @@ export function PortfolioLayout({
     artists?: Artist[],
     exhibitions?: Exhibition[]
 }) {
-    const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null)
-
     const searchParams = useSearchParams()
     const previewTheme = searchParams.get('preview')
     const theme = previewTheme || settings.theme || 'minimal'
+
+    // Deep Linking for Artworks
+    const artworkId = searchParams.get('artwork_id')
+    const initialArtwork = artworkId ? artworks.find(a => a.id === artworkId) : null
+
+    const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(initialArtwork || null)
 
     // Gallery View State
     const view = searchParams.get('view') || 'home'

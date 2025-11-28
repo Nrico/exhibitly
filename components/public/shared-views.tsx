@@ -10,6 +10,8 @@ import { sendInquiry } from '@/app/actions/inquiry'
 
 export function AboutView() {
     const { profile, settings, theme } = usePortfolio()
+    const isGallery = profile.account_type === 'gallery'
+
     const themeStyles = {
         cinema: {
             text: 'text-gray-200',
@@ -39,10 +41,10 @@ export function AboutView() {
     const styles = themeStyles[theme as keyof typeof themeStyles] || themeStyles.minimal
 
     return (
-        <div className="max-w-3xl mx-auto py-12 animate-[fadeIn_0.5s_ease]">
-            <div className="flex flex-col md:flex-row gap-12 items-start">
+        <div className="max-w-4xl mx-auto py-16 px-5 animate-[fadeIn_0.5s_ease]">
+            <div className="flex flex-col md:flex-row gap-16 items-start">
                 {profile.avatar_url && (
-                    <div className="w-full md:w-1/3 relative aspect-square bg-gray-100">
+                    <div className="w-full md:w-2/5 relative aspect-[3/4] bg-gray-100 shadow-lg">
                         <Image
                             src={profile.avatar_url}
                             alt={profile.full_name || 'Artist'}
@@ -52,16 +54,16 @@ export function AboutView() {
                     </div>
                 )}
                 <div className="flex-1">
-                    <h2 className={`text-3xl mb-6 ${styles.font} ${styles.text}`}>
-                        About the Artist
+                    <h2 className={`text-4xl mb-8 ${styles.font} ${styles.text} uppercase tracking-wider`}>
+                        {isGallery ? 'About the Gallery' : 'About the Artist'}
                     </h2>
                     {settings.site_bio_long ? (
                         <div
-                            className={`whitespace-pre-wrap leading-relaxed ${styles.muted} [&>p]:mb-4`}
+                            className={`whitespace-pre-wrap leading-relaxed text-lg ${styles.muted} [&>p]:mb-6 font-light`}
                             dangerouslySetInnerHTML={{ __html: settings.site_bio_long }}
                         />
                     ) : (
-                        <div className={`whitespace-pre-wrap leading-relaxed ${styles.muted}`}>
+                        <div className={`whitespace-pre-wrap leading-relaxed text-lg ${styles.muted} font-light`}>
                             {settings.site_bio || "No biography available."}
                         </div>
                     )}
@@ -72,74 +74,155 @@ export function AboutView() {
 }
 
 export function ContactView() {
-    const { settings, theme } = usePortfolio()
+    const { settings, theme, profile } = usePortfolio()
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
     const themeStyles = {
         cinema: {
             text: 'text-gray-200',
             muted: 'text-gray-500',
             accent: 'text-cinema-gold',
+            input: 'bg-[#1a1a1a] border-[#333] text-white focus:border-cinema-gold',
+            button: 'bg-cinema-gold text-black hover:bg-cinema-gold-hover',
             font: 'font-[family-name:var(--font-cinzel)]'
         },
         archive: {
             text: 'text-archive-text',
             muted: 'text-archive-text-muted',
             accent: 'text-black',
+            input: 'bg-white border-gray-200 text-black focus:border-black',
+            button: 'bg-black text-white hover:bg-[#333]',
             font: 'font-sans'
         },
         minimal: {
             text: 'text-whitecube-text',
             muted: 'text-whitecube-text-muted',
             accent: 'text-whitecube-accent',
+            input: 'bg-white border-gray-200 text-black focus:border-whitecube-accent',
+            button: 'bg-whitecube-accent text-white hover:bg-[#b08d4b]',
             font: 'font-[family-name:var(--font-display)]'
         }
     }
     const styles = themeStyles[theme as keyof typeof themeStyles] || themeStyles.minimal
 
+    const handleContactSubmit = async (formData: FormData) => {
+        setIsSubmitting(true)
+        // Reuse the inquiry action but with a generic subject
+        formData.append('artworkTitle', 'General Inquiry')
+        formData.append('artistEmail', settings.contact_email || '')
+
+        const result = await sendInquiry(formData)
+        setIsSubmitting(false)
+
+        if (result.success) {
+            setSubmitStatus('success')
+        } else {
+            setSubmitStatus('error')
+            toast.error(result.error || 'Failed to send message')
+        }
+    }
+
     return (
-        <div className="max-w-2xl mx-auto py-12 animate-[fadeIn_0.5s_ease] text-center">
-            <h2 className={`text-3xl mb-8 ${styles.font} ${styles.text}`}>
+        <div className="max-w-5xl mx-auto py-16 px-5 animate-[fadeIn_0.5s_ease]">
+            <h2 className={`text-4xl mb-16 text-center ${styles.font} ${styles.text} uppercase tracking-wider`}>
                 Get in Touch
             </h2>
 
-            <div className={`space-y-6 mb-12 ${styles.text}`}>
-                {settings.contact_email && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+                {/* Contact Info */}
+                <div className={`space-y-10 ${styles.text}`}>
                     <div>
-                        <div className={`text-xs uppercase tracking-widest mb-1 ${styles.muted}`}>Email</div>
-                        <a href={`mailto:${settings.contact_email}`} className="text-xl hover:underline">{settings.contact_email}</a>
-                    </div>
-                )}
+                        <h3 className={`text-sm font-bold uppercase tracking-widest mb-6 ${styles.muted}`}>Contact Information</h3>
+                        <div className="space-y-6">
+                            {settings.contact_email && (
+                                <div>
+                                    <div className={`text-xs uppercase tracking-widest mb-1 ${styles.muted}`}>Email</div>
+                                    <a href={`mailto:${settings.contact_email}`} className="text-xl hover:opacity-70 transition-opacity">{settings.contact_email}</a>
+                                </div>
+                            )}
 
-                {settings.phone && (
+                            {settings.phone && (
+                                <div>
+                                    <div className={`text-xs uppercase tracking-widest mb-1 ${styles.muted}`}>Phone</div>
+                                    <div className="text-xl">{settings.phone}</div>
+                                </div>
+                            )}
+
+                            {settings.address && (
+                                <div>
+                                    <div className={`text-xs uppercase tracking-widest mb-1 ${styles.muted}`}>Studio / Gallery</div>
+                                    <div className="text-xl whitespace-pre-wrap">{settings.address}</div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
                     <div>
-                        <div className={`text-xs uppercase tracking-widest mb-1 ${styles.muted}`}>Phone</div>
-                        <div className="text-lg">{settings.phone}</div>
+                        <h3 className={`text-sm font-bold uppercase tracking-widest mb-6 ${styles.muted}`}>Social</h3>
+                        <div className="flex gap-6">
+                            {settings.social_instagram && (
+                                <a href={`https://instagram.com/${settings.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                                    <InstagramLogo size={32} />
+                                </a>
+                            )}
+                            {settings.social_twitter && (
+                                <a href={`https://twitter.com/${settings.social_twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                                    <span className="text-2xl font-bold">X</span>
+                                </a>
+                            )}
+                            {settings.social_facebook && (
+                                <a href={`https://facebook.com/${settings.social_facebook}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                                    <Globe size={32} />
+                                </a>
+                            )}
+                        </div>
                     </div>
-                )}
+                </div>
 
-                {settings.address && (
-                    <div>
-                        <div className={`text-xs uppercase tracking-widest mb-1 ${styles.muted}`}>Studio</div>
-                        <div className="text-lg">{settings.address}</div>
-                    </div>
-                )}
-            </div>
+                {/* Contact Form */}
+                <div>
+                    <h3 className={`text-sm font-bold uppercase tracking-widest mb-6 ${styles.muted}`}>Send a Message</h3>
 
-            <div className={`flex justify-center gap-6 ${styles.text}`}>
-                {settings.social_instagram && (
-                    <a href={`https://instagram.com/${settings.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
-                        <InstagramLogo size={32} />
-                    </a>
-                )}
-                {settings.social_twitter && (
-                    <a href={`https://twitter.com/${settings.social_twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
-                        <span className="text-2xl font-bold">X</span>
-                    </a>
-                )}
-                {settings.social_facebook && (
-                    <a href={`https://facebook.com/${settings.social_facebook}`} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
-                        <Globe size={32} />
-                    </a>
-                )}
+                    {submitStatus === 'success' ? (
+                        <div className="bg-green-50 border border-green-100 p-8 rounded-lg text-center">
+                            <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <EnvelopeSimple size={24} />
+                            </div>
+                            <h4 className="text-lg font-bold text-green-800 mb-2">Message Sent</h4>
+                            <p className="text-green-700">Thank you for contacting us. We will get back to you shortly.</p>
+                            <button
+                                onClick={() => setSubmitStatus('idle')}
+                                className="mt-6 text-sm font-semibold text-green-800 underline hover:text-green-900"
+                            >
+                                Send another message
+                            </button>
+                        </div>
+                    ) : (
+                        <form action={handleContactSubmit} className="space-y-5">
+                            <div>
+                                <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${styles.muted}`}>Name</label>
+                                <input required name="name" type="text" className={`w-full p-4 border rounded-none text-sm outline-none transition-colors ${styles.input}`} placeholder="Your Name" />
+                            </div>
+                            <div>
+                                <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${styles.muted}`}>Email</label>
+                                <input required name="email" type="email" className={`w-full p-4 border rounded-none text-sm outline-none transition-colors ${styles.input}`} placeholder="your@email.com" />
+                            </div>
+                            <div>
+                                <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${styles.muted}`}>Message</label>
+                                <textarea required name="message" rows={5} className={`w-full p-4 border rounded-none text-sm outline-none transition-colors ${styles.input}`} placeholder="How can we help you?" />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className={`w-full py-4 font-bold uppercase tracking-widest text-xs transition-all ${styles.button} disabled:opacity-50`}
+                            >
+                                {isSubmitting ? 'Sending...' : 'Send Message'}
+                            </button>
+                        </form>
+                    )}
+                </div>
             </div>
         </div>
     )
@@ -160,7 +243,7 @@ function InquiryButton({ className, onClick }: { className?: string, onClick: ()
 }
 
 export function DetailModal({ artwork, onClose }: { artwork: Artwork, onClose: () => void }) {
-    const { settings, theme } = usePortfolio()
+    const { profile, settings, theme } = usePortfolio()
     const [view, setView] = useState<'details' | 'inquire'>('details')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -285,10 +368,16 @@ export function DetailModal({ artwork, onClose }: { artwork: Artwork, onClose: (
 
                         <div className="mt-auto">
                             {artwork.status === 'available' ? (
-                                <InquiryButton
-                                    onClick={() => setView('inquire')}
-                                    className="inline-block border border-cinema-gold text-cinema-gold px-8 py-3 text-sm uppercase tracking-[3px] hover:bg-cinema-gold hover:text-black transition-all duration-300 cursor-pointer"
-                                />
+                                profile.subscription_status === 'active' ? (
+                                    <InquiryButton
+                                        onClick={() => setView('inquire')}
+                                        className="inline-block border border-cinema-gold text-cinema-gold px-8 py-3 text-sm uppercase tracking-[3px] hover:bg-cinema-gold hover:text-black transition-all duration-300 cursor-pointer"
+                                    />
+                                ) : (
+                                    <div className="text-cinema-text-muted italic text-sm">
+                                        Inquiries available for Pro members only.
+                                    </div>
+                                )
                             ) : (
                                 <div className="flex items-center gap-2 text-cinema-text-muted italic border-t border-cinema-border pt-4">
                                     <span className="w-2 h-2 rounded-full bg-cinema-red"></span>
@@ -348,10 +437,16 @@ export function DetailModal({ artwork, onClose }: { artwork: Artwork, onClose: (
 
                             <div className="mt-auto pt-8">
                                 {artwork.status === 'available' ? (
-                                    <InquiryButton
-                                        onClick={() => setView('inquire')}
-                                        className="block w-full text-center bg-black text-white px-6 py-4 text-sm font-bold uppercase tracking-wide hover:bg-[#333] transition-colors cursor-pointer"
-                                    />
+                                    profile.subscription_status === 'active' ? (
+                                        <InquiryButton
+                                            onClick={() => setView('inquire')}
+                                            className="block w-full text-center bg-black text-white px-6 py-4 text-sm font-bold uppercase tracking-wide hover:bg-[#333] transition-colors cursor-pointer"
+                                        />
+                                    ) : (
+                                        <div className="bg-gray-100 p-4 text-center text-gray-500 text-sm font-medium">
+                                            Inquiries available for Pro members only.
+                                        </div>
+                                    )
                                 ) : (
                                     <div className="bg-archive-bg-secondary p-4 text-center text-archive-text-muted text-sm font-semibold uppercase tracking-wide">
                                         Sold
@@ -402,10 +497,14 @@ export function DetailModal({ artwork, onClose }: { artwork: Artwork, onClose: (
                         )}
 
                         {artwork.status === 'available' ? (
-                            <InquiryButton
-                                onClick={() => setView('inquire')}
-                                className="inline-block bg-transparent border border-whitecube-text text-whitecube-text px-10 py-3 text-xs uppercase tracking-[3px] hover:bg-whitecube-accent hover:border-whitecube-accent hover:text-white transition-all duration-300 cursor-pointer"
-                            />
+                            profile.subscription_status === 'active' ? (
+                                <InquiryButton
+                                    onClick={() => setView('inquire')}
+                                    className="inline-block bg-transparent border border-whitecube-text text-whitecube-text px-10 py-3 text-xs uppercase tracking-[3px] hover:bg-whitecube-accent hover:border-whitecube-accent hover:text-white transition-all duration-300 cursor-pointer"
+                                />
+                            ) : (
+                                <span className="text-whitecube-text-muted text-sm uppercase tracking-widest">Inquiries available for Pro members only</span>
+                            )
                         ) : (
                             <span className="text-whitecube-text-muted text-sm uppercase tracking-widest">Private Collection</span>
                         )}
