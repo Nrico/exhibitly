@@ -14,7 +14,7 @@ export default async function ExhibitionsPage() {
     if (user) {
         const { data } = await supabase
             .from('artworks')
-            .select('*')
+            .select('*, artist:artists(full_name)')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
 

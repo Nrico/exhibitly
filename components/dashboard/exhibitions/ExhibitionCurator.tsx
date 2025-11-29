@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { X, Plus, Check, DotsSixVertical } from '@phosphor-icons/react'
+import { PDFDownloadButtons } from './PDFDownloadButtons'
 import { Exhibition, Artwork } from '@/types'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
@@ -130,6 +131,9 @@ export function ExhibitionCurator({
                             <p className="text-sm text-gray-500">{exhibition?.title}</p>
                         </div>
                         <div className="flex items-center gap-3">
+                            {exhibition && selectedArtworks.length > 0 && (
+                                <PDFDownloadButtons exhibition={exhibition} items={selectedArtworks} />
+                            )}
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}

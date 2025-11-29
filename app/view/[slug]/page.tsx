@@ -1,3 +1,4 @@
+// Force rebuild
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
@@ -27,6 +28,11 @@ export default async function ViewingRoomPage({ params }: { params: Promise<{ sl
 
     if (room.status !== 'active' && !isOwner) {
         notFound()
+    }
+
+    // Increment View Count (non-blocking)
+    if (room.status === 'active' && !isOwner) {
+        await supabase.rpc('increment_room_views', { room_id: room.id })
     }
 
     // Fetch Items

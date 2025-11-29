@@ -79,8 +79,18 @@ export default async function ViewingRoomsPage() {
                             <div className="text-xs text-gray-500 font-mono">
                                 /{room.slug}
                             </div>
-                            <div className="mt-4 text-xs text-gray-400">
-                                Created {new Date(room.created_at).toLocaleDateString()}
+                            <div className="mt-4 flex justify-between items-end text-xs text-gray-400">
+                                <div>
+                                    Created {new Date(room.created_at).toLocaleDateString()}
+                                </div>
+                                {room.views > 0 && (
+                                    <div className="text-right">
+                                        <div className="font-medium text-[#111]">{room.views} View{room.views !== 1 ? 's' : ''}</div>
+                                        {room.last_viewed_at && (
+                                            <div className="text-[10px]">Last: {new Date(room.last_viewed_at).toLocaleDateString()}</div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </Link>

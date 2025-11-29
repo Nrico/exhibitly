@@ -77,6 +77,8 @@ export type ViewingRoom = {
     expires_at: string | null
     created_at: string
     updated_at: string
+    views: number
+    last_viewed_at: string | null
 }
 
 export type RoomItem = {

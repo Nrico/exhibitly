@@ -12,6 +12,9 @@ export async function exportSiteData() {
 
     const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
     const { data: settings } = await supabase.from('site_settings').select('*').eq('user_id', user.id).single()
+    const { data: artists } = await supabase.from('artists').select('*').eq('user_id', user.id)
+    const { data: exhibitions } = await supabase.from('exhibitions').select('*, exhibition_artworks(*)').eq('user_id', user.id)
+    const { data: viewingRooms } = await supabase.from('viewing_rooms').select('*, room_items(*)').eq('gallery_id', user.id)
     const { data: artworks } = await supabase.from('artworks').select('*').eq('user_id', user.id).eq('status', 'available')
 
     if (!profile || !settings) throw new Error('Profile data not found')
@@ -35,13 +38,29 @@ export async function exportSiteData() {
     `
     zip.file('styles.css', cssContent)
 
-    // 4. Fetch and Add Images
+    // 4. Add Data JSONs (Portability)
+    const dataFolder = zip.folder('data')
+    if (dataFolder) {
+        dataFolder.file('profile.json', JSON.stringify(profile, null, 2))
+        dataFolder.file('settings.json', JSON.stringify(settings, null, 2))
+        dataFolder.file('artworks.json', JSON.stringify(artworks, null, 2))
+        if (artists) dataFolder.file('artists.json', JSON.stringify(artists, null, 2))
+        if (exhibitions) dataFolder.file('exhibitions.json', JSON.stringify(exhibitions, null, 2))
+        if (viewingRooms) dataFolder.file('viewing_rooms.json', JSON.stringify(viewingRooms, null, 2))
+    }
+
+    // 5. Fetch and Add Images
     const imgFolder = zip.folder('images')
     if (artworks && imgFolder) {
         for (const artwork of artworks) {
             if (artwork.image_url) {
                 try {
-                    const response = await fetch(artwork.image_url)
+                    // Use proxy to bypass CORS
+                    const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(artwork.image_url)}`
+                    const response = await fetch(proxyUrl)
+
+                    if (!response.ok) throw new Error(`Proxy fetch failed: ${response.statusText}`)
+
                     const blob = await response.blob()
                     // Extract filename from URL or use ID
                     const filename = `${artwork.title.replace(/[^a-z0-9]/gi, '_')}_${artwork.id}.jpg`
@@ -53,7 +72,7 @@ export async function exportSiteData() {
         }
     }
 
-    // 5. Generate Zip
+    // 6. Generate Zip
     const content = await zip.generateAsync({ type: 'blob' })
     saveAs(content, `${settings.site_title || 'portfolio'}_export.zip`)
 }

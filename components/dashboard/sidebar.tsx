@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { SquaresFour, Image as ImageIcon, Palette, Gear, Users, PresentationChart } from '@phosphor-icons/react'
+import { SquaresFour, Image as ImageIcon, Palette, Gear, Users, PresentationChart, Eye } from '@phosphor-icons/react'
 
 export function Sidebar({ user }: { user: any }) {
     const pathname = usePathname()
@@ -35,6 +35,10 @@ export function Sidebar({ user }: { user: any }) {
                         <Link href="/dashboard/exhibitions" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname === '/dashboard/exhibitions' ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
                             <PresentationChart size={18} />
                             Exhibitions
+                        </Link>
+                        <Link href="/dashboard/viewing-rooms" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname.startsWith('/dashboard/viewing-rooms') ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
+                            <Eye size={18} />
+                            Viewing Rooms
                         </Link>
                     </>
                 )}
