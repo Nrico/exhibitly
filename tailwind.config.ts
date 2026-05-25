@@ -67,6 +67,18 @@ const config: Config = {
         'whitecube-border': '#eeeeee',
         'whitecube-red': '#c94c4c',
         'whitecube-accent': '#c5a059',
+
+        // Brand Southwest Modern Archive colors
+        'brand-bone': '#F4EFE6',
+        'brand-warm-white': '#FBF8F1',
+        'brand-charcoal': '#252321',
+        'brand-black': '#111111',
+        'brand-clay': '#B65C3A',
+        'brand-red-earth': '#8F3F2B',
+        'brand-copper': '#4F7F73',
+        'brand-blue': '#6F8797',
+        'brand-graphite': '#4A4A46',
+        'brand-sand-line': '#D8CDBE',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

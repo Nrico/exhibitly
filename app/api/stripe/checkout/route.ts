@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
         const { data: profile } = await supabase
             .from('profiles')
-            .select('stripe_customer_id, email')
+            .select('stripe_customer_id, email, account_type')
             .eq('id', user.id)
             .single();
 
@@ -36,12 +36,21 @@ export async function POST(req: Request) {
                 .eq('id', user.id);
         }
 
+        const accountType = profile?.account_type || 'artist';
+        const priceId = accountType === 'gallery'
+            ? process.env.STRIPE_PRICE_ID_GALLERY
+            : process.env.STRIPE_PRICE_ID_ARTIST;
+
+        if (!priceId) {
+            return new NextResponse('Stripe Price ID not configured on the server', { status: 500 });
+        }
+
         const session = await stripe.checkout.sessions.create({
             customer: customerId,
             payment_method_types: ['card'],
             line_items: [
                 {
-                    price: 'price_1SWexFLH4rc8LhuuZ7CEIr9h', // Replace with your actual Stripe Price ID
+                    price: priceId,
                     quantity: 1,
                 },
             ],

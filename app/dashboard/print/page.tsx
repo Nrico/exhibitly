@@ -12,7 +12,7 @@ export default async function PrintPage() {
     // Gate access
     const { data: profile } = await supabase
         .from('profiles')
-        .select('account_type')
+        .select('account_type, full_name')
         .eq('id', user.id)
         .single()
 
@@ -23,10 +23,15 @@ export default async function PrintPage() {
     // Fetch Inventory
     const { data: inventory } = await supabase
         .from('artworks')
-        .select('*')
+        .select(`
+            *,
+            artist: artists (
+                full_name
+            )
+        `)
         .eq('user_id', user.id)
         .eq('status', 'available')
         .order('created_at', { ascending: false })
 
-    return <PrintTools inventory={inventory || []} />
+    return <PrintTools inventory={inventory as any[] || []} profileName={profile?.full_name || ''} />
 }

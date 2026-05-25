@@ -1,4 +1,5 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client } from '@aws-sdk/client-s3'
+import * as S3Module from '@aws-sdk/client-s3'
 
 const R2_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID
 const R2_ACCESS_KEY_ID = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID
@@ -45,7 +46,8 @@ export async function uploadToR2(file: File, path: string, contentType: string) 
     const buffer = Buffer.from(arrayBuffer)
 
     try {
-        await S3.send(new PutObjectCommand({
+        const PutCmd = (S3Module as any).PutObjectCommand
+        await S3.send(new PutCmd({
             Bucket: R2_BUCKET_NAME,
             Key: path,
             Body: buffer,
@@ -66,7 +68,8 @@ export async function deleteFromR2(path: string) {
         // Extract key from full URL if passed
         const key = path.replace(`${R2_PUBLIC_DOMAIN}/`, '')
 
-        await S3.send(new DeleteObjectCommand({
+        const DeleteCmd = (S3Module as any).DeleteObjectCommand
+        await S3.send(new DeleteCmd({
             Bucket: R2_BUCKET_NAME,
             Key: key,
         }))

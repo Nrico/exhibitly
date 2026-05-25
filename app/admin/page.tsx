@@ -54,7 +54,7 @@ export default async function AdminPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                        {profiles?.map((profile) => (
+                        {profiles?.map((profile: any) => (
                             <tr key={profile.id} className="hover:bg-gray-50">
                                 <td className="p-4">
                                     <div className="font-medium text-gray-900">{profile.full_name || 'No Name'}</div>

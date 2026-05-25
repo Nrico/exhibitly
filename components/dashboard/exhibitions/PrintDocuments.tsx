@@ -185,7 +185,7 @@ export const PriceListDocument: React.FC<PrintProps> = ({ exhibition, items }) =
                 </View>
             ))}
 
-            <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => (
+            <Text style={styles.footer} fixed render={({ pageNumber, totalPages }: any) => (
                 `${exhibition.title} - Page ${pageNumber} of ${totalPages}`
             )} />
         </Page>

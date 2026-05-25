@@ -24,7 +24,7 @@ export function PDFDownloadButtons({ exhibition, items }: { exhibition: Exhibiti
                 fileName={`${exhibition.title.replace(/\s+/g, '_')}_Labels.pdf`}
                 className="px-3 py-2 bg-white border border-gray-200 text-[#111] rounded-md text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
             >
-                {({ loading }) => (
+                {({ loading }: any) => (
                     <>
                         <FilePdf size={16} />
                         {loading ? 'Generating...' : 'Labels'}
@@ -36,7 +36,7 @@ export function PDFDownloadButtons({ exhibition, items }: { exhibition: Exhibiti
                 fileName={`${exhibition.title.replace(/\s+/g, '_')}_PriceList.pdf`}
                 className="px-3 py-2 bg-white border border-gray-200 text-[#111] rounded-md text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
             >
-                {({ loading }) => (
+                {({ loading }: any) => (
                     <>
                         <FilePdf size={16} />
                         {loading ? 'Generating...' : 'Price List'}

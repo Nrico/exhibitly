@@ -6,7 +6,7 @@ import { Printer, CheckSquare, Cards } from '@phosphor-icons/react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
-export function PrintTools({ inventory }: { inventory: Artwork[] }) {
+export function PrintTools({ inventory, profileName }: { inventory: Artwork[], profileName: string }) {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
     const [viewMode, setViewMode] = useState<'checklist' | 'labels'>('checklist')
 
@@ -137,14 +137,17 @@ export function PrintTools({ inventory }: { inventory: Artwork[] }) {
                         {/* Wall Labels View */}
                         {viewMode === 'labels' && (
                             <div className="grid grid-cols-2 gap-10 print:block">
-                                {selectedArtworks.map(item => (
-                                    <div key={item.id} className="bg-white shadow-lg print:shadow-none p-10 w-[5in] h-[3.5in] flex flex-col justify-center border print:border-none print:break-inside-avoid mb-8 mx-auto">
-                                        <div className="font-bold text-xl mb-1">Artist Name</div> {/* Placeholder as we don't have artist name on artwork yet, assuming single artist profile or we'd need to fetch it */}
-                                        <div className="font-serif text-2xl italic mb-4">{item.title}, {item.year || '2024'}</div>
-                                        <div className="text-gray-600 text-sm mb-1">{item.medium}</div>
-                                        <div className="text-gray-600 text-sm">{item.dimensions}</div>
-                                    </div>
-                                ))}
+                                {selectedArtworks.map(item => {
+                                    const artistName = item.artist?.full_name || profileName || 'Unknown Artist'
+                                    return (
+                                        <div key={item.id} className="bg-white shadow-lg print:shadow-none p-10 w-[5in] h-[3.5in] flex flex-col justify-center border print:border-none print:break-inside-avoid mb-8 mx-auto">
+                                            <div className="font-bold text-xl mb-1">{artistName}</div>
+                                            <div className="font-serif text-2xl italic mb-4">{item.title}, {item.year || '2024'}</div>
+                                            <div className="text-gray-600 text-sm mb-1">{item.medium}</div>
+                                            <div className="text-gray-600 text-sm">{item.dimensions}</div>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         )}
                     </>

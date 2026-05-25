@@ -27,14 +27,14 @@ export async function generateMetadata({
 
     // Dynamic Metadata based on View
     if (view === 'exhibitions' && id && typeof id === 'string') {
-        const exhibition = exhibitions?.find(e => e.id === id)
+        const exhibition = exhibitions?.find((e: any) => e.id === id)
         if (exhibition) {
             title = `${exhibition.title} | ${title}`
             description = exhibition.description?.replace(/<[^>]*>?/gm, '').substring(0, 160) || `View the exhibition "${exhibition.title}" at ${settings?.site_title || profile.full_name}.`
             if (exhibition.cover_image_url) image = exhibition.cover_image_url
         }
     } else if (view === 'artists' && id && typeof id === 'string') {
-        const artist = artists?.find(a => a.id === id)
+        const artist = artists?.find((a: any) => a.id === id)
         if (artist) {
             title = `${artist.full_name} | ${title}`
             description = artist.bio?.substring(0, 160) || `View the works of ${artist.full_name} at ${settings?.site_title || profile.full_name}.`
@@ -44,7 +44,7 @@ export async function generateMetadata({
         // Check for Artwork Deep Link (artwork_id)
         const artworkId = (await searchParams).artwork_id
         if (artworkId && typeof artworkId === 'string') {
-            const artwork = artworks?.find(a => a.id === artworkId)
+            const artwork = artworks?.find((a: any) => a.id === artworkId)
             if (artwork) {
                 title = `${artwork.title} | ${title}`
                 description = `${artwork.title} (${artwork.year || 'n.d.'}) by ${profile.full_name}. ${artwork.medium}, ${artwork.dimensions}.`

@@ -49,7 +49,7 @@ export async function getPublicProfileData(username: string) {
 
         if (artistsData) {
             // Fetch artworks for these artists
-            const artistIds = artistsData.map(a => a.id)
+            const artistIds = artistsData.map((a: any) => a.id)
             const { data: artistArtworks } = await supabase
                 .from('artworks')
                 .select('*')
@@ -57,9 +57,9 @@ export async function getPublicProfileData(username: string) {
                 .in('status', ['available', 'sold', 'Live'])
                 .order('created_at', { ascending: false })
 
-            artists = artistsData.map(artist => ({
+            artists = artistsData.map((artist: any) => ({
                 ...artist,
-                artworks: artistArtworks?.filter(w => w.artist_id === artist.id) || []
+                artworks: artistArtworks?.filter((w: any) => w.artist_id === artist.id) || []
             }))
         }
 
@@ -83,7 +83,7 @@ export async function getPublicProfileData(username: string) {
             // Transform the data to match the expected structure if needed, 
             // or just pass it through. The type definition might need updating.
             // We want exhibition.artworks to be an array of Artworks.
-            exhibitions = exhibitionsData.map(ex => ({
+            exhibitions = exhibitionsData.map((ex: any) => ({
                 ...ex,
                 artworks: ex.exhibition_artworks
                     ?.sort((a: any, b: any) => a.position - b.position)

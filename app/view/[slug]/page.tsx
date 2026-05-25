@@ -117,7 +117,7 @@ export default async function ViewingRoomPage({ params }: { params: Promise<{ sl
             {/* Supporting Works */}
             <section className="max-w-[1600px] mx-auto px-10 py-32">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-24">
-                    {supportingItems.map(item => (
+                    {supportingItems.map((item: any) => (
                         <div key={item.id} className="group cursor-default">
                             <div className="aspect-square bg-gray-50 mb-6 relative">
                                 {item.artwork?.image_url && (

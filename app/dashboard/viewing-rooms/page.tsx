@@ -65,7 +65,7 @@ export default async function ViewingRoomsPage() {
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {rooms?.map(room => (
+                {rooms?.map((room: any) => (
                     <Link key={room.id} href={`/dashboard/viewing-rooms/${room.id}`} className="block group no-underline">
                         <div className="bg-white border border-gray-200 rounded-lg p-6 hover:border-gray-400 transition-all shadow-sm hover:shadow-md">
                             <div className="flex justify-between items-start mb-4">

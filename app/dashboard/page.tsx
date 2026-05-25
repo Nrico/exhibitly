@@ -136,7 +136,7 @@ export default async function Dashboard() {
                             </tr>
                         </thead>
                         <tbody>
-                            {recentUploads?.map((item) => (
+                            {recentUploads?.map((item: any) => (
                                 <tr key={item.id} className="border-b border-gray-50 last:border-none hover:bg-gray-50 transition-colors">
                                     <td className="p-4 pl-6">
                                         <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden relative">
