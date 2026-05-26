@@ -1,5 +1,76 @@
 @import "tailwindcss";
-@config "../tailwind.config.ts";
+
+@theme {
+  /* Fonts */
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-display: "Cormorant Garamond", serif;
+  
+  /* Border Radius */
+  --radius-xl: 12px;
+  --radius-md: 6px;
+
+  /* Base Colors */
+  --color-bg-color: #ffffff;
+  --color-bg-alt: #fafafa;
+  --color-text-main: #1a1a1a;
+  --color-text-muted: #666666;
+  --color-border-color: #e5e5e5;
+  --color-auth-accent: #111;
+  --color-auth-error: #d32f2f;
+  --color-auth-accent-dark: #333;
+  --color-bg-visual-panel: #f0f0f0;
+  --color-bg-body-dashboard: #f8f9fa;
+  --color-bg-card-dashboard: #ffffff;
+  --color-text-main-dashboard: #111111;
+  --color-text-muted-dashboard: #666666;
+  --color-border-dashboard: #e5e5e5;
+  --color-sidebar-bg-dashboard: #111111;
+  --color-sidebar-text-dashboard: #888888;
+  --color-accent-green-dashboard: #2e7d32;
+  --color-accent-red-dashboard: #c62828;
+  --color-accent-yellow-dashboard: #f57f17;
+
+  /* Theme: Cinema */
+  --color-cinema-bg: #121212;
+  --color-cinema-bg-secondary: #111111;
+  --color-cinema-text: #e0e0e0;
+  --color-cinema-text-muted: #8a8175;
+  --color-cinema-gold: #c5a059;
+  --color-cinema-gold-hover: #d4b06a;
+  --color-cinema-border: #333333;
+  --color-cinema-red: #aa3a3a;
+
+  /* Theme: Archive */
+  --color-archive-bg: #ffffff;
+  --color-archive-bg-secondary: #bfbfbf;
+  --color-archive-bg-hover: #efefef;
+  --color-archive-text: #111111;
+  --color-archive-text-muted: #777777;
+  --color-archive-border: #eeeeee;
+  --color-archive-red: #d9534f;
+  --color-archive-green: #5cb85c;
+
+  /* Theme: White Cube (Minimal) */
+  --color-whitecube-bg: #fdfdfd;
+  --color-whitecube-text: #2a2a2a;
+  --color-whitecube-text-muted: #888888;
+  --color-whitecube-border: #eeeeee;
+  --color-whitecube-red: #c94c4c;
+  --color-whitecube-accent: #c5a059;
+
+  /* Brand Southwest Modern Archive colors */
+  --color-brand-bone: #F4EFE6;
+  --color-brand-warm-white: #FBF8F1;
+  --color-brand-charcoal: #252321;
+  --color-brand-black: #111111;
+  --color-brand-clay: #B65C3A;
+  --color-brand-red-earth: #8F3F2B;
+  --color-brand-copper: #4F7F73;
+  --color-brand-blue: #6F8797;
+  --color-brand-graphite: #4A4A46;
+  --color-brand-sand-line: #D8CDBE;
+}
 
 .my-red-box {
   background-color: red;
