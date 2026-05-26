@@ -24,10 +24,10 @@ export default function Home() {
           <section className="hero section">
             <div className="shell hero-grid">
               <div>
-                <div className="eyebrow">For working artists</div>
-                <h1>Turn your Instagram feed into a real artist portfolio.</h1>
+                <div className="eyebrow">For independent artists</div>
+                <h1>A clean portfolio system for artists who would rather make work than manage a website.</h1>
                 <div className="accent-line" aria-hidden="true"></div>
-                <p className="lede">Exhibitly gives artists a clean website, artwork archive, available-works page and shareable portfolio packets, without learning web design.</p>
+                <p className="lede">Organize your artwork once. Instantly publish a beautiful website, share private viewing rooms, and export studio packets—no code, no plugins, no updates.</p>
                 <div className="hero-actions">
                   <Link className="button" href="/auth?view=signup">Start your portfolio</Link>
                   <Link className="button secondary" href="/demo">View demo artist site</Link>
@@ -113,12 +113,103 @@ export default function Home() {
             </div>
           </section>
 
+          {/* --- COMPARISON SECTION --- */}
+          <section className="section comparison" id="comparison">
+            <div className="shell">
+              <div className="section-head text-center">
+                <div>
+                  <span className="eyebrow">A Sharper Direction</span>
+                  <h2>Instagram is for discovery. <br />Exhibitly is for your body of work.</h2>
+                  <div className="accent-line mx-auto" aria-hidden="true"></div>
+                </div>
+              </div>
+
+              <div className="comparison-grid">
+                <div className="comparison-card instagram">
+                  <div className="card-header">
+                    <span className="platform-tag">Instagram</span>
+                    <span className="platform-status">Discovery Feed</span>
+                  </div>
+                  <ul className="comparison-list">
+                    <li>
+                      <strong>Buries past works</strong>
+                      <span className="desc">Your best artwork is quickly lost under daily stories, reels, and algorithm updates.</span>
+                    </li>
+                    <li>
+                      <strong>Mixes personal & professional</strong>
+                      <span className="desc">Finished artwork sits directly next to studio updates, announcements, and personal posts.</span>
+                    </li>
+                    <li>
+                      <strong>Offers only a social profile</strong>
+                      <span className="desc">Provides a single links page rather than an organized archive or professional website.</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="comparison-card exhibitly-comparison">
+                  <div className="card-header">
+                    <span className="platform-tag active">Exhibitly</span>
+                    <span className="platform-status highlight">Structured Archive</span>
+                  </div>
+                  <ul className="comparison-list">
+                    <li>
+                      <strong>Maintains your complete body of work</strong>
+                      <span className="desc">A structured archive categorized by collections, media, year, and status.</span>
+                    </li>
+                    <li>
+                      <strong>Keeps presentation pure</strong>
+                      <span className="desc">Separates finished work from active announcements, showcasing only your art.</span>
+                    </li>
+                    <li>
+                      <strong>Delivers a complete portfolio system</strong>
+                      <span className="desc">Instantly generates a public site, private viewing rooms, and high-res PDF studio packets.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* --- WORKFLOW SECTION --- */}
+          <section className="section workflow" id="workflow">
+            <div className="shell">
+              <div className="section-head text-center">
+                <div>
+                  <span className="eyebrow">The Process</span>
+                  <h2>How Exhibitly Works</h2>
+                  <div className="accent-line mx-auto" aria-hidden="true"></div>
+                </div>
+                <p className="max-w-[600px] mx-auto text-sm text-[#475569]">
+                  No coding, no database maintenance, no custom design cycles. Upload your artwork once and distribute it everywhere.
+                </p>
+              </div>
+
+              <div className="workflow-grid">
+                <div className="workflow-step">
+                  <div className="step-num">01</div>
+                  <h3>Connect & Upload</h3>
+                  <p>Drop your artwork images into your dashboard, or connect your Instagram feed to automatically synchronize new posts as structured records.</p>
+                </div>
+                <div className="workflow-step">
+                  <div className="step-num">02</div>
+                  <h3>Archive & Organize</h3>
+                  <p>Add metadata fields—title, year, medium, size, price, and status—to compile a permanent, searchable archive of your career.</p>
+                </div>
+                <div className="workflow-step">
+                  <div className="step-num">03</div>
+                  <h3>Share & Export</h3>
+                  <p>In one click, turn your records into a public website, compile custom private viewing rooms for collectors, or export PDF studio packets.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* --- FEATURES SECTION --- */}
           <section className="section" id="features">
             <div className="shell">
               <div className="section-head">
                 <div>
-                  <h2>Built for working artists</h2>
+                  <h2>A structured system for your art</h2>
                   <div className="accent-line" aria-hidden="true"></div>
                 </div>
                 <p>Everything you need to turn your artwork into a clear, shareable portfolio, without managing a complicated website.</p>
@@ -131,7 +222,7 @@ export default function Home() {
                     <path d="M8 18h32" stroke="currentColor" strokeWidth="2"/>
                     <path d="M15 29h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
-                  <h3>Artist website</h3>
+                  <h3>A real home for your artwork</h3>
                   <div className="mini-ui">
                     <div className="mini-ui-grid">
                       <div className="art-thumb">
@@ -145,7 +236,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <p>A beautiful, mobile-friendly site that is easy to update.</p>
+                  <p>Keep finished work separate from posts, reels, and announcements.</p>
                 </article>
 
                 <article className="feature-card">
@@ -153,13 +244,13 @@ export default function Home() {
                     <path d="M8 15h12l4 5h16v17H8V15Z" stroke="currentColor" strokeWidth="2"/>
                     <path d="M8 22h32" stroke="currentColor" strokeWidth="2"/>
                   </svg>
-                  <h3>Artwork archive</h3>
+                  <h3>Artwork records that stay organized</h3>
                   <div className="mini-ui">
                     <div className="mini-row"><span>Desert Light</span><span>2024</span></div>
                     <div className="mini-row"><span>Mesa Study</span><span>2024</span></div>
                     <div className="mini-row"><span>Wind Line</span><span>2023</span></div>
                   </div>
-                  <p>Catalog your work with dates, details and images.</p>
+                  <p>Track title, year, medium, size, price, and availability.</p>
                 </article>
 
                 <article className="feature-card">
@@ -167,13 +258,13 @@ export default function Home() {
                     <path d="M10 23 24 9h14v14L24 37 10 23Z" stroke="currentColor" strokeWidth="2"/>
                     <circle cx="32" cy="16" r="2" fill="currentColor"/>
                   </svg>
-                  <h3>Available works</h3>
+                  <h3>Share work without rebuilding anything</h3>
                   <div className="mini-ui">
                     <div className="mini-row"><span>Desert Light</span><span>$1,800</span></div>
                     <div className="mini-row"><span>Mesa Study</span><span>$1,400</span></div>
                     <div className="mini-row"><span>Salt Flats</span><span>Inquire</span></div>
                   </div>
-                  <p>Show available works with prices and inquiry options.</p>
+                  <p>Create portfolio pages, viewing rooms, and PDF packets from the same archive.</p>
                 </article>
 
                 <article className="feature-card">
@@ -182,13 +273,13 @@ export default function Home() {
                     <path d="M28 7v9h8" stroke="currentColor" strokeWidth="2"/>
                     <path d="M19 27h12M19 33h9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
-                  <h3>Studio packets</h3>
+                  <h3>Zero-maintenance infrastructure</h3>
                   <div className="mini-ui">
                     <div className="mini-row"><span>Portfolio PDF</span><span>Ready</span></div>
                     <div className="mini-row"><span>Price list</span><span>Ready</span></div>
                     <div className="mini-row"><span>Statement</span><span>Included</span></div>
                   </div>
-                  <p>Export a beautiful PDF of your best work.</p>
+                  <p>No updates, plugins, or broken layouts. Built for art in the Cloud.</p>
                 </article>
               </div>
             </div>
@@ -204,10 +295,10 @@ export default function Home() {
           {/* --- PRICING SECTION --- */}
           <section className="section pricing" id="pricing">
             <div className="shell">
-              <div className="section-head">
+              <div className="section-head text-center">
                 <div>
                   <h2>Simple pricing</h2>
-                  <div className="accent-line" aria-hidden="true"></div>
+                  <div className="accent-line mx-auto" aria-hidden="true"></div>
                 </div>
               </div>
 
@@ -229,23 +320,17 @@ export default function Home() {
                   <p className="cancel">Cancel anytime.</p>
                 </div>
               </div>
+
+              <div className="text-center mt-8 font-mono text-[10px] uppercase tracking-[1.5px] text-[#666666]">
+                Are you a gallery or art collective? <Link href="/gallery" className="underline hover:text-black transition-colors">Learn about our gallery toolkits &rarr;</Link>
+              </div>
             </div>
           </section>
 
           {/* --- CTA STRIP --- */}
           <section className="cta-strip">
-            <div className="fabric" aria-hidden="true"></div>
-            <svg className="vase" viewBox="0 0 170 180" aria-hidden="true">
-              <defs>
-                <radialGradient id="vaseGrad" cx="50%" cy="35%" r="70%"><stop stopColor="#b99f80"/><stop offset="1" stopColor="#6f5947"/></radialGradient>
-              </defs>
-              <path d="M67 19h36c-5 23 1 38 17 51 25 22 30 72 2 91-22 15-55 15-76 0-28-20-23-70 2-91 16-13 21-28 19-51Z" fill="url(#vaseGrad)"/>
-              <ellipse cx="85" cy="20" rx="31" ry="10" fill="#5f4c3e"/>
-              <ellipse cx="85" cy="20" rx="20" ry="5" fill="#9a8065"/>
-              <path d="M52 91c21-10 46-10 70 0" stroke="#493b30" strokeWidth="3" opacity="0.36" fill="none"/>
-            </svg>
-            <div className="shell">
-              <h2>Build the portfolio your work deserves.</h2>
+            <div className="shell py-8">
+              <h2 className="mb-4">Build the portfolio your work deserves.</h2>
               <Link className="button" href="/auth?view=signup">Start your portfolio</Link>
             </div>
           </section>

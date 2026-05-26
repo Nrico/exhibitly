@@ -94,26 +94,26 @@ export function DemoShowcase() {
 
   return (
     <div>
-      <div className="flex justify-center items-center gap-8 mb-12 border-b border-[#ebdcca]/40 pb-4 font-mono text-[11px] uppercase tracking-[2px] text-gray-500">
+      <div className="flex justify-center items-center gap-8 mb-12 border-b border-[var(--line)] pb-4 font-mono text-[11px] uppercase tracking-[2px] text-gray-500">
         <button
           onClick={() => setSelected('seth')}
-          className={`pb-2 border-b transition-all duration-300 ${selected === 'seth' ? 'text-[#111111] border-[#c07b46] font-bold scale-105' : 'border-transparent hover:text-[#111111]'}`}
+          className={`pb-2 border-b transition-all duration-300 ${selected === 'seth' ? 'text-[var(--ink)] border-[var(--ink)] font-bold scale-105' : 'border-transparent hover:text-[var(--ink)]'}`}
         >
           Seth Herrera (Painting)
         </button>
         <button
           onClick={() => setSelected('trujillo')}
-          className={`pb-2 border-b transition-all duration-300 ${selected === 'trujillo' ? 'text-[#111111] border-[#c07b46] font-bold scale-105' : 'border-transparent hover:text-[#111111]'}`}
+          className={`pb-2 border-b transition-all duration-300 ${selected === 'trujillo' ? 'text-[var(--ink)] border-[var(--ink)] font-bold scale-105' : 'border-transparent hover:text-[var(--ink)]'}`}
         >
           El Trujillo (Woodcarving)
         </button>
       </div>
 
-      <div className="demo-panel bg-[#f8f5f0]/85 border border-[#ebdcca] shadow-sm transition-all duration-500 ease-in-out">
+      <div className="demo-panel bg-[var(--bone)]/80 border border-[var(--line)] shadow-sm transition-all duration-500 ease-in-out">
         <div>
           <h2>See a demo artist site</h2>
           <div className="accent-line" aria-hidden="true"></div>
-          <div className="portrait relative w-full aspect-[1/1.05] overflow-hidden bg-[#e5d9cb] border border-[#ebdcca] rounded">
+          <div className="portrait relative w-full aspect-[1/1.05] overflow-hidden bg-[var(--paper-deep)] border border-[var(--line)] rounded">
             <img
               key={artist.portrait}
               src={artist.portrait}
@@ -124,19 +124,19 @@ export function DemoShowcase() {
         </div>
 
         <div className="demo-copy">
-          <h3 className="font-serif text-2xl tracking-wide uppercase text-[#111111] mb-3">{artist.name}</h3>
-          <p className="text-sm text-[#443a33] leading-relaxed mb-6">{artist.bio}</p>
-          <Link href={artist.link} className="text-link text-[#c07b46] font-extrabold hover:text-[#9e5f32] no-underline transition-colors">
+          <h3 className="font-serif text-2xl tracking-wide uppercase text-[var(--ink)] mb-3">{artist.name}</h3>
+          <p className="text-sm text-[var(--muted)] leading-relaxed mb-6">{artist.bio}</p>
+          <Link href={artist.link} className="text-link text-[var(--ink)] font-extrabold hover:opacity-80 no-underline transition-colors">
             View demo site &rarr;
           </Link>
         </div>
 
         <div className="recent">
-          <h4 className="font-mono text-xs uppercase tracking-wider text-[#666666] mb-4">Recent work</h4>
+          <h4 className="font-mono text-xs uppercase tracking-wider text-[var(--muted)] mb-4">Recent work</h4>
           <div className="recent-grid grid grid-cols-2 md:grid-cols-4 gap-4">
             {artist.recentWork.map((work, idx) => (
               <div key={work.title} className="group">
-                <div className="art-thumb relative aspect-square bg-[#f3efe9] border border-[#ebdcca]/60 overflow-hidden rounded">
+                <div className="art-thumb relative aspect-square bg-[var(--paper)] border border-[var(--line)] overflow-hidden rounded">
                   <img
                     key={`${selected}-${idx}`}
                     src={work.image}
@@ -144,8 +144,8 @@ export function DemoShowcase() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 saturate-[0.85] contrast-[1.05]"
                   />
                 </div>
-                <p className="caption text-[10px] text-[#4f453d] mt-2 leading-snug">
-                  <strong className="block text-[#111111] font-semibold truncate">{work.title}</strong>
+                <p className="caption text-[10px] text-[var(--muted)] mt-2 leading-snug">
+                  <strong className="block text-[var(--ink)] font-semibold truncate">{work.title}</strong>
                   {work.medium}<br />{work.dimensions}
                 </p>
               </div>

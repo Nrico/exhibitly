@@ -98,11 +98,26 @@
 
 /* Landing Page Redesign Styles */
 .redesign-wrapper {
+  --paper: #f8fafc;
+  --paper-deep: #f1f5f9;
+  --bone: #ffffff;
+  --ink: #0f172a;
+  --muted: #475569;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+  --clay: #0f172a;
+  --clay-dark: #1e293b;
+  --copper: #64748b;
+  --blue: #475569;
+  --shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+  --soft-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+  --radius: 8px;
+
   color: var(--ink);
   background:
-    radial-gradient(circle at 18% 10%, rgba(169, 71, 42, 0.06), transparent 28%),
-    radial-gradient(circle at 90% 30%, rgba(116, 134, 149, 0.08), transparent 30%),
-    linear-gradient(180deg, var(--paper), #f7f0e7 100%);
+    radial-gradient(circle at 18% 10%, rgba(100, 116, 139, 0.04), transparent 28%),
+    radial-gradient(circle at 90% 30%, rgba(148, 163, 184, 0.06), transparent 30%),
+    linear-gradient(180deg, var(--paper), #f1f5f9 100%);
   font-family: var(--sans);
   line-height: 1.5;
   min-height: 100vh;
@@ -119,10 +134,10 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.42;
+  opacity: 0.25;
   background-image:
-    linear-gradient(rgba(35, 31, 27, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(35, 31, 27, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.012) 1px, transparent 1px);
   background-size: 34px 34px;
   mix-blend-mode: multiply;
   z-index: 1;
@@ -134,9 +149,9 @@
 .redesign-wrapper .page {
   width: min(100%, 1500px);
   margin: 0 auto;
-  background: rgba(251, 247, 239, 0.72);
-  border-left: 1px solid rgba(216, 205, 190, 0.65);
-  border-right: 1px solid rgba(216, 205, 190, 0.65);
+  background: rgba(255, 255, 255, 0.85);
+  border-left: 1px solid rgba(226, 232, 240, 0.8);
+  border-right: 1px solid rgba(226, 232, 240, 0.8);
   position: relative;
   z-index: 2;
 }
@@ -151,8 +166,8 @@
   top: 0;
   z-index: 20;
   backdrop-filter: blur(16px);
-  background: rgba(251, 247, 239, 0.88);
-  border-bottom: 1px solid rgba(217, 207, 194, 0.72);
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .redesign-wrapper .nav {
@@ -276,7 +291,7 @@
 .redesign-wrapper .accent-line {
   width: 54px;
   height: 2px;
-  background: var(--clay);
+  background: linear-gradient(90deg, #94a3b8 0%, #cbd5e1 50%, #94a3b8 100%);
   margin: 24px 0 22px;
 }
 
@@ -360,8 +375,9 @@
 .redesign-wrapper .feature-card,
 .redesign-wrapper .demo-panel,
 .redesign-wrapper .price-card {
-  background: rgba(255, 253, 247, 0.88);
-  border: 1px solid rgba(201, 184, 167, 0.85);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow: var(--soft-shadow);
 }
 
@@ -742,7 +758,7 @@
   overflow: hidden;
   text-align: center;
   padding: clamp(52px, 7vw, 80px) 0;
-  background: rgba(242, 234, 223, 0.64);
+  background: rgba(241, 245, 249, 0.65);
   border-bottom: 1px solid var(--line);
 }
 
@@ -833,7 +849,172 @@
 .redesign-wrapper .art-e .land { fill: #2d3739; }
 .redesign-wrapper .art-e .sand { fill: #c7b99e; }
 
+/* --- COMPARISON SECTION STYLES --- */
+.redesign-wrapper .comparison {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(248, 250, 252, 0.45);
+}
+
+.redesign-wrapper .comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 48px;
+}
+
+.redesign-wrapper .comparison-card {
+  border-radius: var(--radius);
+  padding: 36px;
+  transition: all 0.3s ease;
+}
+
+.redesign-wrapper .comparison-card.instagram {
+  background: rgba(241, 245, 249, 0.45);
+  border: 1px dashed var(--line-strong);
+  opacity: 0.85;
+}
+
+.redesign-wrapper .comparison-card.exhibitly-comparison {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1.5px solid var(--ink);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05);
+}
+
+.redesign-wrapper .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.redesign-wrapper .platform-tag {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.redesign-wrapper .platform-tag.active {
+  color: var(--ink);
+}
+
+.redesign-wrapper .platform-status {
+  font-size: 0.72rem;
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  background: var(--line);
+  color: var(--muted);
+  border-radius: 4px;
+}
+
+.redesign-wrapper .platform-status.highlight {
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.redesign-wrapper .comparison-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.redesign-wrapper .comparison-list li {
+  position: relative;
+  padding-left: 0;
+}
+
+.redesign-wrapper .comparison-list li strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.redesign-wrapper .comparison-list li .desc {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* --- WORKFLOW SECTION STYLES --- */
+.redesign-wrapper .workflow {
+  border-bottom: 1px solid var(--line);
+}
+
+.redesign-wrapper .workflow-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 48px;
+  margin-top: 48px;
+  position: relative;
+}
+
+.redesign-wrapper .workflow-step {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  padding: 28px;
+  border-radius: var(--radius);
+}
+
+.redesign-wrapper .workflow-step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #94a3b8 0%, #cbd5e1 50%, #94a3b8 100%);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.redesign-wrapper .step-num {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--copper);
+  margin-bottom: 16px;
+  font-family: monospace;
+}
+
+.redesign-wrapper .workflow-step h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+
+.redesign-wrapper .workflow-step p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 @media (max-width: 1050px) {
+  .redesign-wrapper .comparison-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .redesign-wrapper .workflow-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
   .redesign-wrapper .hero-grid,
   .redesign-wrapper .demo-panel,
   .redesign-wrapper .price-card {
