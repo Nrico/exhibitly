@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') || request.nextUrl.hostname
   const hostname = host.split(':')[0] // strip port if running locally
   
-  const platformDomains = ['localhost', 'exhibitly.app', 'exhibitly.vercel.app', 'exhibitly.co']
+  const platformDomains = ['localhost', 'exhibitly.app', 'exhibitly.vercel.app', 'exhibitly.co', 'exhibitly.art']
   const isPlatform = platformDomains.some(d => hostname === d || hostname.endsWith('.' + d))
 
   if (!isPlatform) {

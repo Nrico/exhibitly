@@ -31,7 +31,7 @@ async function notifySubscribers(supabase: any, user: any, artwork: any) {
     const emailPromises = subscribers.map(async (sub: any) => {
         try {
             await resend.emails.send({
-                from: 'Exhibitly <notifications@exhibitly.co>',
+                from: 'Exhibitly <notifications@exhibitly.art>',
                 to: sub.email,
                 subject: `New Artwork Available: ${artwork.title}`,
                 html: `

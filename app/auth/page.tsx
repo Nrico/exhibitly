@@ -197,7 +197,7 @@ function AuthContent() {
                                 <label className="block text-xs font-medium mb-2 text-gray-800">Claim your URL</label>
                                 <div className="flex items-center border border-gray-200 rounded-md overflow-hidden focus-within:border-gray-900 transition-colors">
                                     <div className="bg-gray-50 px-4 py-3 text-sm text-gray-500 border-r border-gray-200">
-                                        exhibitly.co/
+                                        exhibitly.art/
                                     </div>
                                     <input
                                         name="handle"

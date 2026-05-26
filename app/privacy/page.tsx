@@ -61,7 +61,7 @@ export default function PrivacyPolicy() {
 
                     <h2 className="text-xl font-serif font-medium mt-8 mb-4">6. Contact Us</h2>
                     <p className="mb-6">
-                        If you have any questions about this Privacy Policy, please contact us at: <a href="mailto:hello@exhibitly.co" className="underline hover:text-black">hello@exhibitly.co</a>
+                        If you have any questions about this Privacy Policy, please contact us at: <a href="mailto:hello@exhibitly.art" className="underline hover:text-black">hello@exhibitly.art</a>
                     </p>
                 </div>
             </main>

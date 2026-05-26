@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/dashboard/', '/api/', '/admin/'],
         },
-        sitemap: 'https://exhibitly.co/sitemap.xml',
+        sitemap: 'https://exhibitly.art/sitemap.xml',
     }
 }

@@ -56,7 +56,7 @@ export default function WhiteCubeTheme({ view }: { view?: string }) {
                             )}
                         </div>
                         <div className="text-center">
-                            <h3 className="font-[family-name:var(--font-display)] text-2xl font-semibold mb-1">{artwork.title}</h3>
+                            <h3 className="font-display text-2xl font-semibold mb-1">{artwork.title}</h3>
                             <p className="text-whitecube-text-muted text-xs italic mb-2">{artwork.medium}, {artwork.dimensions}</p>
                             <div className="flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
                                 {artwork.status === 'sold' ? (
@@ -80,10 +80,10 @@ export default function WhiteCubeTheme({ view }: { view?: string }) {
     }
 
     return (
-        <div className="min-h-screen bg-whitecube-bg text-whitecube-text font-[family-name:var(--font-montserrat)] selection:bg-whitecube-accent selection:text-white">
+        <div className="min-h-screen bg-whitecube-bg text-whitecube-text font-montserrat selection:bg-whitecube-accent selection:text-white">
             <div className="max-w-[1200px] mx-auto p-5 md:p-10">
                 <header className="text-center py-[60px] mb-10">
-                    <h1 className="text-5xl md:text-6xl font-[family-name:var(--font-display)] font-normal tracking-[2px] mb-2 uppercase">
+                    <h1 className="text-5xl md:text-6xl font-display font-normal tracking-[2px] mb-2 uppercase">
                         {settings.site_title || profile.full_name || 'Untitled Artist'}
                     </h1>
                     <div className="text-whitecube-text-muted text-sm uppercase tracking-[3px]">

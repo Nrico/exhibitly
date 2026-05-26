@@ -48,7 +48,7 @@ export async function sendInquiry(formData: FormData) {
 
         // 1. Send email to Artist
         await resend.emails.send({
-            from: 'Exhibitly <inquiries@exhibitly.co>', // Update this if you have a verified domain
+            from: 'Exhibitly <inquiries@exhibitly.art>', // Update this if you have a verified domain
             to: artistEmail,
             replyTo: email,
             subject: `New Inquiry: ${artworkTitle}`,
@@ -67,7 +67,7 @@ export async function sendInquiry(formData: FormData) {
 
         // 2. Send confirmation to User
         await resend.emails.send({
-            from: 'Exhibitly <notifications@exhibitly.co>',
+            from: 'Exhibitly <notifications@exhibitly.art>',
             to: email,
             subject: `Inquiry Received: ${artworkTitle}`,
             html: `

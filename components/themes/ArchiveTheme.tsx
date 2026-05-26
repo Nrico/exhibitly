@@ -80,7 +80,7 @@ export default function ArchiveTheme({ view }: { view?: string }) {
     }
 
     return (
-        <div className="min-h-screen bg-archive-bg text-archive-text font-[family-name:var(--font-sans)] selection:bg-black selection:text-white">
+        <div className="min-h-screen bg-archive-bg text-archive-text font-sans selection:bg-black selection:text-white">
             <div className="max-w-[1600px] mx-auto px-10 pb-24">
                 <header className="py-[60px] flex flex-col md:flex-row justify-between items-baseline border-b border-archive-border mb-[60px]">
                     <div className="font-semibold text-2xl tracking-tight">

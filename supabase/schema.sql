@@ -173,8 +173,8 @@ begin
     account_type_val := 'artist'; -- Default to artist
   end if;
 
-  insert into public.profiles (id, email, full_name, account_type)
-  values (new.id, new.email, full_name_val, account_type_val);
+  insert into public.profiles (id, email, full_name, username, account_type)
+  values (new.id, new.email, full_name_val, new.raw_user_meta_data->>'username', account_type_val);
   
   -- Also initialize site settings
   insert into public.site_settings (user_id, site_title)

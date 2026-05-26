@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Security: Only allow fetching from known domains
-    const allowedDomains = ['exhibitly.co', 'r2.dev', 'images.unsplash.com', 'supabase.co']
+    const allowedDomains = ['exhibitly.co', 'exhibitly.art', 'r2.dev', 'images.unsplash.com', 'supabase.co']
     const urlObj = new URL(url)
     const isAllowed = allowedDomains.some(domain => urlObj.hostname.endsWith(domain))
 
