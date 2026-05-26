@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Plus } from '@phosphor-icons/react'
+import { Plus, InstagramLogo } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { createArtwork, updateArtwork, deleteArtwork, reorderArtworks } from '@/app/dashboard/inventory/actions'
 import { processImage } from '@/utils/image-processing'
@@ -14,8 +14,20 @@ import { ArtworkTable } from '@/components/dashboard/inventory/ArtworkTable'
 import { ArtworkEditor } from '@/components/dashboard/inventory/ArtworkEditor'
 import { BatchUpload } from '@/components/dashboard/inventory/BatchUpload'
 import { InventoryToolbar } from '@/components/dashboard/inventory/InventoryToolbar'
+import { ExportPdfButton } from '@/components/dashboard/inventory/ExportPdfButton'
+import { InstagramSyncModal } from '@/components/dashboard/inventory/InstagramSyncModal'
 
-export function InventoryClient({ initialArtworks, initialArtists = [] }: { initialArtworks: Artwork[], initialArtists?: any[] }) {
+export function InventoryClient({ 
+    initialArtworks, 
+    initialArtists = [],
+    profile,
+    settings
+}: { 
+    initialArtworks: Artwork[], 
+    initialArtists?: any[],
+    profile: { full_name: string | null; email: string; avatar_url: string | null },
+    settings: { site_title: string | null; site_bio: string | null; site_bio_long?: string | null; social_instagram?: string | null }
+}) {
     const router = useRouter()
 
     const [isEditorOpen, setIsEditorOpen] = useState(false)
@@ -23,6 +35,7 @@ export function InventoryClient({ initialArtworks, initialArtists = [] }: { init
     const [isCreating, setIsCreating] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [isDragging, setIsDragging] = useState(false)
+    const [isInstagramModalOpen, setIsInstagramModalOpen] = useState(false)
 
     const [artworks, setArtworks] = useState<Artwork[]>(initialArtworks)
     const [filterStatus, setFilterStatus] = useState<'all' | 'available' | 'sold' | 'draft'>('all')
@@ -236,12 +249,21 @@ export function InventoryClient({ initialArtworks, initialArtists = [] }: { init
         <div className="relative min-h-screen">
             <header className="flex justify-between items-center mb-8">
                 <h1 className="font-serif text-4xl text-[#111111]">Inventory</h1>
-                <button
-                    onClick={() => openCreateEditor()}
-                    className="bg-[#111111] text-white border-none px-4 py-2.5 rounded-md text-sm cursor-pointer flex items-center gap-2 hover:bg-[#333] transition-colors"
-                >
-                    <Plus size={16} weight="bold" /> Add Single Item
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setIsInstagramModalOpen(true)}
+                        className="bg-[#111111] text-white border-none px-4 py-2.5 rounded-md text-sm cursor-pointer flex items-center gap-2 hover:bg-[#333] transition-all"
+                    >
+                        <InstagramLogo size={16} weight="bold" /> Sync Instagram Feed
+                    </button>
+                    <ExportPdfButton profile={profile} settings={settings} artworks={filteredArtworks} />
+                    <button
+                        onClick={() => openCreateEditor()}
+                        className="bg-[#111111] text-white border-none px-4 py-2.5 rounded-md text-sm cursor-pointer flex items-center gap-2 hover:bg-[#333] transition-colors"
+                    >
+                        <Plus size={16} weight="bold" /> Add Single Item
+                    </button>
+                </div>
             </header>
 
             <BatchUpload
@@ -277,6 +299,12 @@ export function InventoryClient({ initialArtworks, initialArtists = [] }: { init
                 onDelete={handleDelete}
                 onFileSelect={handleFileSelect}
                 artists={initialArtists}
+            />
+
+            <InstagramSyncModal
+                isOpen={isInstagramModalOpen}
+                onClose={() => setIsInstagramModalOpen(false)}
+                initialHandle={settings?.social_instagram || ''}
             />
         </div>
     )

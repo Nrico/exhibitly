@@ -36,12 +36,13 @@ export function Sidebar({ user }: { user: any }) {
                             <PresentationChart size={18} />
                             Exhibitions
                         </Link>
-                        <Link href="/dashboard/viewing-rooms" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname.startsWith('/dashboard/viewing-rooms') ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
-                            <Eye size={18} />
-                            Viewing Rooms
-                        </Link>
                     </>
                 )}
+
+                <Link href="/dashboard/viewing-rooms" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname.startsWith('/dashboard/viewing-rooms') ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
+                    <Eye size={18} />
+                    Viewing Rooms
+                </Link>
 
                 <Link href="/dashboard/inventory" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname === '/dashboard/inventory' ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
                     <ImageIcon size={18} />

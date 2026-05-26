@@ -12,18 +12,18 @@ export default async function ViewingRoomsPage() {
 
     if (!user) redirect('/auth')
 
-    // Gate access to galleries only
+    // Gate access to galleries and artists only
     const { data: profile } = await supabase
         .from('profiles')
         .select('account_type')
         .eq('id', user.id)
         .single()
 
-    if (profile?.account_type !== 'gallery') {
+    if (profile?.account_type !== 'gallery' && profile?.account_type !== 'artist') {
         return (
             <div className="p-10 text-center">
-                <h1 className="text-2xl font-serif mb-4">Gallery Access Required</h1>
-                <p className="text-gray-600">Private Viewing Rooms are available exclusively to Gallery partners.</p>
+                <h1 className="text-2xl font-serif mb-4">Access Required</h1>
+                <p className="text-gray-600">Private Viewing Rooms are available to registered artists and galleries.</p>
                 <Link href="/dashboard" className="text-blue-600 mt-4 inline-block">Return to Dashboard</Link>
             </div>
         )
