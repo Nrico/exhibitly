@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { DemoShowcase } from '@/components/public/demo-showcase'
 
 export default function Home() {
   return (
@@ -196,71 +197,7 @@ export default function Home() {
           {/* --- DEMO SECTION --- */}
           <section className="section" id="demo">
             <div className="shell">
-              <div className="demo-panel">
-                <div>
-                  <h2>See a demo artist site</h2>
-                  <div className="accent-line" aria-hidden="true"></div>
-                  <div className="portrait">
-                    <img 
-                      src="/api/proxy-image?url=https://exhibitly.co/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/seth-herrera-1764388581033.jpg" 
-                      alt="Portrait of Seth Herrera" 
-                      className="w-full h-full object-cover animate-[fadeIn_0.5s_ease]" 
-                    />
-                  </div>
-                </div>
-
-                <div className="demo-copy">
-                  <h3>Seth Herrera</h3>
-                  <p>Seth Herrera was a Southwest modern painter. His work explores small devotional panels, carved frames, and oil portraits capturing rural families under high-desert light.</p>
-                  <Link href="/demo" className="text-link">View demo site →</Link>
-                </div>
-
-                <div className="recent">
-                  <h4>Recent work</h4>
-                  <div className="recent-grid">
-                    <div>
-                      <div className="art-thumb">
-                        <img 
-                          src="/api/proxy-image?url=https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.08821344127910269.jpg" 
-                          alt="Trail to the Moon" 
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
-                      <p className="caption"><strong>Trail to the Moon</strong>Oil on panel<br />12 x 12 in</p>
-                    </div>
-                    <div>
-                      <div className="art-thumb">
-                        <img 
-                          src="/api/proxy-image?url=https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.767166483680785.jpg" 
-                          alt="Blinded" 
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
-                      <p className="caption"><strong>Blinded</strong>Oil on panel<br />16 x 20 in</p>
-                    </div>
-                    <div>
-                      <div className="art-thumb">
-                        <img 
-                          src="/api/proxy-image?url=https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.1439771331160673.jpg" 
-                          alt="A Step Away" 
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
-                      <p className="caption"><strong>A Step Away</strong>Oil on canvas<br />24 x 30 in</p>
-                    </div>
-                    <div>
-                      <div className="art-thumb">
-                        <img 
-                          src="/api/proxy-image?url=https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.536189758092916.jpg" 
-                          alt="Village Visitors" 
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
-                      <p className="caption"><strong>Village Visitors</strong>Oil on panel<br />18 x 24 in</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <DemoShowcase />
             </div>
           </section>
 

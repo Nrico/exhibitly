@@ -56,14 +56,14 @@ export default async function SettingsPage() {
     } else {
         // Mock Data Fallback
         profile = {
-            full_name: 'Enrico Trujillo',
-            email: 'art@enricotrujillo.com',
-            avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200'
+            full_name: 'El Trujillo',
+            email: 'etrujillo@gmail.com',
+            avatar_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/avatars/94615753-3152-4576-945b-0d62cc237d7e/avatar-0.6230062277931487.jpg'
         }
         settings = {
-            site_title: 'Enrico Trujillo Art',
-            site_bio: 'Fine Art & Digital Fabrication based in Taos, NM.',
-            custom_domain: 'enricotrujillo.com'
+            site_title: 'El Trujillo',
+            site_bio: 'Fine Art & Digital Fabrication based in Taos, NM. Exploring the intersection of traditional saint carving and modern manufacturing.',
+            custom_domain: 'exhibitly.art/etrujillo'
         }
     }
 
