@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { usePortfolio } from '@/components/public/portfolio-context'
 import { AboutView, ContactView } from '@/components/public/shared-views'
 
@@ -11,7 +12,6 @@ import { GalleryExhibitions } from '@/components/public/gallery/GalleryExhibitio
 
 export default function ArchiveTheme({ view }: { view?: string }) {
     const { profile, settings, artworks, setSelectedArtwork, artists, exhibitions } = usePortfolio()
-    const [currentView, setCurrentView] = useState<'gallery' | 'about' | 'contact'>('gallery')
     const [selectedCollection, setSelectedCollection] = useState<string>('All')
 
     // Extract unique collections
@@ -30,12 +30,10 @@ export default function ArchiveTheme({ view }: { view?: string }) {
             if (view === 'home') return <GalleryHome profile={profile} settings={settings} artists={artists || []} exhibitions={exhibitions || []} />
             if (view === 'artists') return <GalleryRoster artists={artists || []} />
             if (view === 'exhibitions') return <GalleryExhibitions exhibitions={exhibitions || []} />
-            if (view === 'about') return <AboutView />
-            if (view === 'contact') return <ContactView />
         }
 
-        if (currentView === 'about') return <AboutView />
-        if (currentView === 'contact') return <ContactView />
+        if (view === 'about') return <AboutView />
+        if (view === 'contact') return <ContactView />
 
         // Default Gallery View (Artworks)
         return (
@@ -83,30 +81,32 @@ export default function ArchiveTheme({ view }: { view?: string }) {
         <div className="min-h-screen bg-archive-bg text-archive-text font-sans selection:bg-black selection:text-white">
             <div className="max-w-[1600px] mx-auto px-10 pb-24">
                 <header className="py-[60px] flex flex-col md:flex-row justify-between items-baseline border-b border-archive-border mb-[60px]">
-                    <div className="font-semibold text-2xl tracking-tight">
-                        {settings.site_title || profile.full_name || 'Untitled Artist'}
+                    <div className="font-semibold text-2xl tracking-tight cursor-pointer">
+                        <Link href="?view=home" scroll={false}>
+                            {settings.site_title || profile.full_name || 'Untitled Artist'}
+                        </Link>
                     </div>
                     <nav className="flex gap-8 text-archive-text-muted text-sm mt-4 md:mt-0">
                         {isGalleryAccount ? (
                             <>
-                                <a href="?view=home" className={`hover:text-black transition-colors ${view === 'home' ? 'text-black font-semibold' : ''}`}>Home</a>
-                                <a href="?view=artists" className={`hover:text-black transition-colors ${view === 'artists' ? 'text-black font-semibold' : ''}`}>Artists</a>
-                                <a href="?view=exhibitions" className={`hover:text-black transition-colors ${view === 'exhibitions' ? 'text-black font-semibold' : ''}`}>Exhibitions</a>
-                                <a href="?view=about" className={`hover:text-black transition-colors ${view === 'about' ? 'text-black font-semibold' : ''}`}>About</a>
-                                <a href="?view=contact" className={`hover:text-black transition-colors ${view === 'contact' ? 'text-black font-semibold' : ''}`}>Contact</a>
+                                <Link href="?view=home" scroll={false} className={`hover:text-black transition-colors ${view === 'home' ? 'text-black font-semibold' : ''}`}>Home</Link>
+                                <Link href="?view=artists" scroll={false} className={`hover:text-black transition-colors ${view === 'artists' ? 'text-black font-semibold' : ''}`}>Artists</Link>
+                                <Link href="?view=exhibitions" scroll={false} className={`hover:text-black transition-colors ${view === 'exhibitions' ? 'text-black font-semibold' : ''}`}>Exhibitions</Link>
+                                <Link href="?view=about" scroll={false} className={`hover:text-black transition-colors ${view === 'about' ? 'text-black font-semibold' : ''}`}>About</Link>
+                                <Link href="?view=contact" scroll={false} className={`hover:text-black transition-colors ${view === 'contact' ? 'text-black font-semibold' : ''}`}>Contact</Link>
                             </>
                         ) : (
                             <>
-                                <button onClick={() => setCurrentView('gallery')} className={`hover:text-black transition-colors ${currentView === 'gallery' ? 'text-black font-semibold' : ''}`}>Work</button>
-                                <button onClick={() => setCurrentView('about')} className={`hover:text-black transition-colors ${currentView === 'about' ? 'text-black font-semibold' : ''}`}>About</button>
-                                <button onClick={() => setCurrentView('contact')} className={`hover:text-black transition-colors ${currentView === 'contact' ? 'text-black font-semibold' : ''}`}>Contact</button>
+                                <Link href="?view=gallery" scroll={false} className={`hover:text-black transition-colors ${(!view || view === 'gallery') ? 'text-black font-semibold' : ''}`}>Work</Link>
+                                <Link href="?view=about" scroll={false} className={`hover:text-black transition-colors ${view === 'about' ? 'text-black font-semibold' : ''}`}>About</Link>
+                                <Link href="?view=contact" scroll={false} className={`hover:text-black transition-colors ${view === 'contact' ? 'text-black font-semibold' : ''}`}>Contact</Link>
                             </>
                         )}
                     </nav>
                 </header>
 
                 {/* Collection Filter for Archive (Only for Artist Gallery View) */}
-                {!isGalleryAccount && currentView === 'gallery' && uniqueCollections.length > 0 && (
+                {!isGalleryAccount && (!view || view === 'gallery') && uniqueCollections.length > 0 && (
                     <div className="flex flex-wrap gap-4 mb-10 text-sm">
                         <button
                             onClick={() => setSelectedCollection('All')}

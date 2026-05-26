@@ -194,7 +194,7 @@ export function SettingsForm({
                             className="w-full p-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#111111] transition-colors"
                         />
                     </div>
-                    <div>
+                    <div className="mb-8">
                         <label className="block text-sm font-medium mb-2 text-[#333333]">Email Address</label>
                         <input
                             name="email"
@@ -204,123 +204,123 @@ export function SettingsForm({
                             className="w-full p-3 border border-gray-200 rounded-md text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
                         />
                     </div>
-                </div>
 
-                {/* Site Settings (Moved to Design) */}
-                <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <div className="font-semibold text-lg flex items-center gap-2.5 text-[#111111]">
-                                <MapPin size={24} /> Artist Identity & Site Design
-                            </div>
-                            <div className="text-sm text-[#666666] mt-1">
-                                Manage your public portfolio appearance, bio, and contact info in the Site Design tab.
-                            </div>
-                        </div>
-                        <Link href="/dashboard/design" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 no-underline">
-                            Go to Site Design <ArrowSquareOut size={16} />
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Subscription */}
-                <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
-                    <div className="flex justify-between items-center mb-6">
-                        <div>
-                            <div className="font-semibold text-lg flex items-center gap-2.5 text-[#111111]">
-                                <CreditCard size={24} /> Subscription
-                            </div>
-                            <div className="text-sm text-[#666666] mt-1">Manage your plan tier and payment methods.</div>
-                        </div>
-                        <span className={`px-2.5 py-1 rounded text-xs uppercase tracking-wider font-medium ${isPro ? 'bg-[#111111] text-white' : 'bg-gray-100 text-gray-600'}`}>
-                            {isPro ? 'Professional Plan' : 'Free Plan'}
-                        </span>
-                    </div>
-
-                    <div className="flex justify-between items-center p-5 bg-[#f9fafb] rounded-md border border-gray-200">
-                        <div>
-                            <div className="font-semibold text-sm text-[#111111]">{isPro ? '$12.00 / month' : '$0.00 / month'}</div>
-                            <div className="text-xs text-[#666666] mt-0.5">{isPro ? 'Manage your payment method or cancel subscription.' : 'Upgrade to remove limits.'}</div>
-                        </div>
-                        {isPro ? (
-                            <form action={createPortalSession}>
-                                <button type="submit" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 cursor-pointer">
-                                    Manage Subscription / Cancel <ArrowSquareOut size={16} />
-                                </button>
-                            </form>
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={handleUpgrade}
-                                disabled={isLoadingCheckout}
-                                className="bg-[#111111] text-white px-4 py-2 rounded-md text-sm hover:bg-[#333] transition-colors flex items-center gap-2 disabled:opacity-50"
-                            >
-                                {isLoadingCheckout ? 'Loading...' : 'Upgrade to Pro'} <ArrowSquareOut size={16} />
-                            </button>
-                        )}
-                    </div>
-                </div>
-
-                {/* Data Portability */}
-                <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <div className="font-semibold text-lg flex items-center gap-2.5 text-[#111111]">
-                                <DownloadSimple size={24} /> Data Portability
-                            </div>
-                            <div className="text-sm text-[#666666] mt-1">
-                                Download a ZIP file containing your site as static HTML and all your artwork images.
-                            </div>
-                        </div>
-                        <div className="flex gap-3">
-                            <button
-                                type="button"
-                                onClick={handleCsvExport}
-                                disabled={isCsvExporting || artworks.length === 0}
-                                className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 disabled:opacity-50"
-                            >
-                                {isCsvExporting ? 'Generating...' : 'Export Inventory CSV'} <FileCsv size={16} />
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleExport}
-                                disabled={isExporting}
-                                className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 disabled:opacity-50"
-                            >
-                                {isExporting ? 'Exporting...' : 'Export Full Site'} <DownloadSimple size={16} />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Danger Zone */}
-                <div className="bg-white border border-red-200 rounded-lg p-8 mb-8">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <div className="font-semibold text-lg flex items-center gap-2.5 text-red-700">
-                                <Warning size={24} /> Danger Zone
-                            </div>
-                            <div className="text-sm text-[#666666] mt-1">
-                                Once you delete your account, there is no going back. Please be certain.
-                            </div>
-                        </div>
-                        <button type="button" className="bg-white border border-red-700 text-red-700 px-5 py-2.5 rounded-md text-sm font-medium hover:bg-red-50 transition-colors">
-                            Delete Account
+                    <div className="flex justify-end pt-4 border-t border-gray-100">
+                        <button
+                            type="submit"
+                            disabled={isSaving}
+                            className="bg-[#111111] text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-[#333333] transition-colors border-none cursor-pointer disabled:opacity-50"
+                        >
+                            {isSaving ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>
                 </div>
 
-                <div className="flex justify-end mt-5">
-                    <button
-                        type="submit"
-                        disabled={isSaving}
-                        className="bg-[#111111] text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-[#333333] transition-colors border-none cursor-pointer disabled:opacity-50"
-                    >
-                        {isSaving ? 'Saving...' : 'Save Changes'}
-                    </button>
+            </form>
+
+            {/* Site Settings (Moved to Design) */}
+            <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <div className="font-semibold text-lg flex items-center gap-2.5 text-[#111111]">
+                            <MapPin size={24} /> Artist Identity & Site Design
+                        </div>
+                        <div className="text-sm text-[#666666] mt-1">
+                            Manage your public portfolio appearance, bio, and contact info in the Site Design tab.
+                        </div>
+                    </div>
+                    <Link href="/dashboard/design" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 no-underline">
+                        Go to Site Design <ArrowSquareOut size={16} />
+                    </Link>
+                </div>
+            </div>
+
+            {/* Subscription */}
+            <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
+                <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <div className="font-semibold text-lg flex items-center gap-2.5 text-[#111111]">
+                            <CreditCard size={24} /> Subscription
+                        </div>
+                        <div className="text-sm text-[#666666] mt-1">Manage your plan tier and payment methods.</div>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded text-xs uppercase tracking-wider font-medium ${isPro ? 'bg-[#111111] text-white' : 'bg-gray-100 text-gray-600'}`}>
+                        {isPro ? 'Professional Plan' : 'Free Plan'}
+                    </span>
                 </div>
 
-            </form>
+                <div className="flex justify-between items-center p-5 bg-[#f9fafb] rounded-md border border-gray-200">
+                    <div>
+                        <div className="font-semibold text-sm text-[#111111]">{isPro ? '$12.00 / month' : '$0.00 / month'}</div>
+                        <div className="text-xs text-[#666666] mt-0.5">{isPro ? 'Manage your payment method or cancel subscription.' : 'Upgrade to remove limits.'}</div>
+                    </div>
+                    {isPro ? (
+                        <form action={createPortalSession}>
+                            <button type="submit" className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 cursor-pointer">
+                                Manage Subscription / Cancel <ArrowSquareOut size={16} />
+                            </button>
+                        </form>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={handleUpgrade}
+                            disabled={isLoadingCheckout}
+                            className="bg-[#111111] text-white px-4 py-2 rounded-md text-sm hover:bg-[#333] transition-colors flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {isLoadingCheckout ? 'Loading...' : 'Upgrade to Pro'} <ArrowSquareOut size={16} />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Data Portability */}
+            <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <div className="font-semibold text-lg flex items-center gap-2.5 text-[#111111]">
+                            <DownloadSimple size={24} /> Data Portability
+                        </div>
+                        <div className="text-sm text-[#666666] mt-1">
+                            Download a ZIP file containing your site as static HTML and all your artwork images.
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
+                        <button
+                            type="button"
+                            onClick={handleCsvExport}
+                            disabled={isCsvExporting || artworks.length === 0}
+                            className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {isCsvExporting ? 'Generating...' : 'Export Inventory CSV'} <FileCsv size={16} />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleExport}
+                            disabled={isExporting}
+                            className="bg-white border border-gray-200 px-4 py-2 rounded-md text-sm text-[#111111] hover:border-gray-400 transition-colors flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {isExporting ? 'Exporting...' : 'Export Full Site'} <DownloadSimple size={16} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Danger Zone */}
+            <div className="bg-white border border-red-200 rounded-lg p-8 mb-8">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <div className="font-semibold text-lg flex items-center gap-2.5 text-red-700">
+                            <Warning size={24} /> Danger Zone
+                        </div>
+                        <div className="text-sm text-[#666666] mt-1">
+                            Once you delete your account, there is no going back. Please be certain.
+                        </div>
+                    </div>
+                    <button type="button" className="bg-white border border-red-700 text-red-700 px-5 py-2.5 rounded-md text-sm font-medium hover:bg-red-50 transition-colors">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
         </div>
     )
 }

@@ -368,7 +368,7 @@ export default function DemoPage() {
                     <div>
                       <h2 className="font-serif text-3xl text-brand-black">Preview: Sylvia Vance Pre-acquisition Review</h2>
                       <div className="text-xs text-brand-graphite mt-1 font-mono">
-                        URL: <span className="underline">exhibitly.art/view/elena-sylvia-room</span>
+                        URL: <span className="underline">exhibitly.art/view/seth-sylvia-room</span>
                       </div>
                     </div>
                     
@@ -380,7 +380,7 @@ export default function DemoPage() {
                   </div>
 
                   <p className="text-sm text-brand-graphite italic font-light">
-                    "Sylvia, here is a preview of the newest hand-coiled volcanic clay vessels from my Taos studio. Let me know if you would like me to reserve any of these for your collection before the official collection opening next month." &mdash; Elena
+                    "Sylvia, here is a preview of the newest devotional panels and oil paintings from my Santa Fe studio. Let me know if you would like me to reserve any of these for your collection before the official exhibition opening next month." &mdash; Seth
                   </p>
 
                   {/* Simulated Artworks in Room */}
@@ -564,7 +564,7 @@ export default function DemoPage() {
                     <textarea 
                       rows={3} 
                       required 
-                      defaultValue={`Hello Elena, I am interested in acquiring your work "${selectedArtwork.title}" ($${selectedArtwork.price ? selectedArtwork.price.toLocaleString() : 'N/A'}). Please let me know shipping options.`}
+                      defaultValue={`Hello Seth, I am interested in acquiring your work "${selectedArtwork.title}" ($${selectedArtwork.price ? selectedArtwork.price.toLocaleString() : 'N/A'}). Please let me know shipping options.`}
                       className="w-full p-2.5 border border-brand-sand-line bg-brand-warm-white text-brand-charcoal focus:outline-none focus:border-brand-clay"
                     />
                   </div>

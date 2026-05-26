@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { List, X, SquaresFour, Image as ImageIcon, Palette, Gear, Users, PresentationChart } from '@phosphor-icons/react'
+import { List, X, SquaresFour, Image as ImageIcon, Palette, Gear, Users, PresentationChart, Eye } from '@phosphor-icons/react'
 
 export function MobileNav({ user }: { user: any }) {
     const [isOpen, setIsOpen] = useState(false)
@@ -44,6 +44,10 @@ export function MobileNav({ user }: { user: any }) {
                                 <Link href="/dashboard/exhibitions" onClick={toggleMenu} className={`flex items-center gap-3 px-3 py-3 rounded-md text-sm transition-colors ${pathname === '/dashboard/exhibitions' ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
                                     <PresentationChart size={20} />
                                     Exhibitions
+                                </Link>
+                                <Link href="/dashboard/viewing-rooms" onClick={toggleMenu} className={`flex items-center gap-3 px-3 py-3 rounded-md text-sm transition-colors ${pathname.startsWith('/dashboard/viewing-rooms') ? 'bg-[#1a1a1a] text-white font-medium' : 'text-[#888888] hover:bg-[#1a1a1a] hover:text-white'}`}>
+                                    <Eye size={20} />
+                                    Viewing Rooms
                                 </Link>
                             </>
                         )}

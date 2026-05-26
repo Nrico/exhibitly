@@ -39,6 +39,10 @@ function AuthContent() {
 
     const handleHandleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '')
+            .replace(/-+/g, '-')
         setHandle(value)
 
         if (value.length >= 3) {
