@@ -66,25 +66,25 @@ export function OnboardingChecklist({ profile, settings, artworkCount, username 
     }
 
     return (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm">
+        <div className="dashboard-glass-card rounded-xl p-6 mb-8">
             <div className="flex justify-between items-end mb-4">
                 <div className="flex-1">
-                    <h3 className="font-medium text-[#111111]">Complete your setup</h3>
-                    <p className="text-xs text-[#666666] mt-1">
+                    <h3 className="font-serif text-lg text-slate-800">Complete your setup</h3>
+                    <p className="text-xs text-slate-500 mt-1">
                         You&apos;re {Math.round(progress)}% of the way there. Finish these steps to launch your portfolio.
                     </p>
                 </div>
                 <div className="text-right">
-                    <div className="text-2xl font-bold text-[#111111]">{Math.round(progress)}%</div>
+                    <div className="text-2xl font-bold font-mono text-slate-800">{Math.round(progress)}%</div>
                 </div>
             </div>
 
             {/* Progress Bar */}
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-6">
+            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mb-6">
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
-                    className="h-full bg-[#111111]"
+                    className="h-full bg-slate-800"
                 />
             </div>
 
@@ -93,8 +93,8 @@ export function OnboardingChecklist({ profile, settings, artworkCount, username 
                     <div
                         key={step.id}
                         className={`relative border rounded-lg p-4 transition-all ${step.isComplete
-                            ? 'bg-gray-50 border-gray-200 opacity-75'
-                            : 'bg-white border-gray-300 hover:border-[#111111] hover:shadow-md'
+                            ? 'bg-slate-50/40 border-slate-200/50 opacity-60'
+                            : 'bg-white/50 border-slate-200 hover:border-slate-400 hover:bg-white/90 hover:shadow-sm'
                             }`}
                     >
                         <div className="flex items-start justify-between mb-3">

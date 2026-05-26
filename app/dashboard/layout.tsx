@@ -19,7 +19,7 @@ export default async function DashboardLayout({
     }
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f9fa]">
+        <div className="flex flex-col md:flex-row min-h-screen dashboard-theme">
             <Sidebar user={user} />
             <MobileNav user={user} />
             <main className="flex-1 p-6 md:ml-[260px] md:p-[50px_60px]">

@@ -70,19 +70,19 @@ export default async function Dashboard() {
     const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
     return (
-        <div className="min-h-screen bg-gray-50 p-8">
+        <div className="min-h-screen p-8">
             <div className="max-w-4xl mx-auto">
                 <header className="flex justify-between items-end mb-10">
                     <div>
-                        <h1 className="font-serif text-4xl text-[#111111] mb-1">Welcome, {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Artist'}.</h1>
-                        <div className="text-sm text-[#666666]">{currentDate}</div>
+                        <h1 className="font-serif text-4xl text-[#0f172a] mb-1 tracking-tight">Welcome, {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Artist'}.</h1>
+                        <div className="text-xs text-slate-500 font-mono uppercase tracking-wider">{currentDate}</div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Link href="/dashboard/inventory?new=true" className="bg-[#111111] text-white border-none px-6 py-3 rounded-md text-sm cursor-pointer flex items-center gap-2 hover:bg-[#333] transition-colors no-underline">
-                            <PlusCircle size={18} /> Upload New Work
+                        <Link href="/dashboard/inventory?new=true" className="bg-[#111111] text-white border-none px-6 py-3 rounded-md text-xs font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2 hover:bg-[#333] transition-all no-underline shadow-sm">
+                            <PlusCircle size={16} /> Upload New Work
                         </Link>
                         <form action={signOut}>
-                            <button className="px-4 py-2 bg-white border border-gray-200 rounded-md text-sm hover:bg-gray-50">
+                            <button className="px-4 py-2 bg-white border border-slate-200 text-xs font-bold uppercase tracking-wider rounded-md hover:bg-slate-50 transition-colors">
                                 Sign Out
                             </button>
                         </form>
@@ -107,8 +107,8 @@ export default async function Dashboard() {
                         />
                     </div>
                     <div className="space-y-6">
-                        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-gray-500">Plan Usage</h3>
+                        <div className="dashboard-glass-card rounded-xl p-6">
+                            <h3 className="dashboard-mono-label mb-4">Plan Usage</h3>
                             <div className="space-y-6">
                                 <UsageIndicator type="artworks" count={usage.artworks} limit={limits.artworks} label="Artworks" />
                                 {profile?.account_type === 'gallery' && (
@@ -123,40 +123,40 @@ export default async function Dashboard() {
                     </div>
                 </div>
 
-                <h2 className="text-lg font-semibold mb-5 text-[#111111]">Recent Uploads</h2>
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <h2 className="text-xl font-serif mb-5 text-[#0f172a] tracking-tight">Recent Uploads</h2>
+                <div className="dashboard-glass-card rounded-xl overflow-hidden mb-10">
                     <table className="w-full border-collapse">
                         <thead>
-                            <tr className="bg-[#fafafa] border-b border-gray-200 text-left">
-                                <th className="p-4 pl-6 text-xs uppercase text-[#666666] font-semibold">Image</th>
-                                <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Title</th>
-                                <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Uploaded</th>
-                                <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Price</th>
-                                <th className="p-4 text-xs uppercase text-[#666666] font-semibold">Status</th>
+                            <tr className="border-b border-slate-200/60 text-left">
+                                <th className="p-4 pl-6"><span className="dashboard-mono-label">Image</span></th>
+                                <th className="p-4"><span className="dashboard-mono-label">Title</span></th>
+                                <th className="p-4"><span className="dashboard-mono-label">Uploaded</span></th>
+                                <th className="p-4"><span className="dashboard-mono-label">Price</span></th>
+                                <th className="p-4"><span className="dashboard-mono-label">Status</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             {recentUploads?.map((item: any) => (
-                                <tr key={item.id} className="border-b border-gray-50 last:border-none hover:bg-gray-50 transition-colors">
+                                <tr key={item.id} className="border-b border-slate-100 last:border-none hover:bg-slate-50/50 transition-colors">
                                     <td className="p-4 pl-6">
-                                        <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden relative">
+                                        <div className="w-10 h-10 bg-slate-100 rounded overflow-hidden relative border border-slate-200/50">
                                             {item.image_url && <Image src={item.image_url} alt={item.title} fill className="object-cover" />}
                                         </div>
                                     </td>
                                     <td className="p-4">
-                                        <div className="font-medium text-sm text-[#111111]">{item.title}</div>
-                                        <div className="text-xs text-[#888888]">{item.medium}</div>
+                                        <div className="font-semibold text-sm text-slate-800">{item.title}</div>
+                                        <div className="text-xs text-slate-500 font-mono mt-0.5">{item.medium}</div>
                                     </td>
-                                    <td className="p-4 text-sm text-[#111111]">{new Date(item.created_at).toLocaleDateString()}</td>
-                                    <td className="p-4 text-sm text-[#111111]">{item.price ? `$${item.price}` : '--'}</td>
+                                    <td className="p-4 text-xs font-mono text-slate-600">{new Date(item.created_at).toLocaleDateString()}</td>
+                                    <td className="p-4 text-xs font-mono text-slate-700">{item.price ? `$${item.price.toLocaleString()}` : '--'}</td>
                                     <td className="p-4">
                                         <span className={`
-                      px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1.5
-                      ${item.status === 'available' ? 'bg-green-50 text-green-700' : ''}
-                      ${item.status === 'sold' ? 'bg-red-50 text-red-700' : ''}
-                      ${item.status === 'draft' ? 'bg-yellow-50 text-yellow-700' : ''}
+                      px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1
+                      ${item.status === 'available' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : ''}
+                      ${item.status === 'sold' ? 'bg-rose-50 text-rose-700 border border-rose-100' : ''}
+                      ${item.status === 'draft' ? 'bg-amber-50 text-amber-700 border border-amber-100' : ''}
                     `}>
-                                            {item.status === 'draft' && <MagicWand size={12} weight="fill" />}
+                                            {item.status === 'draft' && <MagicWand size={10} weight="fill" />}
                                             {item.status}
                                         </span>
                                     </td>
