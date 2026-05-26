@@ -21,12 +21,14 @@ export function InventoryClient({
     initialArtworks, 
     initialArtists = [],
     profile,
-    settings
+    settings,
+    instagramIntegration
 }: { 
     initialArtworks: Artwork[], 
     initialArtists?: any[],
     profile: { full_name: string | null; email: string; avatar_url: string | null },
-    settings: { site_title: string | null; site_bio: string | null; site_bio_long?: string | null; social_instagram?: string | null }
+    settings: { site_title: string | null; site_bio: string | null; site_bio_long?: string | null; social_instagram?: string | null },
+    instagramIntegration?: { instagram_username: string; expires_at: string } | null
 }) {
     const router = useRouter()
 
@@ -305,6 +307,7 @@ export function InventoryClient({
                 isOpen={isInstagramModalOpen}
                 onClose={() => setIsInstagramModalOpen(false)}
                 initialHandle={settings?.social_instagram || ''}
+                instagramIntegration={instagramIntegration}
             />
         </div>
     )

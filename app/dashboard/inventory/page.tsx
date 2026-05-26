@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { InventoryClient } from './inventory-client'
 import { getImpersonatedUser } from '@/utils/impersonation'
+import { getInstagramIntegration } from '@/app/actions/instagram'
 
 import { Artist, Artwork } from '@/types'
 
@@ -12,8 +13,11 @@ export default async function InventoryPage() {
     let artists: Artist[] = []
     let profile: any = null
     let settings: any = null
+    let instagramIntegration: any = null
 
     if (user && user.id !== 'mock-user-id') {
+        const instagramIntegrationData = await getInstagramIntegration()
+        instagramIntegration = instagramIntegrationData
         const { data: artworksData } = await supabase
             .from('artworks')
             .select('*')
@@ -106,6 +110,7 @@ export default async function InventoryPage() {
             initialArtists={artists}
             profile={profile}
             settings={settings}
+            instagramIntegration={instagramIntegration}
         />
     )
 }
