@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { InstagramLogo, Globe, EnvelopeSimple, X } from '@phosphor-icons/react'
+import DOMPurify from 'isomorphic-dompurify'
 import { toast } from 'sonner'
 import { Artwork } from '@/types'
 import { usePortfolio } from '@/components/public/portfolio-context'
@@ -60,7 +61,7 @@ export function AboutView() {
                     {settings.site_bio_long ? (
                         <div
                             className={`whitespace-pre-wrap leading-relaxed text-lg ${styles.muted} [&>p]:mb-6 font-light`}
-                            dangerouslySetInnerHTML={{ __html: settings.site_bio_long }}
+                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(settings.site_bio_long) }}
                         />
                     ) : (
                         <div className={`whitespace-pre-wrap leading-relaxed text-lg ${styles.muted} font-light`}>
@@ -108,9 +109,8 @@ export function ContactView() {
 
     const handleContactSubmit = async (formData: FormData) => {
         setIsSubmitting(true)
-        // Reuse the inquiry action but with a generic subject
-        formData.append('artworkTitle', 'General Inquiry')
-        formData.append('artistEmail', settings.contact_email || '')
+        // Pass the target artist's ID instead of verified emails/titles
+        formData.append('artistId', profile.id)
 
         const result = await sendInquiry(formData)
         setIsSubmitting(false)
@@ -252,8 +252,6 @@ export function DetailModal({ artwork, onClose }: { artwork: Artwork, onClose: (
         setIsSubmitting(true)
         // Append hidden fields
         formData.append('artworkId', artwork.id)
-        formData.append('artworkTitle', artwork.title)
-        formData.append('artistEmail', settings.contact_email || '')
 
         const result = await sendInquiry(formData)
         setIsSubmitting(false)
@@ -362,7 +360,7 @@ export function DetailModal({ artwork, onClose }: { artwork: Artwork, onClose: (
                         {artwork.description && (
                             <div
                                 className="text-[#ccc] mb-10 leading-relaxed whitespace-pre-wrap [&>p]:mb-4 font-light tracking-wide"
-                                dangerouslySetInnerHTML={{ __html: artwork.description }}
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(artwork.description) }}
                             />
                         )}
 
@@ -431,7 +429,7 @@ export function DetailModal({ artwork, onClose }: { artwork: Artwork, onClose: (
                             {artwork.description && (
                                 <div
                                     className="text-archive-text mb-8 leading-relaxed whitespace-pre-wrap [&>p]:mb-4 text-sm"
-                                    dangerouslySetInnerHTML={{ __html: artwork.description }}
+                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(artwork.description) }}
                                 />
                             )}
 
@@ -492,7 +490,7 @@ export function DetailModal({ artwork, onClose }: { artwork: Artwork, onClose: (
                         {artwork.description && (
                             <div
                                 className="text-whitecube-text-muted mb-10 leading-relaxed whitespace-pre-wrap [&>p]:mb-4 font-light"
-                                dangerouslySetInnerHTML={{ __html: artwork.description }}
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(artwork.description) }}
                             />
                         )}
 

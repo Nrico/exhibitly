@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { Exhibition, Artwork } from '@/types'
 import { usePortfolio } from '@/components/public/portfolio-context'
+import DOMPurify from 'isomorphic-dompurify'
 
 export function ExhibitionDetail({ exhibition, onBack, variant = 'square', mutedTextClass = 'text-gray-600' }: { exhibition: Exhibition, onBack: () => void, variant?: 'masonry' | 'square', mutedTextClass?: string }) {
     const { setSelectedArtwork } = usePortfolio()
@@ -29,7 +30,7 @@ export function ExhibitionDetail({ exhibition, onBack, variant = 'square', muted
                 {exhibition.description && (
                     <div
                         className={`prose prose-base md:prose-lg mx-auto font-light leading-relaxed px-4 md:px-0 ${mutedTextClass}`}
-                        dangerouslySetInnerHTML={{ __html: exhibition.description }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(exhibition.description) }}
                     />
                 )}
             </header>

@@ -1,4 +1,4 @@
-import { SupabaseClient } from '@supabase/supabase-js'
+import { SupabaseClient, User } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 export const IMPERSONATION_COOKIE = 'x-impersonate-id'
@@ -30,26 +30,24 @@ export async function getImpersonatedUser(supabase: SupabaseClient) {
         return { user: authUser, isImpersonating: false }
     }
 
-    // Fetch the impersonated user
-    // We can't use auth.getUser(id) because that requires service role and returns a User object
-    // But for our app purposes, we mostly need the ID and metadata.
-    // However, Supabase Auth doesn't let us easily "get" another user object without admin API.
-    // BUT, we can just return a mock User object with the ID, or fetch the profile.
-
-    // Actually, for RLS to work with `auth.uid() = user_id`, we need to be careful.
-    // RLS checks the JWT. We can't easily forge a JWT for another user without signing it ourselves.
-    // BUT, we just updated RLS to allow Admins to access everything!
-    // So, we don't need to "become" the user in the database sense.
-    // We just need the application code to *think* we are that user.
-
-    // So we return a constructed User object with the impersonated ID.
+    // Fetch target user's profile to populate metadata
+    const { data: targetProfile } = await supabase
+        .from('profiles')
+        .select('account_type, full_name, email')
+        .eq('id', impersonateId)
+        .single()
 
     return {
         user: {
             ...authUser,
             id: impersonateId,
-            email: 'impersonated@example.com', // Placeholder or fetch real email if needed
-        },
+            email: targetProfile?.email || 'impersonated@example.com',
+            user_metadata: {
+                ...authUser.user_metadata,
+                account_type: targetProfile?.account_type || 'artist',
+                full_name: targetProfile?.full_name || 'Impersonated User',
+            }
+        } as User,
         isImpersonating: true,
         realUser: authUser
     }

@@ -240,19 +240,20 @@ export async function reorderArtworks(items: { id: string, position: number }[])
         return { error: 'Unauthorized' }
     }
 
-    // Perform updates in a transaction-like manner (or just parallel promises)
-    // Supabase doesn't support easy transactions via client yet, so we'll just loop.
-    // For a small number of items (20-50), this is fine.
+    // Prepare payload for bulk upsert. Include user_id so RLS policy checks pass.
+    const payload = items.map(item => ({
+        id: item.id,
+        user_id: user.id,
+        position: item.position
+    }))
 
-    const updates = items.map(item =>
-        supabase
-            .from('artworks')
-            .update({ position: item.position })
-            .eq('id', item.id)
-            .eq('user_id', user.id)
-    )
+    const { error } = await supabase
+        .from('artworks')
+        .upsert(payload)
 
-    await Promise.all(updates)
+    if (error) {
+        return { error: error.message }
+    }
 
     // Fetch profile to get username for revalidation
     const { data: profile } = await supabase.from('profiles').select('username').eq('id', user.id).single()

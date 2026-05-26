@@ -34,6 +34,13 @@ export async function updateViewingRoom(id: string, updates: Partial<ViewingRoom
 
     if (!user) return { error: 'Unauthorized' }
 
+    // Fetch current slug for cache invalidation
+    const { data: currentRoom } = await supabase
+        .from('viewing_rooms')
+        .select('slug')
+        .eq('id', id)
+        .single()
+
     const { error } = await supabase
         .from('viewing_rooms')
         .update(updates)
@@ -41,7 +48,15 @@ export async function updateViewingRoom(id: string, updates: Partial<ViewingRoom
         .eq('gallery_id', user.id)
 
     if (error) return { error: error.message }
+    
     revalidatePath(`/dashboard/viewing-rooms/${id}`)
+    if (currentRoom?.slug) {
+        revalidatePath(`/view/${currentRoom.slug}`)
+    }
+    if (updates.slug && updates.slug !== currentRoom?.slug) {
+        revalidatePath(`/view/${updates.slug}`)
+    }
+    revalidatePath('/')
     return { success: true }
 }
 
@@ -54,7 +69,7 @@ export async function addRoomItem(roomId: string, artworkId: string, isHighlight
     // Verify ownership of room
     const { data: room } = await supabase
         .from('viewing_rooms')
-        .select('id')
+        .select('id, slug')
         .eq('id', roomId)
         .eq('gallery_id', user.id)
         .single()
@@ -70,7 +85,12 @@ export async function addRoomItem(roomId: string, artworkId: string, isHighlight
         })
 
     if (error) return { error: error.message }
+    
     revalidatePath(`/dashboard/viewing-rooms/${roomId}`)
+    if (room?.slug) {
+        revalidatePath(`/view/${room.slug}`)
+    }
+    revalidatePath('/')
     return { success: true }
 }
 
@@ -80,6 +100,13 @@ export async function removeRoomItem(itemId: string) {
 
     if (!user) return { error: 'Unauthorized' }
 
+    // Fetch room context for cache invalidation before delete
+    const { data: item } = await supabase
+        .from('room_items')
+        .select('room_id, room:viewing_rooms(slug)')
+        .eq('id', itemId)
+        .single()
+
     // We rely on RLS policy "Galleries can manage items in their rooms"
     const { error } = await supabase
         .from('room_items')
@@ -87,6 +114,15 @@ export async function removeRoomItem(itemId: string) {
         .eq('id', itemId)
 
     if (error) return { error: error.message }
+    
+    if (item?.room_id) {
+        revalidatePath(`/dashboard/viewing-rooms/${item.room_id}`)
+    }
+    const slug = (item?.room as any)?.slug
+    if (slug) {
+        revalidatePath(`/view/${slug}`)
+    }
+    revalidatePath('/')
     return { success: true }
 }
 
@@ -96,13 +132,38 @@ export async function updateRoomItemOrder(items: { id: string, sort_order: numbe
 
     if (!user) return { error: 'Unauthorized' }
 
-    for (const item of items) {
-        await supabase
+    // Fetch the room context of the first item to invalidate cache
+    let roomId = null
+    let roomSlug = null
+    if (items.length > 0) {
+        const { data: item } = await supabase
             .from('room_items')
-            .update({ sort_order: item.sort_order })
-            .eq('id', item.id)
+            .select('room_id, room:viewing_rooms(slug)')
+            .eq('id', items[0].id)
+            .single()
+        roomId = item?.room_id
+        roomSlug = (item?.room as any)?.slug
     }
 
+    // Bulk upsert room_items to reorder in a single database roundtrip
+    const payload = items.map(item => ({
+        id: item.id,
+        sort_order: item.sort_order
+    }))
+
+    const { error } = await supabase
+        .from('room_items')
+        .upsert(payload)
+
+    if (error) return { error: error.message }
+
+    if (roomId) {
+        revalidatePath(`/dashboard/viewing-rooms/${roomId}`)
+    }
+    if (roomSlug) {
+        revalidatePath(`/view/${roomSlug}`)
+    }
+    revalidatePath('/')
     return { success: true }
 }
 
@@ -158,6 +219,13 @@ export async function deleteViewingRoom(roomId: string) {
 
     if (!user) return { error: 'Unauthorized' }
 
+    // Fetch slug for cache invalidation
+    const { data: room } = await supabase
+        .from('viewing_rooms')
+        .select('slug')
+        .eq('id', roomId)
+        .single()
+
     const { error } = await supabase
         .from('viewing_rooms')
         .delete()
@@ -165,6 +233,11 @@ export async function deleteViewingRoom(roomId: string) {
         .eq('gallery_id', user.id)
 
     if (error) return { error: error.message }
+    
     revalidatePath('/dashboard/viewing-rooms')
+    if (room?.slug) {
+        revalidatePath(`/view/${room.slug}`)
+    }
+    revalidatePath('/')
     return { success: true }
 }

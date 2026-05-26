@@ -9,7 +9,7 @@ export async function getArtistData(username: string) {
     console.log('Fetching artist data for username:', username)
     const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, username, full_name, avatar_url, account_type, subscription_status, created_at')
         .eq('username', username)
         .single()
 

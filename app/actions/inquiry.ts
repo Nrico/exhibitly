@@ -7,48 +7,72 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function sendInquiry(formData: FormData) {
     const artworkId = formData.get('artworkId') as string
-    const artworkTitle = formData.get('artworkTitle') as string
-    const artistEmail = formData.get('artistEmail') as string
+    const artistId = formData.get('artistId') as string
     const name = formData.get('name') as string
     const email = formData.get('email') as string
     const message = formData.get('message') as string
 
-    if (!name || !email || !message || !artistEmail) {
+    if (!name || !email || !message) {
         return { error: 'Missing required fields' }
     }
 
     const supabase = await createClient()
 
     try {
-        // 0. Find the artist's user_id based on the artwork or email
-        // Since we don't have the artist's ID explicitly passed (only email), we should probably pass it or look it up.
-        // Looking up by email is okay if email is unique in profiles.
-        // Better: Pass artistId in the form data.
-        // I'll assume we can look it up or I should have passed it.
-        // Let's look it up by email for now, or fetch the artwork to get the user_id.
+        let finalArtistId = artistId
+        let artistEmail = ''
+        let artworkTitle = 'General Inquiry'
 
-        let artistId = null
+        // 0. Resolve the artwork and artist context server-side
         if (artworkId) {
-            const { data: artwork } = await supabase.from('artworks').select('user_id').eq('id', artworkId).single()
-            if (artwork) artistId = artwork.user_id
+            const { data: artwork } = await supabase
+                .from('artworks')
+                .select('title, user_id')
+                .eq('id', artworkId)
+                .single()
+            if (artwork) {
+                artworkTitle = artwork.title
+                finalArtistId = artwork.user_id
+            }
+        }
+
+        if (!finalArtistId) {
+            return { error: 'Artist context not found' }
+        }
+
+        // Fetch verified email from settings or profile
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', finalArtistId)
+            .single()
+
+        const { data: settings } = await supabase
+            .from('site_settings')
+            .select('contact_email')
+            .eq('user_id', finalArtistId)
+            .single()
+
+        artistEmail = settings?.contact_email || profile?.email || ''
+
+        if (!artistEmail) {
+            return { error: 'Artist contact email not configured' }
         }
 
         // If we found the artist, save the subscriber
-        if (artistId) {
-            // Check if already subscribed to avoid unique constraint error (though we have ON CONFLICT in SQL usually, here we can just ignore)
-            // Supabase `upsert` or `insert` with `ignoreDuplicates`
+        if (finalArtistId) {
+            // Check if already subscribed to avoid unique constraint error
             await supabase.from('subscribers').insert({
-                user_id: artistId,
+                user_id: finalArtistId,
                 email: email,
                 source: 'inquiry',
                 subscribed: true
             }).select().single()
-            // We ignore error here if it's a duplicate
         }
 
         // 1. Send email to Artist
         await resend.emails.send({
-            from: 'Exhibitly <inquiries@exhibitly.art>', // Update this if you have a verified domain
+            from: 'Exhibitly <inquiries@exhibitly.art>',
             to: artistEmail,
             replyTo: email,
             subject: `New Inquiry: ${artworkTitle}`,
