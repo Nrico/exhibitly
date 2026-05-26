@@ -201,27 +201,17 @@ export default function Home() {
                   <h2>See a demo artist site</h2>
                   <div className="accent-line" aria-hidden="true"></div>
                   <div className="portrait">
-                    <svg viewBox="0 0 300 315" role="img" aria-label="Portrait of a sample artist named Maya Ellison">
-                      <defs>
-                        <linearGradient id="skin" x1="0" x2="1"><stop stopColor="#caa184"/><stop offset="1" stopColor="#ecd4be"/></linearGradient>
-                        <linearGradient id="bg" x1="0" x2="1"><stop stopColor="#cfc3b4"/><stop offset="1" stopColor="#efe4d5"/></linearGradient>
-                      </defs>
-                      <rect width="300" height="315" fill="url(#bg)"/>
-                      <circle cx="150" cy="108" r="54" fill="url(#skin)"/>
-                      <path d="M96 105c-3-50 32-80 72-76 40 4 61 41 55 89-31-26-72-17-127-13Z" fill="#2d211c"/>
-                      <path d="M112 157c39 26 81 22 109-7l24 103H71l41-96Z" fill="#eee7dc"/>
-                      <path d="M71 253c20-62 50-89 86-89s70 28 88 89v62H71v-62Z" fill="#f6f0e7"/>
-                      <path d="M117 180c17 16 47 18 66 3" stroke="#b69076" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                      <circle cx="132" cy="114" r="4" fill="#2a221f"/><circle cx="171" cy="114" r="4" fill="#2a221f"/>
-                      <path d="M149 124c-4 9-7 17-3 23" stroke="#9c725d" strokeWidth="3" fill="none" strokeLinecap="round"/>
-                      <path d="M127 145c14 9 32 9 47 0" stroke="#8b5f52" strokeWidth="3" fill="none" strokeLinecap="round"/>
-                    </svg>
+                    <img 
+                      src="/api/proxy-image?url=https://exhibitly.co/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/seth-herrera-1764388581033.jpg" 
+                      alt="Portrait of Seth Herrera" 
+                      className="w-full h-full object-cover animate-[fadeIn_0.5s_ease]" 
+                    />
                   </div>
                 </div>
 
                 <div className="demo-copy">
-                  <h3>Maya Ellison</h3>
-                  <p>Maya Ellison is a painter based in Santa Fe, New Mexico. Her work explores desert landscapes and the memory, light and transformation they hold.</p>
+                  <h3>Seth Herrera</h3>
+                  <p>Seth Herrera was a Southwest modern painter. His work explores small devotional panels, carved frames, and oil portraits capturing rural families under high-desert light.</p>
                   <Link href="/demo" className="text-link">View demo site →</Link>
                 </div>
 
@@ -230,27 +220,43 @@ export default function Home() {
                   <div className="recent-grid">
                     <div>
                       <div className="art-thumb">
-                        <img src="/images/home_detail.png" alt="Desert Light" className="w-full h-full object-cover" />
+                        <img 
+                          src="/api/proxy-image?url=https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.08821344127910269.jpg" 
+                          alt="Trail to the Moon" 
+                          className="w-full h-full object-cover" 
+                        />
                       </div>
-                      <p className="caption"><strong>Desert Light, 2024</strong>Oil on panel<br />24 x 30 in</p>
+                      <p className="caption"><strong>Trail to the Moon</strong>Oil on panel<br />12 x 12 in</p>
                     </div>
                     <div>
                       <div className="art-thumb">
-                        <img src="/images/home_detail2.png" alt="Mesa Study" className="w-full h-full object-cover" />
+                        <img 
+                          src="/api/proxy-image?url=https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.767166483680785.jpg" 
+                          alt="Blinded" 
+                          className="w-full h-full object-cover" 
+                        />
                       </div>
-                      <p className="caption"><strong>Mesa Study, 2024</strong>Oil on canvas<br />36 x 36 in</p>
+                      <p className="caption"><strong>Blinded</strong>Oil on panel<br />16 x 20 in</p>
                     </div>
                     <div>
                       <div className="art-thumb">
-                        <img src="/images/home_detail1.png" alt="Wind Line" className="w-full h-full object-cover" />
+                        <img 
+                          src="/api/proxy-image?url=https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.1439771331160673.jpg" 
+                          alt="A Step Away" 
+                          className="w-full h-full object-cover" 
+                        />
                       </div>
-                      <p className="caption"><strong>Wind Line, 2023</strong>Mixed media<br />22 x 30 in</p>
+                      <p className="caption"><strong>A Step Away</strong>Oil on canvas<br />24 x 30 in</p>
                     </div>
                     <div>
                       <div className="art-thumb">
-                        <img src="/images/home_detail.png" alt="Salt Flats" className="w-full h-full object-cover" />
+                        <img 
+                          src="/api/proxy-image?url=https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.536189758092916.jpg" 
+                          alt="Village Visitors" 
+                          className="w-full h-full object-cover" 
+                        />
                       </div>
-                      <p className="caption"><strong>Salt Flats, 2023</strong>Oil on panel<br />24 x 24 in</p>
+                      <p className="caption"><strong>Village Visitors</strong>Oil on panel<br />18 x 24 in</p>
                     </div>
                   </div>
                 </div>

@@ -7,133 +7,133 @@ import { ArrowLeft, EnvelopeSimple, Eye, FilePdf, LinkSimple, CheckSquare, Spark
 
 const DEMO_ARTWORKS = [
   {
-    id: 'elena-art-1',
-    title: 'Adobe Study II',
-    year: '2025',
-    medium: 'Taos clay, limestone, and raw wax',
-    dimensions: '12" x 12" x 16"',
+    id: 'seth-art-1',
+    title: 'Trail to the Moon',
+    year: '1938',
+    medium: 'Oil on pine panel',
+    dimensions: '12" x 12"',
     price: 950,
     status: 'available',
-    image_url: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=600',
-    collection: 'High Desert Sculptures',
-    location: 'Taos Studio',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.08821344127910269.jpg',
+    collection: 'Devotional Series',
+    location: 'Santa Fe Studio',
     edition: 'Unique piece',
   },
   {
-    id: 'elena-art-2',
-    title: 'Strata I',
-    year: '2025',
-    medium: 'Earth pigment and plaster on wood panel',
-    dimensions: '24" x 24"',
+    id: 'seth-art-2',
+    title: 'Blinded',
+    year: '1935',
+    medium: 'Oil on pine panel',
+    dimensions: '16" x 20"',
     price: 1200,
     status: 'sold',
-    image_url: 'https://images.unsplash.com/photo-1507643179173-4463bd0ed3fa?q=80&w=600',
-    collection: 'Pigment Studies',
-    location: 'Private Collection, Berlin',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.767166483680785.jpg',
+    collection: 'Devotional Series',
+    location: 'Private Collection, Denver',
     edition: 'Unique piece',
   },
   {
-    id: 'elena-art-3',
-    title: 'Dry Creek Bed',
-    year: '2024',
-    medium: 'Mixed clay and oxidized copper glaze',
-    dimensions: '18" x 18" x 3"',
-    price: 850,
+    id: 'seth-art-3',
+    title: 'A Step Away',
+    year: '1939',
+    medium: 'Oil on canvas',
+    dimensions: '24" x 30"',
+    price: 1800,
     status: 'available',
-    image_url: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=600',
-    collection: 'High Desert Sculptures',
-    location: 'Taos Studio',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.1439771331160673.jpg',
+    collection: 'High Desert Landscapes',
+    location: 'Santa Fe Studio',
     edition: 'Unique piece',
   },
   {
-    id: 'elena-art-4',
-    title: 'Chama River Gorge',
-    year: '2024',
-    medium: 'Charcoal and iron oxide on linen',
-    dimensions: '36" x 48"',
-    price: 2400,
-    status: 'available',
-    image_url: 'https://images.unsplash.com/photo-1545989253-02cc26577f88?q=80&w=600',
-    collection: 'Pigment Studies',
-    location: 'Taos Studio',
-    edition: 'Unique piece',
-  },
-  {
-    id: 'elena-art-5',
-    title: 'Eroded Horizon',
-    year: '2025',
-    medium: 'Pigment and river silt on panel',
-    dimensions: '30" x 30"',
-    price: 1600,
-    status: 'sold',
-    image_url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600',
-    collection: 'Pigment Studies',
-    location: 'Private Collection, Dallas',
-    edition: 'Unique piece',
-  },
-  {
-    id: 'elena-art-6',
-    title: 'Cliffs of Abiquiu',
-    year: '2025',
-    medium: 'Clay body with copper wash',
-    dimensions: '14" x 14" x 20"',
-    price: 1100,
-    status: 'available',
-    image_url: 'https://images.unsplash.com/photo-1580136579312-94651dfd596d?q=80&w=600',
-    collection: 'High Desert Sculptures',
-    location: 'Taos Studio',
-    edition: 'Unique piece',
-  },
-  {
-    id: 'elena-art-7',
-    title: 'Graphite Ridge',
-    year: '2024',
-    medium: 'Plaster and graphite on board',
-    dimensions: '24" x 36"',
+    id: 'seth-art-4',
+    title: 'Village Visitors',
+    year: '1932',
+    medium: 'Oil on pine panel',
+    dimensions: '18" x 24"',
     price: 1400,
     status: 'available',
-    image_url: 'https://images.unsplash.com/photo-1561214115-f2f134cc4912?q=80&w=600',
-    collection: 'Pigment Studies',
-    location: 'Taos Studio',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.536189758092916.jpg',
+    collection: 'Devotional Series',
+    location: 'Santa Fe Studio',
     edition: 'Unique piece',
   },
   {
-    id: 'elena-art-8',
-    title: 'Dust and Bone',
-    year: '2025',
-    medium: 'Found stone, raw clay, and linen thread',
-    dimensions: '10" x 10" x 14"',
-    price: 750,
+    id: 'seth-art-5',
+    title: 'Afield',
+    year: '1942',
+    medium: 'Oil on pine panel',
+    dimensions: '14" x 18"',
+    price: 1100,
     status: 'available',
-    image_url: 'https://images.unsplash.com/photo-1579783928621-7a13d66a6211?q=80&w=600',
-    collection: 'High Desert Sculptures',
-    location: 'Taos Studio',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.8895845909369582.jpg',
+    collection: 'High Desert Landscapes',
+    location: 'Santa Fe Studio',
     edition: 'Unique piece',
   },
   {
-    id: 'elena-art-9',
-    title: 'High Desert Monolith',
-    year: '2024',
-    medium: 'Hand-coiled volcanic clay',
-    dimensions: '24" x 24" x 36"',
-    price: 3200,
-    status: 'sold',
-    image_url: 'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?q=80&w=600',
-    collection: 'High Desert Sculptures',
-    location: 'Private Collection, Santa Fe',
+    id: 'seth-art-6',
+    title: 'Waiting',
+    year: '1937',
+    medium: 'Oil on pine panel',
+    dimensions: '16" x 16"',
+    price: 1050,
+    status: 'available',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.3304782566425537.jpg',
+    collection: 'Devotional Series',
+    location: 'Santa Fe Studio',
     edition: 'Unique piece',
   },
   {
-    id: 'elena-art-10',
-    title: 'Anasazi Whispers',
-    year: '2024',
-    medium: 'Raw earth plaster on panel',
+    id: 'seth-art-7',
+    title: 'Unweighted',
+    year: '1946',
+    medium: 'Mixed media on plaster',
     dimensions: '20" x 20"',
+    price: 1500,
+    status: 'available',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.9485456189138799.jpg',
+    collection: 'Erosions',
+    location: 'Santa Fe Studio',
+    edition: 'Unique piece',
+  },
+  {
+    id: 'seth-art-8',
+    title: 'Lifted',
+    year: '1945',
+    medium: 'Mixed media on canvas',
+    dimensions: '24" x 24"',
+    price: 1650,
+    status: 'sold',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.7540313757342361.jpg',
+    collection: 'Erosions',
+    location: 'Private Collection, Taos',
+    edition: 'Unique piece',
+  },
+  {
+    id: 'seth-art-9',
+    title: 'Aria',
+    year: '1940',
+    medium: 'Pigment and plaster on wood',
+    dimensions: '12" x 12"',
+    price: 800,
+    status: 'available',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.8350907023923659.jpg',
+    collection: 'Erosions',
+    location: 'Santa Fe Studio',
+    edition: 'Unique piece',
+  },
+  {
+    id: 'seth-art-10',
+    title: 'Pushed',
+    year: '1941',
+    medium: 'Pigment on plaster',
+    dimensions: '18" x 18"',
     price: 900,
     status: 'available',
-    image_url: 'https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=600',
-    collection: 'Pigment Studies',
-    location: 'Taos Studio',
+    image_url: 'https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.8204712740782429.jpg',
+    collection: 'Erosions',
+    location: 'Santa Fe Studio',
     edition: 'Unique piece',
   }
 ]
@@ -177,10 +177,10 @@ export default function DemoPage() {
         {/* --- ARTIST HEADER --- */}
         <header className="text-center py-12 border-b border-brand-sand-line mb-10">
           <h1 className="text-5xl font-serif font-normal tracking-wide text-brand-black uppercase">
-            Elena Lujan
+            Seth Herrera
           </h1>
           <div className="text-brand-clay text-xs font-semibold uppercase tracking-[3px] mt-2">
-            Taos, New Mexico &mdash; Mixed Media & Earth Archive
+            Santa Fe, New Mexico &mdash; Southwest Modern Painting & Devotional Panels
           </div>
 
           {/* Navigation Tabs */}
@@ -258,7 +258,7 @@ export default function DemoPage() {
           {activeTab === 'available' && (
             <div className="space-y-12 mb-24 max-w-4xl mx-auto">
               <div className="bg-brand-bone border border-brand-sand-line p-6 text-center text-xs font-mono text-brand-graphite">
-                Showing available works in Elena Lujan's Flat File archive. Click "Inquire" to send a formal purchase request.
+                Showing available works in Seth Herrera's Flat File archive. Click "Inquire" to send a formal purchase request.
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -299,10 +299,10 @@ export default function DemoPage() {
               <div className="space-y-6">
                 <h3 className="font-serif text-3xl border-b border-brand-sand-line pb-3 text-brand-black">Biography</h3>
                 <p className="text-base text-brand-graphite leading-relaxed font-light">
-                  Elena Lujan (b. 1993) is a Taos, New Mexico-based mixed media artist. She works extensively with raw geological matter, hand-coiled clays, beeswax, and locally harvested earth pigments. Her practices are deeply rooted in the historical sedimentations and high-desert landscapes of northern New Mexico.
+                  Seth Herrera worked across the Southwest from the 1910s to the late 1940s. He focused on small devotional panels, carved frames, and oil portraits of rural families. He traveled by rail and wagon, taking seasonal jobs while painting at night.
                 </p>
                 <p className="text-base text-brand-graphite leading-relaxed font-light">
-                  After completing her studies in Sculpture and Mineralogy at the University of New Mexico in 2016, she established her permanent studio in the foothills of Taos. Lujan’s sculptures explore the boundary lines of erosion, geological memory, and the physical weight of time.
+                  His notebooks show careful studies of light on adobe walls and figures at work. Museums later recognized his paintings for their steady observation and simple technique. His surviving pieces appear in regional collections, church offices, and a few private homes that kept his work for generations.
                 </p>
               </div>
 
@@ -310,7 +310,7 @@ export default function DemoPage() {
               <div className="space-y-6">
                 <h3 className="font-serif text-3xl border-b border-brand-sand-line pb-3 text-brand-black">Artist Statement</h3>
                 <p className="text-base text-brand-graphite leading-relaxed font-light italic">
-                  "My process is a slow dialogue with the desert floor. I do not see clay or silt as passive art supplies; they are archives of deep time. By layering raw clay bodies, oxidized copper washes, and melted wax, I mimic the natural cycles of sedimentation, heat, and decay. The resulting forms represent the fragile and shifting geography of the Southwest modern archive."
+                  "My work is an observation of quiet moments in the high-desert valleys. Through the use of devotional panel structures, hand-built pine frames, and classic oil techniques, I hope to anchor the light and daily labor of rural families in a timeless space."
                 </p>
               </div>
 
@@ -321,17 +321,16 @@ export default function DemoPage() {
                   <div>
                     <h4 className="font-bold text-brand-charcoal text-sm mb-2">SELECTED EXHIBITIONS</h4>
                     <ul className="space-y-2">
-                      <li>2025 &bull; *Strata & Sediment*, Harwood Museum of Art, Taos, NM (Solo)</li>
-                      <li>2024 &bull; *Northwest Clay Invitational*, Seattle, WA (Group)</li>
-                      <li>2024 &bull; *Taos Open Studio Association Exhibition*, Taos, NM (Group)</li>
-                      <li>2023 &bull; *New Mexico Clay: Contemporary Earth*, Santa Fe, NM (Group)</li>
+                      <li>1938 &bull; *Devotional Panels*, Santa Fe Museum of Fine Arts, Santa Fe, NM (Solo)</li>
+                      <li>1932 &bull; *Southwest Regional Exhibition*, Albuquerque, NM (Group)</li>
+                      <li>1928 &bull; *New Mexico Guild Exhibition*, Taos, NM (Group)</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-bold text-brand-charcoal text-sm mb-2">RESIDENCIES & AWARDS</h4>
                     <ul className="space-y-2">
-                      <li>2024 &bull; Helene Wurlitzer Foundation Artist Residency, Taos, NM</li>
-                      <li>2023 &bull; New Mexico Arts Council Emerging Artist Fellowship</li>
+                      <li>1941 &bull; New Mexico Historical Society Honor</li>
+                      <li>1935 &bull; WPA Federal Art Project Commission</li>
                     </ul>
                   </div>
                 </div>
@@ -448,15 +447,15 @@ export default function DemoPage() {
                   <div>
                     {/* Header */}
                     <div className="border-b border-brand-charcoal pb-4 mb-8 flex justify-between items-baseline">
-                      <span className="text-brand-charcoal font-sans font-bold text-sm uppercase">Elena Lujan Portfolio Packet</span>
-                      <span>Taos, New Mexico</span>
+                      <span className="text-brand-charcoal font-sans font-bold text-sm uppercase">Seth Herrera Portfolio Packet</span>
+                      <span>Santa Fe, New Mexico</span>
                     </div>
 
                     {/* Bio Statement Block */}
                     <div className="mb-8 font-sans font-light leading-relaxed text-[10px] space-y-2">
                       <span className="font-mono text-[8px] font-bold text-brand-clay block mb-1">ARTIST BIOGRAPHY</span>
                       <p>
-                        Elena Lujan works extensively with raw geological matter, hand-coiled clays, beeswax, and locally harvested earth pigments. Her practices are deeply rooted in the historical sedimentations and high-desert landscapes of northern New Mexico.
+                        Seth Herrera focused on small devotional panels, carved frames, and oil portraits of rural families. His notebooks show careful studies of light on adobe walls and figures at work in the high-desert valleys.
                       </p>
                     </div>
 
@@ -468,23 +467,23 @@ export default function DemoPage() {
                       {/* Item 1 */}
                       <div className="border border-brand-sand-line p-3 bg-brand-warm-white/20">
                         <div className="w-full aspect-square relative bg-brand-bone mb-2">
-                          <Image src="https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=300" alt="" fill className="object-cover saturate-50" />
+                          <Image src="https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.08821344127910269.jpg" alt="" fill className="object-cover saturate-50" />
                         </div>
-                        <div className="font-bold text-brand-charcoal font-sans text-[10px]">Adobe Study II</div>
-                        <div>Taos clay, limestone, and raw wax</div>
-                        <div>12" x 12" x 16" &bull; 2025</div>
+                        <div className="font-bold text-brand-charcoal font-sans text-[10px]">Trail to the Moon</div>
+                        <div>Oil on pine panel</div>
+                        <div>12" x 12" &bull; 1938</div>
                         <div className="mt-1.5 font-bold text-brand-charcoal">$950 (Available)</div>
                       </div>
 
                       {/* Item 2 */}
                       <div className="border border-brand-sand-line p-3 bg-brand-warm-white/20">
                         <div className="w-full aspect-square relative bg-brand-bone mb-2">
-                          <Image src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=300" alt="" fill className="object-cover saturate-50" />
+                          <Image src="https://zdfxzjjvjddsdmkrihgl.supabase.co/storage/v1/object/public/artworks/d58d3215-4cf4-49fb-9b09-fca65ea7da1b/0.1439771331160673.jpg" alt="" fill className="object-cover saturate-50" />
                         </div>
-                        <div className="font-bold text-brand-charcoal font-sans text-[10px]">Dry Creek Bed</div>
-                        <div>Mixed clay and oxidized copper glaze</div>
-                        <div>18" x 18" x 3" &bull; 2024</div>
-                        <div className="mt-1.5 font-bold text-brand-charcoal">$850 (Available)</div>
+                        <div className="font-bold text-brand-charcoal font-sans text-[10px]">A Step Away</div>
+                        <div>Oil on canvas</div>
+                        <div>24" x 30" &bull; 1939</div>
+                        <div className="mt-1.5 font-bold text-brand-charcoal">$1,800 (Available)</div>
                       </div>
 
                     </div>
@@ -522,7 +521,7 @@ export default function DemoPage() {
                 </div>
                 <h3 className="font-serif text-2xl text-brand-black">Inquiry Submitted</h3>
                 <p className="text-sm text-brand-graphite">
-                  Elena Lujan will receive your request directly at her Taos studio email.
+                  Seth Herrera will receive your request directly at his Santa Fe studio email.
                 </p>
               </div>
             ) : (
